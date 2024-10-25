@@ -1,0 +1,47 @@
+[
+    {
+        "MaBP": 1,
+        "TenBoPhan": "Quản lý",
+        "Luong": 20000000,
+    },
+    {
+        "MaBP": 2,
+        "TenBoPhan": "Phục vụ",
+        "Luong": 10000000,
+    },
+    {
+        "MaBP": 3,
+        "TenBoPhan": "Giao hàng",
+        "Luong": 12000000,
+    },
+    {
+        "MaBP": 4,
+        "TenBoPhan": "Kế toán",
+        "Luong": 15000000,
+    },
+    {
+        "MaBP": 5,
+        "TenBoPhan": "Bảo vệ",
+        "Luong": 8000000,
+    },
+    {
+        "MaBP": 7,
+        "TenBoPhan": "Bếp",
+        "Luong": 15000000,
+    },
+    {
+        "MaBP": 8,
+        "TenBoPhan": "Thu ngân",
+        "Luong": 12000000,
+    },
+    {
+        "MaBP": 9,
+        "TenBoPhan": "Tạp vụ",
+        "Luong": 8000000,
+    }
+        {
+        "MaBP": 10,
+        "TenBoPhan": "Phụ bếp",
+        "Luong": 10000000,
+    }
+]
