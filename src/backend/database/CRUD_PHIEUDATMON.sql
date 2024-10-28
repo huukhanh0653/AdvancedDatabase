@@ -1,0 +1,48 @@
+USE QLY_NHAHANG
+GO
+
+CREATE PROCEDURE PHIEUDATMON_Insert
+    @MaPhieu INT,
+    @NgayLap DATE NOT NULL,
+    @MaBan NVARCHAR(50) NOT NULL,
+    @TongTien DECIMAL(18, 2),
+    @MAKH INT,
+    @MaNV INT NOT NULL,
+    @MaHD INT
+AS
+BEGIN
+    INSERT INTO PHIEUDATMON
+    VALUES (@MaPhieu, @NgayLap, @MaBan, @TongTien, @MAKH, @MaNV, @MaHD)
+END;
+GO
+
+CREATE PROCEDURE PHIEUDATMON_Update
+    @MaPhieu INT,
+    @NgayLap DATE NOT NULL,
+    @MaBan NVARCHAR(50) NOT NULL,
+    @TongTien DECIMAL(18, 2),
+    @MAKH INT,
+    @MaNV INT NOT NULL,
+    @MaHD INT
+AS 
+BEGIN
+    UPDATE PHIEUDATMON
+    SET NgayLap = @NgayLap, MaBan = @MaBan, TongTien = @TongTien, MaKH = @MAKH, MaNV = @MaNV, MaHD = @MaHD
+    WHERE MaPhieu = @MaPhieu;
+END;
+GO
+
+CREATE PROCEDURE PHIEUDATMON_Delete
+    @MaPhieu INT
+AS
+BEGIN
+    DELETE FROM PHIEUDATMON
+    WHERE MaPhieu = @MaPhieu;
+END;
+GO
+
+CREATE PROCEDURE PHIEUDATMON_GetAll
+AS
+BEGIN
+    SELECT * FROM PHIEUDATMON;
+END;
