@@ -7,55 +7,60 @@ GO
 USE QLY_NHAHANG
 GO
 
-CREATE TABLE TAIKHOAN (
+CREATE TABLE TAIKHOAN
+(
     Username NVARCHAR(50) PRIMARY KEY,
     Password NVARCHAR(100),
     isActive bit
 );
 GO
 
-CREATE TABLE KHACHHANG (
+CREATE TABLE KHACHHANG
+(
     MaKH INT identity(1,1) PRIMARY KEY,
-	Username NVARCHAR(50),
+    Username NVARCHAR(50),
     HoTen NVARCHAR(100),
     SDT VARCHAR(10),
     Email NVARCHAR(100),
     CCCD VARCHAR(12),
     GioiTinh NVARCHAR(10)
 
-	constraint CK_KHACHHANG_GioiTinh
+        constraint CK_KHACHHANG_GioiTinh
 	check (GioiTinh = 'Male' or Gioitinh = 'Female'),
 
-	CONSTRAINT CK_KHACHHANG_CCCD
+    CONSTRAINT CK_KHACHHANG_CCCD
 	CHECK (LEN(CCCD) = 12 AND CCCD NOT LIKE '%[^0-9]%'),
 
-	CONSTRAINT CK_KHACHHANG_SDT
+    CONSTRAINT CK_KHACHHANG_SDT
 	CHECK (LEN(SDT) = 10 AND SDT NOT LIKE '%[^0-9]%'),
 );
 GO
 
-CREATE TABLE BOPHAN (
-    MaBP INT IDENTITY(1, 1)  PRIMARY KEY,
+CREATE TABLE BOPHAN
+(
+    MaBP INT IDENTITY(1, 1) PRIMARY KEY,
     TenBoPhan NVARCHAR(100),
     Luong DECIMAL(18, 2)
 
 );
 GO
 
-CREATE TABLE NHANVIEN (
-    MaNV INT IDENTITY(1, 1)  PRIMARY KEY,
+CREATE TABLE NHANVIEN
+(
+    MaNV INT IDENTITY(1, 1) PRIMARY KEY,
     HoTen NVARCHAR(100),
     NgaySinh DATE,
     NgayVaoLam DATE,
-    NgayNghiViec DATE, 
-	Username NVARCHAR(50),
-	MaBP INT
+    NgayNghiViec DATE,
+    Username NVARCHAR(50),
+    MaBP INT
 
-	FOREIGN KEY (MaBP) REFERENCES BOPHAN(MaBP)
+        FOREIGN KEY (MaBP) REFERENCES BOPHAN(MaBP)
 );
 GO
 
-CREATE TABLE THETHANHVIEN (
+CREATE TABLE THETHANHVIEN
+(
     MaThe CHAR(8) PRIMARY KEY,
     NgayLap DATE,
     LoaiThe NVARCHAR(50),
@@ -65,12 +70,13 @@ CREATE TABLE THETHANHVIEN (
 
     FOREIGN KEY (MaKH) REFERENCES KhachHang(MaKH),
 
-	constraint CK_THETHANHVIEN_LoaiThe
+    constraint CK_THETHANHVIEN_LoaiThe
 	check (LoaiThe = 'Silver' or LoaiThe = 'Gold' or LoaiThe = 'Normal'),
 );
 GO
 
-CREATE TABLE HOADON (
+CREATE TABLE HOADON
+(
     MaHoaDon INT IDENTITY(1, 1) PRIMARY KEY,
     GiamGia DECIMAL(18, 2),
     TongHoaDon DECIMAL(18, 2),
@@ -80,8 +86,9 @@ CREATE TABLE HOADON (
 );
 GO
 
-CREATE TABLE PHIEUDANHGIA (
-    MaPhieuDG INT IDENTITY(1, 1)  PRIMARY KEY,
+CREATE TABLE PHIEUDANHGIA
+(
+    MaPhieuDG INT IDENTITY(1, 1) PRIMARY KEY,
     DiemPhucVu INT,
     DiemViTri INT,
     DiemMonAn INT,
@@ -93,7 +100,8 @@ CREATE TABLE PHIEUDANHGIA (
 );
 GO
 
-CREATE TABLE ChiNhanh (
+CREATE TABLE ChiNhanh
+(
     MaCN INT IDENTITY(1, 1) PRIMARY KEY,
     TenCN NVARCHAR(100),
     DiaChi NVARCHAR(255),
@@ -103,11 +111,13 @@ CREATE TABLE ChiNhanh (
     SDT VARCHAR(10),
     coXeMay BIT,
     coXeHoi BIT,
-    hasDelivery BIT --XEM LẠI
+    hasDelivery BIT
+    --XEM LẠI
 );
 GO
 
-CREATE TABLE Doi_CN (
+CREATE TABLE Doi_CN
+(
     MaNV INT,
     MaCN INT,
     NgayBatDau DATE,
@@ -120,13 +130,15 @@ CREATE TABLE Doi_CN (
 );
 GO
 
-CREATE TABLE KhuVuc (
+CREATE TABLE KhuVuc
+(
     MaKV INT IDENTITY(1, 1) PRIMARY KEY,
     TenKhuVuc NVARCHAR(100)
 );
 GO
 
-CREATE TABLE ThucDon (
+CREATE TABLE ThucDon
+(
     MaTD INT PRIMARY KEY,
     MaKV INT,
 
@@ -134,15 +146,18 @@ CREATE TABLE ThucDon (
 );
 GO
 
-CREATE TABLE MonAn (
+CREATE TABLE MonAn
+(
     MaMon INT PRIMARY KEY,
     TenMon NVARCHAR(100),
     PhanLoai NVARCHAR(50),
-    GiaTien DECIMAL(18, 2)
+    GiaTien DECIMAL(18, 2),
+    HinhAnh CHAR(200),
 );
 GO
 
-CREATE TABLE PhucVu (
+CREATE TABLE PhucVu
+(
     MaTD INT,
     MaMon INT,
     isServed BIT,
@@ -152,7 +167,8 @@ CREATE TABLE PhucVu (
 );
 GO
 
-CREATE TABLE PhieuDatMon (
+CREATE TABLE PhieuDatMon
+(
     MaPhieu INT IDENTITY(1,1) PRIMARY KEY,
     NgayLap DATE,
     MaBan NVARCHAR(50),
@@ -163,7 +179,8 @@ CREATE TABLE PhieuDatMon (
 );
 GO
 
-CREATE TABLE ChonMon (
+CREATE TABLE ChonMon
+(
     MaPhieu INT,
     MaMon INT,
     SoLuong INT,
@@ -176,7 +193,8 @@ CREATE TABLE ChonMon (
 );
 GO
 
-CREATE TABLE DatBan (
+CREATE TABLE DatBan
+(
     MaDatBan INT IDENTITY(1, 1) PRIMARY KEY,
     NgayDat DATE,
     GioDat TIME,
@@ -184,10 +202,10 @@ CREATE TABLE DatBan (
     CuaHang NVARCHAR(100),
     GhiChu NVARCHAR(255),
     MaKH INT,
-	MaPhieu INT,
+    MaPhieu INT,
 
     FOREIGN KEY (MaKH) REFERENCES KHACHHANG(MaKH),
-	FOREIGN KEY (MaPhieu) REFERENCES PHIEUDATMON(MaPhieu)
+    FOREIGN KEY (MaPhieu) REFERENCES PHIEUDATMON(MaPhieu)
 );
 GO
 
