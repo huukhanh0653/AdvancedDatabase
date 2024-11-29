@@ -1,16 +1,16 @@
-MaCN,TenCN,DiaChi,ThanhPho,KhuVuc,tgMoCua,tgDongCua,SDT,coXeMay,coXeHoi,hasDelivery
-1,"Chi nhánh Đường Lê Lợi, Bà Rịa","560 Đường Lê Lợi, Bà Rịa",['city'],Miền Nam,09:00,22:00,0123456789,1,1,1
-2,"Chi nhánh Đường Nguyễn Lương Bằng, Đà Lạt","230 Đường Nguyễn Lương Bằng, Đà Lạt",['city'],Miền Trung,09:00,22:00,0123456789,1,1,0
-3,"Chi nhánh Đường Lê Duẩn, Vũng Tàu","466 Đường Lê Duẩn, Vũng Tàu",['city'],Miền Nam,09:00,22:00,0123456789,1,0,0
-4,"Chi nhánh Đường Tôn Đức Thắng, Hồ Chí Minh","555 Đường Tôn Đức Thắng, Hồ Chí Minh",['city'],Miền Nam,09:00,22:00,0123456789,0,0,0
-5,"Chi nhánh Đường Thái Hà, Hà Nội","425 Đường Thái Hà, Hà Nội",['city'],Miền Bắc,09:00,22:00,0123456789,0,0,0
-6,"Chi nhánh Đường Chùa Bộc, Hồ Chí Minh","126 Đường Chùa Bộc, Hồ Chí Minh",['city'],Miền Nam,09:00,22:00,0123456789,0,1,1
-7,"Chi nhánh Đường Láng Hạ, Đà Nẵng","46 Đường Láng Hạ, Đà Nẵng",['city'],Miền Trung,09:00,22:00,0123456789,0,1,0
-8,"Chi nhánh Đường Hai Bà Trưng, Vũng Tàu","548 Đường Hai Bà Trưng, Vũng Tàu",['city'],Miền Nam,09:00,22:00,0123456789,1,1,1
-9,"Chi nhánh Đường Phạm Văn Đồng, Hà Nội","108 Đường Phạm Văn Đồng, Hà Nội",['city'],Miền Bắc,09:00,22:00,0123456789,0,1,1
-10,"Chi nhánh Đường Đại Cồ Việt, Đà Lạt","478 Đường Đại Cồ Việt, Đà Lạt",['city'],Miền Trung,09:00,22:00,0123456789,0,1,0
-11,"Chi nhánh Đường Nam Kỳ Khởi Nghĩa, Hà Nội","194 Đường Nam Kỳ Khởi Nghĩa, Hà Nội",['city'],Miền Bắc,09:00,22:00,0123456789,1,1,1
-12,"Chi nhánh Đường Pasteur, Bà Rịa","24 Đường Pasteur, Bà Rịa",['city'],Miền Nam,09:00,22:00,0123456789,1,0,1
-13,"Chi nhánh Đường Đồng Khởi, Hải Dương","293 Đường Đồng Khởi, Hải Dương",['city'],Miền Bắc,09:00,22:00,0123456789,1,1,0
-14,"Chi nhánh Đường Láng Hạ, Cần Thơ","332 Đường Láng Hạ, Cần Thơ",['city'],Miền Nam,09:00,22:00,0123456789,1,1,1
-15,"Chi nhánh Đường Đồng Khởi, Đà Nẵng","104 Đường Đồng Khởi, Đà Nẵng",['city'],Miền Trung,09:00,22:00,0123456789,0,1,1
+MaCN,TenCN,DiaChi,KhuVuc,tgMoCua,tgDongCua,SDT,coXeMay,coXeHoi,hasDelivery
+1,"Chi nhánh Đường Phạm Văn Đồng, Hà Nội","506 Đường Phạm Văn Đồng, Hà Nội",MB,09:00,22:00,0123456789,0,0,1
+2,"Chi nhánh Đường Nguyễn Chí Thanh, Đà Lạt","300 Đường Nguyễn Chí Thanh, Đà Lạt",MT,09:00,22:00,0123456789,0,0,0
+3,"Chi nhánh Đường Xuân Thủy, Đà Nẵng","545 Đường Xuân Thủy, Đà Nẵng",MT,09:00,22:00,0123456789,0,0,0
+4,"Chi nhánh Đường Pasteur, Đà Nẵng","255 Đường Pasteur, Đà Nẵng",MT,09:00,22:00,0123456789,0,0,0
+5,"Chi nhánh Đường Láng Hạ, Đà Lạt","157 Đường Láng Hạ, Đà Lạt",MT,09:00,22:00,0123456789,0,0,1
+6,"Chi nhánh Đường Láng Hạ, Hồ Chí Minh","391 Đường Láng Hạ, Hồ Chí Minh",MN,09:00,22:00,0123456789,0,1,0
+7,"Chi nhánh Đường Nguyễn Huệ, Vũng Tàu","384 Đường Nguyễn Huệ, Vũng Tàu",MN,09:00,22:00,0123456789,0,0,1
+8,"Chi nhánh Đường Nguyễn Chí Thanh, Cần Thơ","508 Đường Nguyễn Chí Thanh, Cần Thơ",MN,09:00,22:00,0123456789,0,1,1
+9,"Chi nhánh Đường Hai Bà Trưng, Hồ Chí Minh","232 Đường Hai Bà Trưng, Hồ Chí Minh",MN,09:00,22:00,0123456789,1,0,1
+10,"Chi nhánh Đường Thái Hà, Bà Rịa","51 Đường Thái Hà, Bà Rịa",MN,09:00,22:00,0123456789,1,0,0
+11,"Chi nhánh Đường Nguyễn Huệ, Đà Lạt","167 Đường Nguyễn Huệ, Đà Lạt",MT,09:00,22:00,0123456789,1,0,0
+12,"Chi nhánh Đường Nguyễn Huệ, Vũng Tàu","573 Đường Nguyễn Huệ, Vũng Tàu",MN,09:00,22:00,0123456789,1,0,1
+13,"Chi nhánh Đường Tây Sơn, Cần Thơ","10 Đường Tây Sơn, Cần Thơ",MN,09:00,22:00,0123456789,0,1,0
+14,"Chi nhánh Đường Hai Bà Trưng, Hà Nội","273 Đường Hai Bà Trưng, Hà Nội",MB,09:00,22:00,0123456789,1,1,0
+15,"Chi nhánh Đường Lê Lợi, Bà Rịa","461 Đường Lê Lợi, Bà Rịa",MN,09:00,22:00,0123456789,1,0,0
