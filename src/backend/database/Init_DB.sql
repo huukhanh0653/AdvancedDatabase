@@ -218,7 +218,7 @@ CREATE TABLE DATBAN
     GhiChu NVARCHAR(255),
 	MaPhieu int,
     MaKH INT,
-    MaHoaDon INT,
+    MaHD INT,
 
     CONSTRAINT CK_DATBAN_SOLUONG CHECK (SoLuong > 0)
 );
@@ -248,7 +248,6 @@ CREATE TABLE BAN
     MaBan CHAR(3),
 	MaCN CHAR(2),
     MaHD INT,
-	MaCN INT NOT NULL,
     TinhTrang BIT 
 
 	PRIMARY KEY (MaBan, MaCN)
