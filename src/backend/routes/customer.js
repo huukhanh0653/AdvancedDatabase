@@ -3,7 +3,8 @@ const passport = require("../middleware/passport");
 const { isEmployee } = require("../middleware/auth");
 var router = express.Router();
 const { sql, poolPromise } = require("../model/dbConfig");
-const { queryDB } = require("../model/query");
+const { executeProcedure } = require("../middleware/queryDB");
+require("../model/query");
 
 router.get("/get-all-bophan", async function (req, res, next) {
   let query = `SELECT * FROM BOPHAN`;
@@ -49,8 +50,8 @@ router.post("/create-new-card", async function (req, res, next) {
   let MaThe = queryDB("SELECT * FROM THETHANHVIEN").recordset.length;
   if (!MaThe) MaThe = 1;
   
-
-  return res.status(500).json({ message: "Internal server error" });
+  if (!executeProcedure("CREATE_THE_THANH_VIEN", [MaThe, LoaiThe, username]))
+    return res.status(500).json({ message: "Internal server error" });
 
   return res.status(200).json({ message: "Registered successfully" });
 
