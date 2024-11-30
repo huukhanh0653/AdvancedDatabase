@@ -11,7 +11,7 @@ const Category = ({category, banner}) => {
           <img src={banner} alt="" className='block my-7 mx-auto'/>
         </div>
         <div className='flexBetween my-8 mx-2'>
-          <h5><span className='font-bold'>Showing 1-12</span> out of 36 products</h5>
+          <h5><span className='font-bold'>Hiển thị 1-12</span> trong số 36 sản phẩm</h5>
           <div className='flexBetween max-sm:p-4 gap-x-4 px-8 py-3 rounded-5x1 ring-1 ring-slate-900/15'>Sort by <MdOutlineKeyboardArrowDown /></div>
         </div>
         {/*container*/}
@@ -19,12 +19,12 @@ const Category = ({category, banner}) => {
           {all_products.map((item) => {
             if (category === item.category)
             {
-              return <Item key={item.id} id={item.id} image={item.image} name={item.name} old_price={item.old_price} new_price={item.new_price}></Item>
+              return <Item key={item.id} id={item.id} image={item.image} name={item.name} old_price={item.old_price}></Item>
             }
           })}
         </div>
         <div className='mt-16 text-center'>
-          <button className='btn_dark_rounded'>Load more</button>
+          <button className='btn_dark_rounded'>Tải thêm</button>
         </div>
       </div>
     </section>
