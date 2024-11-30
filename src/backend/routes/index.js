@@ -1,6 +1,6 @@
 var express = require("express");
-const passport = require("../api/passport");
-const { isEmployee, isCustomer } = require("../api/auth");
+const passport = require("../middleware/passport");
+const { isEmployee, isCustomer } = require("../middleware/auth");
 var router = express.Router();
 
 /* GET home page. */

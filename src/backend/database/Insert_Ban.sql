@@ -1,307 +1,231 @@
 
-DELETE FROM Ban 
-GO 
+--DELETE FROM Ban 
+--GO 
 
-INSERT INTO Ban (MaBan, MaCN, MaHD, isActive) VALUES 
+--SET IDENTITY_INSERT Ban ON 
 
-('11', 1, NULL, 1), 
-('12', 1,  NULL, 1), 
-('13', 1,  NULL, 1), 
-('14', 1,  NULL, 1), 
-('15', 1,  NULL, 1), 
-('16', 1,  NULL, 1), 
-('17', 1,  NULL, 1), 
-('18', 1,  NULL, 1), 
-('19', 1,  NULL, 1), 
-('110', 1,  NULL, 1), 
-('111', 1,  NULL, 1), 
-('112', 1,  NULL, 1), 
-('113', 1,  NULL, 1), 
-('114', 1,  NULL, 1), 
-('115', 1,  NULL, 1), 
-('116', 1,  NULL, 1), 
-('117', 1,  NULL, 1), 
-('118', 1,  NULL, 1), 
-('119', 1,  NULL, 1), 
-('120', 1,  NULL, 1), 
-('21', 2,  NULL, 1), 
-('22', 2,  NULL, 1), 
-('23', 2,  NULL, 1), 
-('24', 2,  NULL, 1), 
-('25', 2,  NULL, 1), 
-('26', 2,  NULL, 1), 
-('27', 2,  NULL, 1), 
-('28', 2,  NULL, 1), 
-('29', 2,  NULL, 1), 
-('210', 2,  NULL, 1), 
-('211', 2,  NULL, 1), 
-('212', 2,  NULL, 1), 
-('213', 2,  NULL, 1), 
-('214', 2,  NULL, 1), 
-('215', 2,  NULL, 1), 
-('216', 2,  NULL, 1), 
-('217', 2,  NULL, 1), 
-('218', 2,  NULL, 1), 
-('219', 2,  NULL, 1), 
-('220', 2,  NULL, 1), 
-('31', 3,  NULL, 1), 
-('32', 3,  NULL, 1), 
-('33', 3,  NULL, 1), 
-('34', 3,  NULL, 1), 
-('35', 3,  NULL, 1), 
-('36', 3,  NULL, 1), 
-('37', 3,  NULL, 1), 
-('38', 3,  NULL, 1), 
-('39', 3,  NULL, 1), 
-('310', 3,  NULL, 1), 
-('311', 3,  NULL, 1), 
-('312', 3,  NULL, 1), 
-('313', 3,  NULL, 1), 
-('314', 3,  NULL, 1), 
-('315', 3,  NULL, 1), 
-('316', 3,  NULL, 1), 
-('317', 3,  NULL, 1), 
-('318', 3,  NULL, 1), 
-('319', 3,  NULL, 1), 
-('320', 3,  NULL, 1), 
-('41', 4,  NULL, 1), 
-('42', 4,  NULL, 1), 
-('43', 4,  NULL, 1), 
-('44', 4,  NULL, 1), 
-('45', 4,  NULL, 1), 
-('46', 4,  NULL, 1), 
-('47', 4,  NULL, 1), 
-('48', 4,  NULL, 1), 
-('49', 4,  NULL, 1), 
-('410', 4,  NULL, 1), 
-('411', 4,  NULL, 1), 
-('412', 4,  NULL, 1), 
-('413', 4,  NULL, 1), 
-('414', 4,  NULL, 1), 
-('415', 4,  NULL, 1), 
-('416', 4,  NULL, 1), 
-('417', 4,  NULL, 1), 
-('418', 4,  NULL, 1), 
-('419', 4,  NULL, 1), 
-('420', 4,  NULL, 1), 
-('51', 5,  NULL, 1), 
-('52', 5,  NULL, 1), 
-('53', 5,  NULL, 1), 
-('54', 5,  NULL, 1), 
-('55', 5,  NULL, 1), 
-('56', 5,  NULL, 1), 
-('57', 5,  NULL, 1), 
-('58', 5,  NULL, 1), 
-('59', 5,  NULL, 1), 
-('510', 5,  NULL, 1), 
-('511', 5,  NULL, 1), 
-('512', 5,  NULL, 1), 
-('513', 5,  NULL, 1), 
-('514', 5,  NULL, 1), 
-('515', 5,  NULL, 1), 
-('516', 5,  NULL, 1), 
-('517', 5,  NULL, 1), 
-('518', 5,  NULL, 1), 
-('519', 5,  NULL, 1), 
-('520', 5,  NULL, 1), 
-('61', 6,  NULL, 1), 
-('62', 6,  NULL, 1), 
-('63', 6,  NULL, 1), 
-('64', 6,  NULL, 1), 
-('65', 6,  NULL, 1), 
-('66', 6,  NULL, 1), 
-('67', 6,  NULL, 1), 
-('68', 6,  NULL, 1), 
-('69', 6,  NULL, 1), 
-('610', 6,  NULL, 1), 
-('611', 6,  NULL, 1), 
-('612', 6,  NULL, 1), 
-('613', 6,  NULL, 1), 
-('614', 6,  NULL, 1), 
-('615', 6,  NULL, 1), 
-('616', 6,  NULL, 1), 
-('617', 6,  NULL, 1), 
-('618', 6,  NULL, 1), 
-('619', 6,  NULL, 1), 
-('620', 6,  NULL, 1), 
-('71', 7,  NULL, 1), 
-('72', 7,  NULL, 1), 
-('73', 7,  NULL, 1), 
-('74', 7,  NULL, 1), 
-('75', 7,  NULL, 1), 
-('76', 7,  NULL, 1), 
-('77', 7,  NULL, 1), 
-('78', 7,  NULL, 1), 
-('79', 7,  NULL, 1), 
-('710', 7,  NULL, 1), 
-('711', 7,  NULL, 1), 
-('712', 7,  NULL, 1), 
-('713', 7,  NULL, 1), 
-('714', 7,  NULL, 1), 
-('715', 7,  NULL, 1), 
-('716', 7,  NULL, 1), 
-('717', 7,  NULL, 1), 
-('718', 7,  NULL, 1), 
-('719', 7,  NULL, 1), 
-('720', 7,  NULL, 1), 
-('81', 8,  NULL, 1), 
-('82', 8,  NULL, 1), 
-('83', 8,  NULL, 1), 
-('84', 8,  NULL, 1), 
-('85', 8,  NULL, 1), 
-('86', 8,  NULL, 1), 
-('87', 8,  NULL, 1), 
-('88', 8,  NULL, 1), 
-('89', 8,  NULL, 1), 
-('810', 8,  NULL, 1), 
-('811', 8,  NULL, 1), 
-('812', 8,  NULL, 1), 
-('813', 8,  NULL, 1), 
-('814', 8,  NULL, 1), 
-('815', 8,  NULL, 1), 
-('816', 8,  NULL, 1), 
-('817', 8,  NULL, 1), 
-('818', 8,  NULL, 1), 
-('819', 8,  NULL, 1), 
-('820', 8,  NULL, 1), 
-('91', 9,  NULL, 1), 
-('92', 9,  NULL, 1), 
-('93', 9,  NULL, 1), 
-('94', 9,  NULL, 1), 
-('95', 9,  NULL, 1), 
-('96', 9,  NULL, 1), 
-('97', 9,  NULL, 1), 
-('98', 9,  NULL, 1), 
-('99', 9,  NULL, 1), 
-('910', 9,  NULL, 1), 
-('911', 9,  NULL, 1), 
-('912', 9,  NULL, 1), 
-('913', 9,  NULL, 1), 
-('914', 9,  NULL, 1), 
-('915', 9,  NULL, 1), 
-('916', 9,  NULL, 1), 
-('917', 9,  NULL, 1), 
-('918', 9,  NULL, 1), 
-('919', 9,  NULL, 1), 
-('920', 9,  NULL, 1), 
-('101', 10,  NULL, 1), 
-('102', 10,  NULL, 1), 
-('103', 10,  NULL, 1), 
-('104', 10,  NULL, 1), 
-('105', 10,  NULL, 1), 
-('106', 10,  NULL, 1), 
-('107', 10,  NULL, 1), 
-('108', 10,  NULL, 1), 
-('109', 10,  NULL, 1), 
-('1010', 10,  NULL, 1), 
-('1011', 10,  NULL, 1), 
-('1012', 10,  NULL, 1), 
-('1013', 10,  NULL, 1), 
-('1014', 10,  NULL, 1), 
-('1015', 10,  NULL, 1), 
-('1016', 10,  NULL, 1), 
-('1017', 10,  NULL, 1), 
-('1018', 10,  NULL, 1), 
-('1019', 10,  NULL, 1), 
-('1020', 10,  NULL, 1), 
-('111', 11,  NULL, 1), 
-('112', 11,  NULL, 1), 
-('113', 11,  NULL, 1), 
-('114', 11,  NULL, 1), 
-('115', 11,  NULL, 1), 
-('116', 11,  NULL, 1), 
-('117', 11,  NULL, 1), 
-('118', 11,  NULL, 1), 
-('119', 11,  NULL, 1), 
-('1110', 11,  NULL, 1), 
-('1111', 11,  NULL, 1), 
-('1112', 11,  NULL, 1), 
-('1113', 11,  NULL, 1), 
-('1114', 11,  NULL, 1), 
-('1115', 11,  NULL, 1), 
-('1116', 11,  NULL, 1), 
-('1117', 11,  NULL, 1), 
-('1118', 11,  NULL, 1), 
-('1119', 11,  NULL, 1), 
-('1120', 11,  NULL, 1), 
-('121', 12,  NULL, 1), 
-('122', 12,  NULL, 1), 
-('123', 12,  NULL, 1), 
-('124', 12,  NULL, 1), 
-('125', 12,  NULL, 1), 
-('126', 12,  NULL, 1), 
-('127', 12,  NULL, 1), 
-('128', 12,  NULL, 1), 
-('129', 12,  NULL, 1), 
-('1210', 12,  NULL, 1), 
-('1211', 12,  NULL, 1), 
-('1212', 12,  NULL, 1), 
-('1213', 12,  NULL, 1), 
-('1214', 12,  NULL, 1), 
-('1215', 12,  NULL, 1), 
-('1216', 12,  NULL, 1), 
-('1217', 12,  NULL, 1), 
-('1218', 12,  NULL, 1), 
-('1219', 12,  NULL, 1), 
-('1220', 12,  NULL, 1), 
-('131', 13,  NULL, 1), 
-('132', 13,  NULL, 1), 
-('133', 13,  NULL, 1), 
-('134', 13,  NULL, 1), 
-('135', 13,  NULL, 1), 
-('136', 13,  NULL, 1), 
-('137', 13,  NULL, 1), 
-('138', 13,  NULL, 1), 
-('139', 13,  NULL, 1), 
-('1310', 13,  NULL, 1), 
-('1311', 13,  NULL, 1), 
-('1312', 13,  NULL, 1), 
-('1313', 13,  NULL, 1), 
-('1314', 13,  NULL, 1), 
-('1315', 13,  NULL, 1), 
-('1316', 13,  NULL, 1), 
-('1317', 13,  NULL, 1), 
-('1318', 13,  NULL, 1), 
-('1319', 13,  NULL, 1), 
-('1320', 13,  NULL, 1), 
-('141', 14,  NULL, 1), 
-('142', 14,  NULL, 1), 
-('143', 14,  NULL, 1), 
-('144', 14,  NULL, 1), 
-('145', 14,  NULL, 1), 
-('146', 14,  NULL, 1), 
-('147', 14,  NULL, 1), 
-('148', 14,  NULL, 1), 
-('149', 14,  NULL, 1), 
-('1410', 14,  NULL, 1), 
-('1411', 14,  NULL, 1), 
-('1412', 14,  NULL, 1), 
-('1413', 14,  NULL, 1), 
-('1414', 14,  NULL, 1), 
-('1415', 14,  NULL, 1), 
-('1416', 14,  NULL, 1), 
-('1417', 14,  NULL, 1), 
-('1418', 14,  NULL, 1), 
-('1419', 14,  NULL, 1), 
-('1420', 14,  NULL, 1), 
-('151', 15,  NULL, 1), 
-('152', 15,  NULL, 1), 
-('153', 15,  NULL, 1), 
-('154', 15,  NULL, 1), 
-('155', 15,  NULL, 1), 
-('156', 15,  NULL, 1), 
-('157', 15,  NULL, 1), 
-('158', 15,  NULL, 1), 
-('159', 15,  NULL, 1), 
-('1510', 15,  NULL, 1), 
-('1511', 15,  NULL, 1), 
-('1512', 15,  NULL, 1), 
-('1513', 15,  NULL, 1), 
-('1514', 15,  NULL, 1), 
-('1515', 15,  NULL, 1), 
-('1516', 15,  NULL, 1), 
-('1517', 15,  NULL, 1), 
-('1518', 15,  NULL, 1), 
-('1519', 15,  NULL, 1), 
-('1520', 15,  NULL, 1); 
-
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (1, 1, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (2, 1, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (3, 1, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (4, 1, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (5, 1, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (6, 1, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (7, 1, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (8, 1, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (9, 1, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (10, 1, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (11, 1, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (12, 1, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (13, 1, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (14, 1, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (15, 1, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (16, 2, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (17, 2, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (18, 2, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (19, 2, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (20, 2, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (21, 2, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (22, 2, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (23, 2, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (24, 2, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (25, 2, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (26, 2, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (27, 2, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (28, 2, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (29, 2, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (30, 2, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (31, 3, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (32, 3, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (33, 3, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (34, 3, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (35, 3, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (36, 3, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (37, 3, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (38, 3, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (39, 3, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (40, 3, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (41, 3, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (42, 3, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (43, 3, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (44, 3, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (45, 3, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (46, 4, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (47, 4, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (48, 4, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (49, 4, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (50, 4, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (51, 4, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (52, 4, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (53, 4, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (54, 4, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (55, 4, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (56, 4, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (57, 4, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (58, 4, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (59, 4, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (60, 4, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (61, 5, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (62, 5, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (63, 5, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (64, 5, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (65, 5, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (66, 5, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (67, 5, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (68, 5, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (69, 5, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (70, 5, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (71, 5, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (72, 5, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (73, 5, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (74, 5, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (75, 5, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (76, 6, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (77, 6, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (78, 6, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (79, 6, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (80, 6, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (81, 6, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (82, 6, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (83, 6, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (84, 6, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (85, 6, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (86, 6, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (87, 6, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (88, 6, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (89, 6, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (90, 6, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (91, 7, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (92, 7, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (93, 7, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (94, 7, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (95, 7, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (96, 7, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (97, 7, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (98, 7, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (99, 7, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (100, 7, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (101, 7, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (102, 7, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (103, 7, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (104, 7, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (105, 7, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (106, 8, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (107, 8, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (108, 8, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (109, 8, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (110, 8, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (111, 8, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (112, 8, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (113, 8, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (114, 8, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (115, 8, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (116, 8, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (117, 8, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (118, 8, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (119, 8, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (120, 8, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (121, 9, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (122, 9, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (123, 9, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (124, 9, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (125, 9, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (126, 9, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (127, 9, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (128, 9, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (129, 9, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (130, 9, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (131, 9, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (132, 9, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (133, 9, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (134, 9, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (135, 9, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (136, 10, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (137, 10, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (138, 10, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (139, 10, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (140, 10, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (141, 10, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (142, 10, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (143, 10, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (144, 10, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (145, 10, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (146, 10, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (147, 10, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (148, 10, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (149, 10, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (150, 10, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (151, 11, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (152, 11, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (153, 11, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (154, 11, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (155, 11, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (156, 11, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (157, 11, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (158, 11, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (159, 11, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (160, 11, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (161, 11, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (162, 11, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (163, 11, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (164, 11, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (165, 11, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (166, 12, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (167, 12, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (168, 12, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (169, 12, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (170, 12, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (171, 12, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (172, 12, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (173, 12, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (174, 12, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (175, 12, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (176, 12, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (177, 12, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (178, 12, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (179, 12, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (180, 12, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (181, 13, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (182, 13, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (183, 13, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (184, 13, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (185, 13, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (186, 13, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (187, 13, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (188, 13, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (189, 13, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (190, 13, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (191, 13, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (192, 13, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (193, 13, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (194, 13, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (195, 13, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (196, 14, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (197, 14, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (198, 14, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (199, 14, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (200, 14, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (201, 14, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (202, 14, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (203, 14, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (204, 14, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (205, 14, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (206, 14, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (207, 14, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (208, 14, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (209, 14, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (210, 14, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (211, 15, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (212, 15, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (213, 15, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (214, 15, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (215, 15, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (216, 15, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (217, 15, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (218, 15, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (219, 15, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (220, 15, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (221, 15, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (222, 15, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (223, 15, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (224, 15, NULL, 1);
+INSERT INTO Ban (MaBan, MaCN, MaHD, TinhTrang) VALUES (225, 15, NULL, 1); 
