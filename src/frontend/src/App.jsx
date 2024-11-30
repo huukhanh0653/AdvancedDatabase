@@ -1,35 +1,30 @@
-import Header from "./components/Header"
-import Footer from "./components/Footer"
-import { BrowserRouter, Routes, Route } from "react-router-dom"
-import Home from "./pages/Home"
-import Category from "./pages/Category"
-import Cart from "./pages/Cart"
-import Login from "./pages/Login"
-import Product from "./pages/Product"
-
-//import images
-import bannermen from "./assets/bannermens.png"
-import bannerwomen from "./assets/bannerwomens.png"
-import bannerkid from "./assets/bannerkids.png"
-import Reservation from "./pages/Reservation"
+import React from 'react';
+import Employee from './admin/pages/Employee/Employee.jsx'
+import Menu from './admin/pages/Menu/Menu.jsx'
+import Customer from './admin/pages/Customer/Customer.jsx'
+import Bill from './admin/pages/Bill/Bill/Bill.jsx'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import BillDetail from './admin/pages/Bill/Bill/BillDetail.jsx'
+import Table from './admin/pages/Table/Table.jsx'
+import TableDetail from './admin/pages/Table/TableDetail.jsx'
+import Reservation from './admin/pages/Reservation/Reservation.jsx'
+import Dashboard from './admin/pages/Dashboard/Dashboard.jsx'
 
 export default function App() {
   return (
-    <main className="bg-primary text-tertiary">
-      <BrowserRouter>
-        <Header />
-        <Routes>
-            <Route path="/" element={<Home/>}/>
-            <Route path="/menu" element={<Category category="men" banner={bannermen}/>}/>
-            <Route path="/reservation" element={<Reservation />}/>
-            <Route path="/kids" element={<Category category="kid" banner={bannerkid}/>}/>
-            <Route path="/product/:productId" element={<Product />}/>
-              {/*<Route path=":productId" element={<Product/>}/> */}
-            <Route path="/cart-page" element={<Cart />}/>
-            <Route path="/login" element={<Login />}/>
-        </Routes>
-        <Footer />
-      </BrowserRouter>
-    </main>
+    <BrowserRouter>
+      <Routes>
+          <Route path="/" element={<Reservation/>}/>
+          <Route path="/dashboard" element={<Dashboard />}/>
+          <Route path="/table" element={<Table />}/>
+          <Route path="/table/:tableID" element={<TableDetail />}/>
+          <Route path="/reservation" element={<Reservation />}/>
+          <Route path="/bill" element={<Bill />}/>
+          <Route path="/bill/:billID" element={<BillDetail />}/>
+          <Route path="/employee" element={<Employee />}/>
+          <Route path="/menu" element={<Menu />}/>
+          <Route path="/customer" element={<Customer />}/>    
+      </Routes>
+    </BrowserRouter>
   )
 }
