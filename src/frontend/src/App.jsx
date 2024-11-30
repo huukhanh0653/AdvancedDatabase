@@ -6,6 +6,7 @@ import Category from "./pages/Category"
 import Cart from "./pages/Cart"
 import Login from "./pages/Login"
 import Product from "./pages/Product"
+import Signup from "./pages/Signup"
 
 //import images
 import bannermen from "./assets/bannermens.png"
@@ -22,11 +23,11 @@ export default function App() {
             <Route path="/" element={<Home/>}/>
             <Route path="/menu" element={<Category category="men" banner={bannermen}/>}/>
             <Route path="/reservation" element={<Reservation />}/>
-            <Route path="/kids" element={<Category category="kid" banner={bannerkid}/>}/>
             <Route path="/product/:productId" element={<Product />}/>
               {/*<Route path=":productId" element={<Product/>}/> */}
             <Route path="/cart-page" element={<Cart />}/>
             <Route path="/login" element={<Login />}/>
+            <Route path="/signup" element={<Signup />}/>
         </Routes>
         <Footer />
       </BrowserRouter>

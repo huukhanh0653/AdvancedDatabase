@@ -68,9 +68,10 @@ CREATE TABLE THETHANHVIEN
     MaThe CHAR(6) PRIMARY KEY,
     -- sửa từ 8 thành 6
     NgayLap DATE NOT NULL,
-    LoaiThe NVARCHAR(50) NOT NULL,
+    LoaiThe VARCHAR(10) NOT NULL,
     DiemTichLuy INT DEFAULT 0 NOT NULL,
-    IsActive BIT NOT NULL,
+	NgayDatThe DATE NOT NULL,
+    IsActive BIT default 1 NOT NULL,
     MaKH INT NOT NULL,
     MaNV INT NOT NULL,
 
@@ -336,7 +337,28 @@ FOREIGN KEY (MaBan) REFERENCES BAN(MaBan)
 ALTER TABLE BAN
 ADD CONSTRAINT FK_BAN_HOADON
 FOREIGN KEY (MaHD) REFERENCES HOADON(MaHD)
+go
 
---ALTER TABLE BAN
---DROP FK_BAN_HOADON
+--MaThe auto generate tăng dần
+CREATE SEQUENCE Seq_MaThe
+    START WITH 1 -- Starting value
+    INCREMENT BY 1; -- Increment by 1
+GO
 
+CREATE TRIGGER trg_InsertMaThe
+ON THETHANHVIEN
+INSTEAD OF INSERT
+AS
+BEGIN
+    INSERT INTO THETHANHVIEN (MaThe, NgayLap, LoaiThe, DiemTichLuy, IsActive, NgayDatThe, MaKH, MaNV)
+    SELECT 
+        RIGHT('000000' + CAST(NEXT VALUE FOR Seq_MaThe AS CHAR(6)), 6), -- Generate 6-character MaThe
+        NgayLap,
+        LoaiThe,
+        DiemTichLuy,
+        IsActive,
+        NgayDatThe,
+        MaKH,
+        MaNV
+    FROM INSERTED;
+END;
