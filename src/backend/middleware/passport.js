@@ -58,7 +58,7 @@ passport.deserializeUser(async (username, done) => {
     }
 
     let user = result.recordset[0];
-    done(null, user);
+    done(null, user); 
   } catch (err) {
     done(err);
   }

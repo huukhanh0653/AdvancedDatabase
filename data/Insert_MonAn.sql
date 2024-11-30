@@ -2,7 +2,7 @@
 DELETE FROM MonAn 
 GO 
 
-INSERT INTO MonAn (MaMon, TenMon, PhanLoai, GiaTien, HinhAnh) VALUES 
+INSERT INTO MonAn (MaMon, TenMon, MaLoai, Gia, HinhAnh) VALUES 
  (1, "AKAGAI SASHIMI", "Sashimi", 179000, "https://sushiworld.com.vn/wp-content/uploads/2022/06/akagai-1-300x300.jpg"), 
 (2, "AKAGAI SUSHI", "Sushi", 89000, "https://sushiworld.com.vn/wp-content/uploads/2022/09/Artboard-19-copy-81@4x-100-300x300.jpg"), 
 (3, "AYU SHIO YAKI", "Yakimono", 129000, "https://sushiworld.com.vn/wp-content/uploads/2022/11/Capture-28-300x300.png"), 
@@ -61,7 +61,7 @@ INSERT INTO MonAn (MaMon, TenMon, PhanLoai, GiaTien, HinhAnh) VALUES
 (56, "KAKI FURAI", "Tempura", 139000, "https://sushiworld.com.vn/wp-content/uploads/2022/10/Capture-16-300x300.png"), 
 (57, "KAKI SASHIMI", "Sashimi", 109000, "https://sushiworld.com.vn/wp-content/uploads/2022/06/Artboard-19-copy-34@4x-100-300x300.jpg"), 
 (58, "KANI GURATAN", "Yakimono", 189000, "https://sushiworld.com.vn/wp-content/uploads/2022/11/Capture-300x300.png"), 
-(59, "KANI MISO YAKI", "Yakimono",189000, "https://sushiworld.com.vn/wp-content/uploads/2022/10/Capture-24-300x300.png"), 
+(59, "KANI MISO YAKI", "Yakimono", , "https://sushiworld.com.vn/wp-content/uploads/2022/10/Capture-24-300x300.png"), 
 (60, "KANIKAMA CHIZU", "Tempura", 99000, "https://sushiworld.com.vn/wp-content/uploads/2022/10/Capture-15-300x300.png"), 
 (61, "KANIKAMA SUSHI", "Sushi", 59000, "https://sushiworld.com.vn/wp-content/uploads/2022/09/Artboard-19-copy-85@4x-100-300x300.jpg"), 
 (62, "KANIKO SALAD MAKI", "Maki", 129000, "https://sushiworld.com.vn/wp-content/uploads/2022/10/Capture-5-300x300.png"), 
