@@ -5,12 +5,15 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { useOrder } from '../context/OrderContext'
 import { Separator } from "@/components/ui/separator"
-
+import { Textarea } from "@/components/ui/textarea"
+import { useEffect, useState } from 'react'
 
 
 export function OrderSummary({ tableNumber, employeeName, onCancel }) {
   const { orderItems } = useOrder()
   const subtotal = orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
+  const [note, setNote] = useState('')
+
 
   return (
     <Card className="bg-zinc-900 h-full flex flex-col border-transparent p-2">
@@ -44,6 +47,7 @@ export function OrderSummary({ tableNumber, employeeName, onCancel }) {
           ))}
         </div>
       </ScrollArea>
+      <div className="flex items-center p-2"><Textarea className="p-4 text-white border-zinc-600" placeholder="Ghi chú..." onChange={(e) => setNote(e.target.value)}/></div>
       <div className="p-4 border-t border-zinc-800">
         <div className="space-y-2 mb-4">
           <div className="flex justify-between text-sm">

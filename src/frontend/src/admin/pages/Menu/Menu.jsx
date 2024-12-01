@@ -105,11 +105,11 @@ export default function Menu() {
             }} />
             ))}
           </div>
-          <PopupModal open={AddDishOpen} setOpen={setAddDishOpen} formComponent= {AddDishForm} props={{title: "Thêm món ăn", description: "Nhập thông tin của món ăn"}}>
+          {/* <PopupModal open={AddDishOpen} setOpen={setAddDishOpen} formComponent= {AddDishForm} props={{title: "Thêm món ăn", description: "Nhập thông tin của món ăn"}}>
             <Button className="w-[145px] text-sm font-semibold bg-[#1C1C1C] text-rose-300 hover:bg-rose-300 hover:text-black rounded-lg mr-1 ml-auto mb-0">
                   Thêm món ăn
             </Button>
-          </PopupModal>
+          </PopupModal> */}
         <DataTable columns={columns} data={filteredData} filterProps={{column: "name", placeholder: "Tìm món ăn bằng tên..."}}/>
       </DefaultLayout>
   )
