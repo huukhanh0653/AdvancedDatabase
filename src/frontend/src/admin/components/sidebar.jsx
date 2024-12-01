@@ -11,6 +11,7 @@ import {
   Send,
   Utensils,
   UtensilsCrossed,
+  ConciergeBell,
 } from "lucide-react"
 
 import { NavMain } from "@/src/admin/components/nav-main"
@@ -53,7 +54,7 @@ const data = {
     {
       title: "Quản lí đặt bàn",
       url: "/reservation",
-      icon: UtensilsCrossed,
+      icon: ConciergeBell,
     },
     {
       title: "Quản lí hóa đơn",
@@ -77,6 +78,11 @@ const data = {
       title: "Thực đơn",
       url: "/menu",
       icon: Utensils,
+    },
+    {
+      title: "Thực đơn khu vực",
+      url: "/regional-menu",
+      icon: UtensilsCrossed,
     },
     {
       title: "Danh sách nhân viên",

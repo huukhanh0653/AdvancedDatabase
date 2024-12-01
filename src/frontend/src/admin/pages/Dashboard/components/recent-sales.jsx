@@ -94,7 +94,7 @@ import {
 
     useEffect(() => {
         setDishes(fetchDishSales())
-    })
+    }, [])
 
     return (
       <div className="space-y-8">

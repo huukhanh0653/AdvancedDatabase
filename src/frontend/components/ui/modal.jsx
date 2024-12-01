@@ -2,6 +2,7 @@ import * as React from "react"
 
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { Button } from "@/components/ui/button"
+import {cn} from '@/lib/utils'
 import {
   Dialog,
   DialogContent,
@@ -22,7 +23,7 @@ import {
 } from "@/components/ui/drawer"
 
 
-export function PopupModal({ children, formComponent: FormComponent, props, open, setOpen }) {
+export function PopupModal({ children, formComponent: FormComponent, props, open, setOpen, className, ...rest }) {
   const isDesktop = useMediaQuery("(min-width: 768px)")
 
   if (isDesktop) {
@@ -31,14 +32,14 @@ export function PopupModal({ children, formComponent: FormComponent, props, open
         <DialogTrigger asChild>
           {children}
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className={cn("sm:max-w-[425px]", className)}>
           <DialogHeader>
             <DialogTitle>{props.title}</DialogTitle>
             <DialogDescription>
               {props.description}
             </DialogDescription>
           </DialogHeader>
-          {FormComponent && <FormComponent setOpen= {setOpen}/>}
+          {FormComponent && <FormComponent setOpen= {setOpen} {...rest}/>}
         </DialogContent>
       </Dialog>
     )

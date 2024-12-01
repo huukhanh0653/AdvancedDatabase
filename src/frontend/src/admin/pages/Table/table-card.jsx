@@ -14,7 +14,7 @@ function fetchBillSummary() {
     {
       tableID: 1,
       employeeName: "Nguyễn Văn A",
-      orderItems : Array(5).fill(null).map((_, i) => ({
+      orderItems : Array(9).fill(null).map((_, i) => ({
         title: "Roasted Chicken",
         price: 55.00,
         quantity: 1,
@@ -56,7 +56,7 @@ export function TableCard({ tableID, billID, date, time, createdBy, isPending })
         <Button onClick={() => navigate(`/table/${tableID}`)} variant="outline" size="icon" className="h-10 w-10 rounded-lg border-zinc-800 bg-transparent text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
           <Pencil className="h-4 w-4 " />
         </Button>
-        <PopupModal open={payOpen} setOpen={setPayOpen} formComponent={BillSummary} props={{title: "", description: ""}}>
+        <PopupModal open={payOpen} setOpen={setPayOpen} formComponent={BillSummary} props={{title: "", description: ""}} className="bg-zinc-900 border-transparent">
           <Button className="ml-auto flex-1 rounded-lg bg-rose-200 text-rose-900 hover:bg-rose-300">
             Thanh toán
           </Button>
@@ -67,7 +67,10 @@ export function TableCard({ tableID, billID, date, time, createdBy, isPending })
 }
 
 
-function BillSummary() {
+function BillSummary({ setOpen }) {
+  function handleClose() {
+    setOpen(false)
+  }
   const [data, setData] = useState(fetchBillSummary());
   const subtotal = data.orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
   const tax = subtotal * 0.05
@@ -79,15 +82,15 @@ function BillSummary() {
     }, []);
 
   return (
-    <Card className="bg-zinc-900 flex flex-col">
+    <Card className="bg-zinc-900 flex flex-col h-[600px] border-transparent">
       <div className="p-4 border-b border-zinc-800 flex items-center justify-between">
         <div>
           <h2 className="text-white text-lg font-medium">Bàn {data.tableID}</h2>
-          <p className="text-zinc-400 text-sm">{data.employeeName}</p>
+          <p className="text-zinc-400 text-sm">NV: {data.employeeName}</p>
         </div>
       </div>
       <ScrollArea
-        className="flex-1 p-4 h-[100px]"
+        className="flex-1 p-4 "
         style={{ height: '100px', overflowY: 'auto', display: 'block' }}
       >
         <div className="space-y-4">
@@ -126,7 +129,7 @@ function BillSummary() {
           <Button className="w-full bg-pink-300 text-zinc-900 hover:bg-pink-400">
             Thanh toán
           </Button>
-          <Button className="w-full bg-zinc-600 text-zinc-900 hover:bg-zinc-300">
+          <Button onClick={handleClose} className="w-full bg-zinc-600 text-zinc-900 hover:bg-zinc-300">
             Hủy
           </Button>
         </div>
