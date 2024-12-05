@@ -220,7 +220,7 @@ BEGIN
         SET MaHD = @MaHD
         WHERE MaBan = @MaBan and MaCN = @MaCN;
 
-		--Link the invoice to the order cards
+		--Link thBEe invoice to the order cards
 		INSERT INTO PHIEUDATMON(NgayLap, MaBan, MaCN, MaKH, MaNV, MaHD)
         VALUES (GETDATE(), @MaBan, @MaCN, NULL, '1', @MaHD);
     END;
@@ -229,6 +229,40 @@ BEGIN
 	--	INSERT INTO PHIEUDATMON(NgayLap, MaBan, MaCN, MaKH, MaNV, MaHD)
  --       VALUES (GETDATE(), @MaBan, @MaCN, NULL, '1', @MaHD);
 	--END;
+END;
+GO
+
+--Proc trả về MaHD mới tạo
+CREATE OR ALTER PROCEDURE sp_TaoHDMoi
+AS 
+BEGIN	
+	DECLARE @MaHD int;
+	INSERT INTO HOADON (MaThe, NgayLap, isEatIn, TongHoaDon)
+    VALUES (NULL, GETDATE(), 1, 0);
+
+    SET @MaHD = SCOPE_IDENTITY(); -- Retrieve the newly created invoice ID
+
+	RETURN @MaHD;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE sp_TaoPDM_Moi(@MaBan CHAR(3), @MaCN CHAR(2), @MaNV int, @MaHD int)
+AS 
+BEGIN 
+	DECLARE @MaPhieu int;
+	INSERT INTO PHIEUDATMON(NgayLap, MaBan, MaCN, MaNV, MaHD)
+    VALUES (GETDATE(), @MaBan, @MaCN, @MaNV, @MaHD);
+
+	RETURN @MaPhieu;
+END;
+GO
+
+--INSERT CHONMON 
+
+CREATE OR ALTER PROCEDURE sp_ChonMon(@ListMon array)
+AS
+BEGIN 
+	DECLARE @MaHD int;
 END;
 GO
 

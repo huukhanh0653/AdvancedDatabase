@@ -8,6 +8,7 @@ const Signup = () => {
         <h3 className='h3'>Đăng ký</h3>
         <div className='flex flex-col gap-4 mt-7'>
           <input type="text" placeholder='Họ tên'className='h-14 w-full pl-5 bg-slate-900/5 outline-none rounded-xl'/>
+          <input type="text" placeholder='CCCD'className='h-14 w-full pl-5 bg-slate-900/5 outline-none rounded-xl'/>
           <input type="email" placeholder='Email' className='h-14 w-full pl-5 bg-slate-900/5 outline-none rounded-xl'/>
           <input type="tel" placeholder='Số điện thoại' className='h-14 w-full pl-5 bg-slate-900/5 outline-none rounded-xl'/>
           <input type="text" placeholder='Tên đăng nhập' className='h-14 w-full pl-5 bg-slate-900/5 outline-none rounded-xl'/>

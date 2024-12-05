@@ -167,6 +167,7 @@ CREATE TABLE MONAN
     TenMon NVARCHAR(100) NOT NULL,
     PhanLoai NVARCHAR(50) NOT NULL,
     GiaTien DECIMAL(18, 2) NOT NULL,
+	HinhAnh VARCHAR(MAX),
     GiaoHang BIT NOT NULL
 );
 GO
@@ -187,8 +188,7 @@ CREATE TABLE PHIEUDATMON
     MaBan CHAR(3) NOT NULL,
 	MaCN char(2),
     TongTien DECIMAL(18, 2),
-    MaKH INT,
-    MaNV INT NOT NULL,
+    MaNV INT,
     MaHD INT
 );
 GO
@@ -210,14 +210,12 @@ CREATE TABLE DATBAN
     MaDatBan INT IDENTITY(1, 1) PRIMARY KEY,
 	HoTen NVARCHAR(50),
 	SDT VARCHAR(12), 
-    NgayDat DATE NOT NULL,
-    GioDat TIME NOT NULL,
+    NgayGioDat DATETIME NOT NULL,
     SoLuong INT NOT NULL,
 	MaKV char(2),
     ChiNhanh CHAR(2) NOT NULL,
     GhiChu NVARCHAR(255),
 	MaPhieu int,
-    MaKH INT,
     MaHD INT,
 
     CONSTRAINT CK_DATBAN_SOLUONG CHECK (SoLuong > 0)
