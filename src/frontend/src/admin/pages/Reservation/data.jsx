@@ -6,7 +6,8 @@ export const reservations = [
         SoLuong: 4,
         GhiChu: "Bàn gần cửa sổ",
         HoTen: "Nguyen Van A",
-        SoDienThoai: "0123456789"
+        SoDienThoai: "0123456789",
+        MaHoaDon: 1003,
     },
     {
         MaDatBan: 102,
@@ -15,7 +16,8 @@ export const reservations = [
         SoLuong: 2,
         GhiChu: "Ăn trưa hẹn đối tác",
         HoTen: "Tran Thi B",
-        SoDienThoai: "0987654321"
+        SoDienThoai: "0987654321",
+        MaHoaDon: 1004,
     },
     {
         MaDatBan: 103,
@@ -24,7 +26,8 @@ export const reservations = [
         SoLuong: 6,
         GhiChu: "Sinh nhật",
         HoTen: "Pham Van C",
-        SoDienThoai: "0901234567"
+        SoDienThoai: "0901234567",
+        MaHoaDon: 1005,
     },
     {
         MaDatBan: 104,
@@ -33,7 +36,8 @@ export const reservations = [
         SoLuong: 3,
         GhiChu: "Gặp gỡ khách hàng",
         HoTen: "Le Thi D",
-        SoDienThoai: "0912345678"
+        SoDienThoai: "0912345678",
+        MaHoaDon: 1006,
     },
     {
         MaDatBan: 105,
@@ -42,7 +46,8 @@ export const reservations = [
         SoLuong: 5,
         GhiChu: "Kỷ niệm ngày cưới",
         HoTen: "Hoang Van E",
-        SoDienThoai: "0923456781"
+        SoDienThoai: "0923456781",
+        MaHoaDon: 1007,
     },
     {
         MaDatBan: 106,
@@ -51,7 +56,8 @@ export const reservations = [
         SoLuong: 8,
         GhiChu: "Tiệc công ty",
         HoTen: "Nguyen Thi F",
-        SoDienThoai: "0934567890"
+        SoDienThoai: "0934567890",
+        MaHoaDon: 1008,
     },
     {
         MaDatBan: 107,
@@ -60,7 +66,8 @@ export const reservations = [
         SoLuong: 10,
         GhiChu: "Liên hoan lớp",
         HoTen: "Tran Van G",
-        SoDienThoai: "0945678901"
+        SoDienThoai: "0945678901",
+        MaHoaDon: 1009,
     },
     {
         MaDatBan: 108,
@@ -69,6 +76,7 @@ export const reservations = [
         SoLuong: 2,
         GhiChu: "Bữa sáng nhanh",
         HoTen: "Pham Thi H",
-        SoDienThoai: "0956789012"
+        SoDienThoai: "0956789012", 
+        MaHoaDon: 1010,
     }
 ];

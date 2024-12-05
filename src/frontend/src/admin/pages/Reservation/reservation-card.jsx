@@ -8,7 +8,21 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 
-export default function ReservationCard({reservationID, reservationDate, reservationTime, paxNumber, fullName, phoneNumber, note = "Không có"}) {
+export default function ReservationCard({reservationID, reservationDate, reservationTime, paxNumber, fullName, phoneNumber, note = "Không có", billID}) {
+  const [textToCopy] = useState(`${billID}`);
+  const [isCopied, setIsCopied] = useState(false);
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(textToCopy)
+            .then(() => {
+                setIsCopied(true);
+                setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
+            })
+            .catch((err) => {
+                console.error("Failed to copy text: ", err);
+            });
+    };
+  
   return (
     <Card className="w-[300px] bg-zinc-900 text-zinc-100">
       <CardHeader className="space-y-4 pb-4">
@@ -49,8 +63,12 @@ export default function ReservationCard({reservationID, reservationDate, reserva
         </div>
       </CardContent>
       <CardFooter className="flex items-center pt-4">
-        <Button onClick= {() => onCreateBill(reservationID)} className="ml-auto flex-1 rounded-lg bg-rose-200 text-rose-900 hover:bg-rose-300">
-            Tạo hóa đơn
+        <Button 
+        onClick= {() =>
+          handleCopy()
+        } 
+        className="ml-auto flex-1 rounded-lg bg-rose-200 text-rose-900 hover:bg-rose-300">
+        {isCopied ? "Đã copy vào bộ nhớ tạm!" : `#${billID}`}
         </Button>
       </CardFooter>
     </Card>

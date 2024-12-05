@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { addDays, format } from "date-fns"
+import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -14,12 +14,9 @@ import {
 } from "@/components/ui/popover"
 
 export function CalendarDateRangePicker({
-  className,
+  className, date, onDateChange
 }) {
-  const [date, setDate] = React.useState({
-    from: new Date(2023, 0, 20),
-    to: addDays(new Date(2023, 0, 20), 20),
-  });
+
 
   return (
     <div className={cn("grid gap-2", className)}>
@@ -54,7 +51,7 @@ export function CalendarDateRangePicker({
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={setDate}
+            onSelect={onDateChange}
             numberOfMonths={2}
           />
         </PopoverContent>

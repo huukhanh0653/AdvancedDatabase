@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import React, { useEffect, useState, useMemo } from "react"
 import {
     Avatar,
     AvatarFallback,
@@ -89,8 +88,15 @@ import {
   }      
 
   
-  export function RecentSales() {
+  export function RecentSales({searchQuery}) {
     const [dishes, setDishes] = useState(fetchDishSales())
+
+    const filteredItems = useMemo(() => {
+        return dishes.filter(item => {
+          const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase())
+          return matchesSearch
+        })
+      }, [searchQuery])
 
     useEffect(() => {
         setDishes(fetchDishSales())
@@ -98,7 +104,7 @@ import {
 
     return (
       <div className="space-y-8">
-            {dishes.slice(0,5).map((dish, i) => (
+            {filteredItems.slice(0,5).map((dish, i) => (
                 <React.Fragment key = {i}>
                     <div className="flex items-center">
                         <Avatar className="h-10 w-10">

@@ -1,5 +1,5 @@
 import DefautLayout from "../../layout/DefaultLayout"
-import { Search } from "./components/search"
+import { useState } from "react"
 import {
   Card,
   CardContent,
@@ -15,16 +15,23 @@ import {
 import { CalendarDateRangePicker } from "./components/date-range-picker"
 import { Overview } from "./components/overview"
 import { RecentSales } from "./components/recent-sales"
+import { Input } from "@/components/ui/input"
 
 
 
 export default function DashboardPage() {
+    const [searchDishQuery, setSearchDishQuery] = useState('');
+    const [date, setDate] = useState({
+        from: new Date(2023, 0, 20),
+        to: new Date(),
+    });
+
   return (
     <DefautLayout>
         <div className="flex items-center justify-between space-y-5">
         <h2 className="text-3xl font-bold tracking-tight">Thống kê</h2>
         <div className="flex items-center space-x-2">
-            <CalendarDateRangePicker />
+            <CalendarDateRangePicker date={date} onDateChange={setDate} />
         </div>
         </div>
         <Tabs defaultValue="overview" className="space-y-5">
@@ -148,11 +155,16 @@ export default function DashboardPage() {
                         <CardHeader>
                             <div className = "flex justify-between">
                                 <CardTitle>Doanh thu món ăn</CardTitle>
-                                <Search />
+                                <Input
+                                    type="search"
+                                    placeholder="Tìm kiếm theo tên món ăn..."
+                                    className="md:w-[100px] lg:w-[300px]"
+                                    onChange={e => setSearchDishQuery(e.target.value)}
+                                />
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <RecentSales />
+                            <RecentSales searchQuery={searchDishQuery}/>
                         </CardContent>
                     </Card>
                 </div>

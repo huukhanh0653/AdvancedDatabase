@@ -1,3 +1,5 @@
+
+
 export const Orders = [
     {
       orderID: 1,
@@ -111,6 +113,11 @@ export const Orders = [
     }
   ];
 
+
+// TH1: bill ID null, isPending true => da dat truoc va thanh toan
+// TH2: bill ID null, isPending false => ban trong
+// TH3: bill ID not null, isPending true => tao hoa don tai quan va chua thanh toan
+
 export const tableInfo = [
     {
       tableID: 1,
@@ -118,7 +125,8 @@ export const tableInfo = [
       date: "28/11/24",
       time: "10:30 AM",
       createdBy: "Alice",
-      isPending: true
+      isPending: true,
+      isPaid: false
     },
     {
       tableID: 2,
@@ -126,15 +134,17 @@ export const tableInfo = [
       date: "28/11/24",
       time: "11:45 AM",
       createdBy: "Bob",
-      isPending: false
+      isPending: true,
+      isPaid: false
     },
     {
       tableID: 3, 
-      billID: 103,
-      date: "28/11/24",
-      time: "12:15 PM",
-      createdBy: "Charlie",
-      isPending: true
+      date: null,
+      time: null,
+      createdBy: null,
+      billID: null,
+      isPending: false,
+      isPaid: false
     },
     {
       tableID: 4,
@@ -142,23 +152,26 @@ export const tableInfo = [
       date: "28/11/24",
       time: "1:00 PM",
       createdBy: "Diana",
-      isPending: false
+      isPending: true,
+      isPaid: false
     },
     {
       tableID: 5,
-      billID: 105,
       date: "28/11/24",
       time: "2:30 PM",
       createdBy: "Eve",
-      isPending: true
+      billID: 105,
+      isPending: true,
+      isPaid: true
     },
     {
       tableID: 6,   
-      billID: 106,
-      date: "28/11/24",
-      time: "3:45 PM",
-      createdBy: "Frank",
-      isPending: false
+      date: null,
+      time: null,
+      createdBy: null,
+      billID: null,
+      isPending: false, 
+      isPaid: false
     },
     {
       tableID: 7,  
@@ -166,7 +179,8 @@ export const tableInfo = [
       date: "28/11/24",
       time: "4:15 PM",
       createdBy: "Grace",
-      isPending: true
+      isPending: true,
+      isPaid: false
     },
     {
       tableID: 8,  
@@ -174,7 +188,8 @@ export const tableInfo = [
       date: "28/11/24",
       time: "5:00 PM",
       createdBy: "Henry",
-      isPending: false
+      isPending: true, 
+      isPaid: false
     }
   ];
   

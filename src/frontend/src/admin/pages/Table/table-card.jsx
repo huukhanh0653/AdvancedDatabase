@@ -25,7 +25,7 @@ function fetchBillSummary() {
 }
 
 
-export function TableCard({ tableID, billID, date, time, createdBy, isPending }) {
+export function TableCard({ tableID, billID, date, time, createdBy, isPending, isPaid }) {
   const navigate = useNavigate()
   const [payOpen, setPayOpen] = useState(false);
   return (
@@ -41,10 +41,15 @@ export function TableCard({ tableID, billID, date, time, createdBy, isPending })
           </div>
           <Badge variant="secondary" className={`ml-auto ${
               isPending 
-                ? "bg-yellow-500/10 text-yellow-500" 
-                : "bg-emerald-500/10 text-emerald-500"
+                ? isPaid ? 
+                  "bg-emerald-500/10 text-emerald-500"
+                  : "bg-yellow-500/10 text-yellow-500" 
+                : "bg-rose-500/10 text-rose-500"
             }`}>
-            {isPending ? "Chưa thanh toán" : "Đã thanh toán"}
+            {isPending ?
+                isPaid ? "Đã thanh toán" : "Chưa thanh toán"
+              : "Bàn trống"
+            }
           </Badge>
         </div>
         <div className="text-sm text-zinc-400">
@@ -53,21 +58,37 @@ export function TableCard({ tableID, billID, date, time, createdBy, isPending })
         </div>
       </CardHeader>
       <CardFooter className="flex gap-2 pt-4 justify-between">
-        <Button onClick={() => navigate(`/table/${tableID}`)} variant="outline" size="icon" className="h-10 w-10 rounded-lg border-zinc-800 bg-transparent text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
+        {isPending && !isPaid && <Button onClick={() => navigate(`/table/${tableID}`)} variant="outline" size="icon" className="h-10 w-10 rounded-lg border-zinc-800 bg-transparent text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
           <Pencil className="h-4 w-4 " />
-        </Button>
-        <PopupModal open={payOpen} setOpen={setPayOpen} formComponent={BillSummary} props={{title: "", description: ""}} className="bg-zinc-900 border-transparent">
+        </Button>}
+        {isPending && isPaid && <Button onClick={() => navigate(`/table/${tableID}/order`)} variant="outline" size="icon" className="h-10 w-10 rounded-lg border-zinc-800 bg-transparent text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
+          <Pencil className="h-4 w-4 " />
+        </Button>}
+        {isPending && !isPaid && <PopupModal open={payOpen} setOpen={setPayOpen} formComponent={BillSummary} props={{title: "", description: ""}} className="bg-zinc-900 border-transparent" isPaid = {isPaid}>
           <Button className="ml-auto flex-1 rounded-lg bg-rose-200 text-rose-900 hover:bg-rose-300">
             Thanh toán
           </Button>
-        </PopupModal>
+        </PopupModal>}
+        {isPending && isPaid && <PopupModal open={payOpen} setOpen={setPayOpen} formComponent={BillSummary} props={{title: "", description: ""}} className="bg-zinc-900 border-transparent" isPaid = {isPaid}>
+          <Button className="ml-auto flex-1 rounded-lg bg-rose-200 text-rose-900 hover:bg-rose-300">
+            Đã thanh toán
+          </Button>
+        </PopupModal>}
+        {!isPending && 
+          <Button 
+            className="ml-auto flex-1 rounded-lg bg-rose-200 text-rose-900 hover:bg-rose-300"
+            onClick={() => navigate(`/table/${tableID}/order`)}
+          >
+            Mở bàn
+          </Button>}
       </CardFooter>
     </Card>
   )
 }
 
 
-function BillSummary({ setOpen }) {
+
+function BillSummary({ setOpen, isPaid }) {
   function handleClose() {
     setOpen(false)
   }
@@ -110,7 +131,7 @@ function BillSummary({ setOpen }) {
         <div className="space-y-2 mb-4">
           <div className="flex justify-between text-sm">
             <span className="text-zinc-400">Tổng tiền món ăn (VNĐ)</span>
-            <span className="text-white">${subtotal.toFixed(2)}</span>
+            <span className="text-white">{subtotal.toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-zinc-400">Giảm giá (%)</span>
@@ -125,15 +146,17 @@ function BillSummary({ setOpen }) {
             <span className="text-white">{total.toFixed(2)}</span>
           </div>
         </div>
-        <div className="space-y-4">
+        {!isPaid && <div className="space-y-4">
           <Button className="w-full bg-pink-300 text-zinc-900 hover:bg-pink-400">
             Thanh toán
           </Button>
           <Button onClick={handleClose} className="w-full bg-zinc-600 text-zinc-900 hover:bg-zinc-300">
             Hủy
           </Button>
-        </div>
+        </div>}
       </div>
     </Card>
   )
 }
+
+
