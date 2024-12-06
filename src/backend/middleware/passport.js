@@ -26,6 +26,11 @@ passport.use(
         return done(null, false, { message: "Incorrect password." });
       }
 
+      // const isPasswordValid = await bcrypt.compare(password, user.Password);
+      // if (!isPasswordValid) {
+      //   return done(null, false, { message: "Invalid password" });
+      // }
+
       // Check if user is active
       if (!user.IsActive) {
         return done(null, false, { message: "User is not active." });

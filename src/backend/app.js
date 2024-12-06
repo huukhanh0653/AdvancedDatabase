@@ -5,6 +5,8 @@ const session = require("express-session");
 const path = require("path");
 const logger = require("morgan");
 const fs = require("fs");
+const cors = require("cors");
+
 
 const { sql, poolPromise } = require("./model/dbConfig");
 
@@ -19,6 +21,8 @@ app.use(
     cookie: { secure: true },
   })
 );
+
+app.use(cors());
 
 const indexRouter = require("./routes/index");
 const customerRouter = require("./routes/customer");
