@@ -63,7 +63,7 @@ VALUES
 ('john.doe', 'password123', 1),
 ('jane.smith', 'jane2024!', 1),
 ('pham.vinh', 'vinhSecure#1', 1),
-('nguyen.thao', 'Thao*2023', 1),
+('nguyen.thao', 'Thao*2023', 1);
 -- Inactive accounts
 ('le.minh', 'minhInactive$', 0),
 ('tran.hoai', 'hoaiPaused&7', 0);
@@ -85,6 +85,7 @@ VALUES
 ('jane.smith', 'Quoc!78Access', 1),
 ('nguyen.thao', 'Quoc!78Access', 1);
 
+SELECT * FROM KHACHHANG;
 SELECT * FROM TAIKHOAN;
 
 INSERT INTO KHACHHANG (Username, HoTen, SDT, Email, CCCD, GioiTinh)
@@ -187,51 +188,6 @@ INSERT INTO CHONMON(MaPhieu, MaMon, SoLuong) VALUES ('8', '2', 1);
 INSERT INTO CHONMON(MaPhieu, MaMon, SoLuong) VALUES ('9', '3', 2);
 GO
 
---Trigger tạo hóa đơn tự động: Sau khi chọn bàn, tự động tạo HD mới gắn vào BAN, update tình trạng
---và tạo PHIEUDATMON mới gắn với mã HD vừa tạo
-CREATE OR ALTER TRIGGER trg_GenerateInvoice
-ON BAN
-AFTER UPDATE
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    DECLARE @MaBan CHAR(3), @MaCN char(2), @MaHD INT, @ttban bit;
-
-    -- Retrieve the table and order details from the inserted data
-    SELECT TOP 1 @MaBan = MaBan, @MaCN = MaCN
-    FROM INSERTED;
-
-    -- Check if an invoice (MaHD) already exists for this table
-    SELECT @MaHD = B.MaHD, @ttban = B.TinhTrang
-    FROM BAN B
-    WHERE B.MaBan = @MaBan and B.MaCN = @MaCN;
-
-    -- If no invoice exists, create a new one
-    IF (@MaHD IS NULL) AND (@ttban = 1)
-    BEGIN
-        INSERT INTO HOADON (MaThe, NgayLap, isEatIn, TongHoaDon)
-        VALUES (NULL, GETDATE(), 1, 0);
-
-        SET @MaHD = SCOPE_IDENTITY(); -- Retrieve the newly created invoice ID
-
-        -- Link the new invoice to the table
-        UPDATE BAN
-        SET MaHD = @MaHD
-        WHERE MaBan = @MaBan and MaCN = @MaCN;
-
-		--Link thBEe invoice to the order cards
-		INSERT INTO PHIEUDATMON(NgayLap, MaBan, MaCN, MaKH, MaNV, MaHD)
-        VALUES (GETDATE(), @MaBan, @MaCN, NULL, '1', @MaHD);
-    END;
-	--ELSE 
-	--BEGIN 
-	--	INSERT INTO PHIEUDATMON(NgayLap, MaBan, MaCN, MaKH, MaNV, MaHD)
- --       VALUES (GETDATE(), @MaBan, @MaCN, NULL, '1', @MaHD);
-	--END;
-END;
-GO
-
 --Proc trả về MaHD mới tạo
 CREATE OR ALTER PROCEDURE sp_TaoHDMoi
 AS 
@@ -257,34 +213,16 @@ BEGIN
 END;
 GO
 
---INSERT CHONMON 
+----INSERT CHONMON 
 
-CREATE OR ALTER PROCEDURE sp_ChonMon(@ListMon array)
-AS
-BEGIN 
-	DECLARE @MaHD int;
-END;
-GO
+--CREATE OR ALTER PROCEDURE sp_ChonMon(@ListMon array)
+--AS
+--BEGIN 
+--	DECLARE @MaHD int;
+--END;
+--GO
 
---EXEC sp_TakeOrder @MaBan='A02', @MaCN='CT', @MaKH='2', @MaNV='4'
-
---Update MaKH và MaNV lập hóa đơn
-CREATE OR ALTER PROCEDURE sp_TakeOrder(@MaBan char(3), @MaCN char(2), @MaNV int, @MaKH int)
-AS 
-BEGIN 
-	DECLARE @MaHD int;
-
-	SELECT @MaHD = MaHD FROM BAN WHERE MaBan = @MaBan AND MaCN = @MaCN;
-
-	IF (@MaHD IS NOT NULL) 
-	BEGIN 
-		UPDATE PHIEUDATMON
-		SET MaKH = @MaKH, MaNV = @MaNV
-		WHERE MaHD = @MaHD;
-	END;
-END;
-
---Tính tổng hóa đơn
+--Tính tổng hóa đơn (đã gọi trong sp_Checkout ở dưới)
 CREATE OR ALTER PROCEDURE sp_Subtotal(@MaHD int)
 AS 
 BEGIN
@@ -320,7 +258,9 @@ BEGIN
 	DEALLOCATE myCursor; -- Deallocate the cursor
 
 END;
+GO
 
+--Update tình trạng bàn (đã gọi trong sp_Checkout ở dưới)
 CREATE OR ALTER PROCEDURE sp_UpdateBanToEmpty(@MaHD int)
 AS 
 BEGIN
@@ -340,10 +280,6 @@ END;
 GO 
 
 --Thanh toán, gọi lên khi chọn vào button 'Thanh toán' trên web
---Ví dụ flow chạy:
---SELECT * FROM BAN
---SELECT MaHD FROM BAN WHERE MaBan=@MaBan and MaCN = @MaCN
---EXEC sp_Checkout @MaHD=6, @MaThe = '000002';
 CREATE OR ALTER PROCEDURE sp_Checkout(@MaHD int, @MaThe char(8))
 AS 
 BEGIN 
