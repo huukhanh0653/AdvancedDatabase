@@ -1,6 +1,7 @@
 USE QLY_NHAHANG
 GO
 
+-- ĐỔI chi nhánh
 CREATE PROCEDURE sp_DoiChiNhanh
     @MaNV INT,
     @MaCN INT,
@@ -12,41 +13,39 @@ BEGIN
     WHERE MaNV = @MaNV
       AND NgayKetThuc IS NULL;
 
+    UPDATE NHANVIEN
+    SET CN_Hientai = @MaCN
+    WHERE MaNV = @MaNV;
+
     INSERT INTO DOICN (MaNV, MaCN, NgayBatDau, NgayKetThuc)
     VALUES (@MaNV, @MaCN, @NgayBatDau, NULL);
 END
 GO
 
-CREATE PROCEDURE sp_DSNhanVien
+-- Danh sách nhân viên theo chi nhánh
+CREATE PROCEDURE sp_DSNhanVienTheoChiNhanh
     @MaCN INT
 AS
 BEGIN
-    SELECT NV.*
-    FROM NHANVIEN NV
-    JOIN DOICN DCN
-    ON NV.MaNV = DCN.MaNV
-    WHERE DCN.MaCN = @MaCN
-      AND DCN.NgayKetThuc IS NULL;
+    SELECT *
+    FROM NHANVIEN
+    WHERE @MaCN = CN_Hientai;
 END;
 GO
 
+-- Danh sách nhân viên theo bộ phận
 CREATE PROCEDURE sp_DSNhanVienTheoBoPhan
     @MaCN INT,
     @MaBP INT
 AS
 BEGIN
-    SELECT NV.*
-    FROM NHANVIEN NV
-    JOIN DOICN DCN
-    ON NV.MaNV = DCN.MaNV
-    JOIN BOPHAN BP
-    ON NV.MaBP = BP.MaBP
-    WHERE DCN.MaCN = @MaCN
-      AND DCN.NgayKetThuc IS NULL
-      AND BP.MaBP = @MaBP;
+    SELECT *
+    FROM NHANVIEN
+    WHERE @MaCN = CN_Hientai AND @MaBP = MaBP;
 END;
 GO
 
+-- Thêm nhân viên
 CREATE PROCEDURE sp_ThemNhanVien
     @HoTen NVARCHAR(100),
     @NgaySinh DATE,
@@ -58,8 +57,8 @@ AS
 BEGIN
     DECLARE @MaNV INT;
 
-    INSERT INTO NHANVIEN (HoTen, NgaySinh, NgayVaoLam, Username, MaBP)
-    VALUES (@HoTen, @NgaySinh, @NgayVaoLam, @Username, @MaBP);
+    INSERT INTO NHANVIEN (HoTen, NgaySinh, NgayVaoLam, Username, MaBP, CN_Hientai)
+    VALUES (@HoTen, @NgaySinh, @NgayVaoLam, @Username, @MaBP, @MaCN);
 
     SET @MaNV = SCOPE_IDENTITY();
 
@@ -68,6 +67,7 @@ BEGIN
 END
 GO
 
+-- Cập nhật nhân viên
 CREATE PROCEDURE sp_CapNhatNhanVien
     @MaNV INT,
     @HoTen NVARCHAR(100),
@@ -84,11 +84,17 @@ BEGIN
 END
 GO
 
+-- Xóa nhân viên
 CREATE PROCEDURE sp_XoaNhanVien
     @MaNV INT,
-    @NgayKetThuc DATE
+    @NgayKetThuc DATE NULL
 AS
 BEGIN
+    IF @NgayKetThuc IS NULL
+    BEGIN
+        SET @NgayKetThuc = GETDATE();
+    END
+
     UPDATE DOICN
     SET NgayKetThuc = @NgayKetThuc
     WHERE MaNV = @MaNV
@@ -98,9 +104,9 @@ BEGIN
     SET IsActive = 0
     WHERE Username = (SELECT Username FROM NHANVIEN WHERE MaNV = @MaNV);
 
-    -- UPDATE NHANVIEN
-    -- SET NgayNghiViec = @NgayKetThuc, Username = NULL
-    -- WHERE MaNV = @MaNV;
+    UPDATE NHANVIEN
+    SET NgayNghiViec = @NgayKetThuc
+    WHERE MaNV = @MaNV;
 END
 GO
 
