@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { PopupModal } from "@/components/ui/modal"
 import { useEffect, useState } from "react"
+import { Input } from "@/components/ui/input"
 
 
 
@@ -28,6 +29,7 @@ function fetchBillSummary() {
 export function TableCard({ tableID, billID, date, time, createdBy, isPending, isPaid }) {
   const navigate = useNavigate()
   const [payOpen, setPayOpen] = useState(false);
+  const [openTable, setOpenTable] = useState(false);
   return (
     <Card className="w-[390px] bg-zinc-900 text-zinc-100">
       <CardHeader className="space-y-4 pb-4">
@@ -64,31 +66,83 @@ export function TableCard({ tableID, billID, date, time, createdBy, isPending, i
         {isPending && isPaid && <Button onClick={() => navigate(`/table/${tableID}/order`)} variant="outline" size="icon" className="h-10 w-10 rounded-lg border-zinc-800 bg-transparent text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
           <Pencil className="h-4 w-4 " />
         </Button>}
-        {isPending && !isPaid && <PopupModal open={payOpen} setOpen={setPayOpen} formComponent={BillSummary} props={{title: "", description: ""}} className="bg-zinc-900 border-transparent" isPaid = {isPaid}>
+        {isPending && !isPaid && <PopupModal open={payOpen} setOpen={setPayOpen} formComponent={BillSummary} props={{title: "", description: ""}} className="bg-zinc-900 border-transparent" isPaid = {isPaid} billID= {billID}>
           <Button className="ml-auto flex-1 rounded-lg bg-rose-200 text-rose-900 hover:bg-rose-300">
             Thanh toán
           </Button>
         </PopupModal>}
-        {isPending && isPaid && <PopupModal open={payOpen} setOpen={setPayOpen} formComponent={BillSummary} props={{title: "", description: ""}} className="bg-zinc-900 border-transparent" isPaid = {isPaid}>
+        {isPending && isPaid && <PopupModal open={payOpen} setOpen={setPayOpen} formComponent={BillSummary} props={{title: "", description: ""}} className="bg-zinc-900 border-transparent" isPaid = {isPaid} billID= {billID}>
           <Button className="ml-auto flex-1 rounded-lg bg-rose-200 text-rose-900 hover:bg-rose-300">
             Đã thanh toán
           </Button>
         </PopupModal>}
-        {!isPending && 
-          <Button 
-            className="ml-auto flex-1 rounded-lg bg-rose-200 text-rose-900 hover:bg-rose-300"
-            onClick={() => navigate(`/table/${tableID}/order`)}
-          >
-            Mở bàn
-          </Button>}
+        {!isPending && <PopupModal open= {openTable} setOpen = {setOpenTable} formComponent={TableOpen} props={{title: "Trạng thái bàn", description: ""}} tableID = {tableID}>
+            <Button 
+              className="ml-auto flex-1 rounded-lg bg-rose-200 text-rose-900 hover:bg-rose-300"
+              onClick={() => setOpenTable(true)}
+            >
+              Mở bàn
+            </Button>
+          </PopupModal>}
       </CardFooter>
     </Card>
   )
 }
 
 
+function TableOpen({ setOpen, tableID }) {
+  const navigate = useNavigate()
+  const [hasReservation , setHasReservation] = useState(false);
+  const [tableInfoOpen, setTableInfoOpen] = useState(false);
 
-function BillSummary({ setOpen, isPaid }) {
+
+  return (
+    <div className = "flex items-center justify-center gap-3">
+      <PopupModal open= {tableInfoOpen} setOpen={setTableInfoOpen} formComponent={getTableInfo} props={{title: "Nhập mã hóa đơn", description: "Nhập mã hóa đơn của khách hàng đã thanh toán trước"}} tableID= {tableID}>
+        <Button 
+          onClick={() => {
+            setHasReservation(true)
+            setTableInfoOpen(true)
+          }}
+          className="ml-auto flex-1 rounded-lg bg-rose-200 text-rose-900 hover:bg-rose-300"
+        >
+          Đã đặt trước
+        </Button>
+      </PopupModal>
+      <Button 
+        onClick={() => 
+          {
+            setHasReservation(false)
+            setOpen(false)
+            navigate(`/table/${tableID}/order`)
+          }
+        } 
+        className="ml-auto flex-1 rounded-lg bg-rose-200 text-rose-900 hover:bg-rose-300">
+        Chưa đặt trước
+      </Button>
+    </div>
+  )
+}
+
+function getTableInfo({tableID}) {
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    console.log("Submit")
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <Input id="tableID" label="Mã hóa đơn" placeholder="Mã hóa đơn..." />
+      <Button type="submit" className="w-full bg-pink-300 text-zinc-900 hover:bg-pink-400">
+        Xác nhận
+      </Button>
+    </form>
+  )
+}
+
+
+
+function BillSummary({ setOpen, isPaid, billID }) {
   function handleClose() {
     setOpen(false)
   }
