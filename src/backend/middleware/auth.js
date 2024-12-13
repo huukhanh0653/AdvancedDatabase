@@ -11,16 +11,7 @@ function isEmployee(req, res, next) {
   if (!req.isAuthenticated())
     return res.status(401).json({ message: "Unauthorized" });
 
-  let pool = poolPromise;
-  let NhanVien = pool
-    .request()
-    .input("username", req.user.Username)
-    .query("SELECT * FROM NHANVIEN WHERE Username = @username");
-  
-  if (NhanVien.recordset.length > 0) {
-    req.user = NhanVien.recordset[0];
-    return next();}
-
+  if (req.user.MaNV) return next;
   return res.status(401).json({ message: "Unauthorized" });
 }
 
@@ -28,17 +19,18 @@ function isManager(req, res, next) {
   if (!req.isAuthenticated())
     return res.status(401).json({ message: "Unauthorized" });
 
-  let pool = poolPromise;
-  let QuanLy = pool
-    .request()
-    .input("username", req.user.Username)
-    .query("SELECT * FROM NHANVIEN WHERE Username = @username AND MABOPHAN = 1 ");
-  
-  if (QuanLy.recordset.length > 0) {
-    req.user = QuanLy.recordset[0];
-    return next();}
+  if (req.user.MaNV && req.user.MaBP == 1) return next; // 1 is the code for the manager department
 
   return res.status(401).json({ message: "Unauthorized" });
 }
 
-module.exports = { isAuthenticated, isEmployee, isManager };
+function isAdministrator(req, res, next) {
+  if (!req.isAuthenticated())
+    return res.status(401).json({ message: "Unauthorized" });
+
+  if (req.user.MaNV && req.user.MaBP == 6) return next; // 6 is the code for the administrator department
+
+  return res.status(401).json({ message: "Unauthorized" });
+}
+
+module.exports = { isAuthenticated, isEmployee, isManager, isAdministrator };
