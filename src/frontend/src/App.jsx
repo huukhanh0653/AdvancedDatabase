@@ -11,23 +11,47 @@ import Reservation from './admin/pages/Reservation/Reservation.jsx'
 import Dashboard from './admin/pages/Dashboard/Dashboard.jsx'
 import RegionalMenu from './admin/pages/RegionalMenu/RegionalMenu.jsx';
 import Order from './admin/pages/Table/Order/Order.jsx';
+import Login from './admin/pages/Login.jsx';
+import ProtectedRoutes from './admin/routes/ProtectedRoutes.jsx';
+import PublicRoutes from './admin/routes/PublicRoutes.jsx';
+import PermissionDenied from './admin/pages/PermissionDenied.jsx';
+import CompanyCustomer from './admin/boss/pages/CompanyCustomer/CompanyCustomer.jsx';
+import CompanyMenu from './admin/boss/pages/CompanyMenu/CompanyMenu.jsx';
+import CompanyDashboard from './admin/boss/pages/CompanyDashboard/CompanyDashboard.jsx';
+import CompanyEmployee from './admin/boss/pages/CompanyEmployee/CompanyEmployee.jsx';
+
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-          <Route path="/" element={<Reservation/>}/>
-          <Route path="/dashboard" element={<Dashboard />}/>
-          <Route path="/table" element={<Table />}/>
-          <Route path="/table/:tableID" element={<TableDetail />}/>
-          <Route path="/table/:tableID/order" element={<Order />}/>
-          <Route path="/reservation" element={<Reservation />}/>
-          <Route path="/bill" element={<Bill />}/>
-          <Route path="/bill/:billID" element={<BillDetail />}/>
-          <Route path="/employee" element={<Employee />}/>
-          <Route path="/menu" element={<Menu />}/>
-          <Route path="/regional-menu" element={<RegionalMenu />}/>
-          <Route path="/customer" element={<Customer />}/>    
+          <Route path = "/" element = {<ProtectedRoutes roleRequired= {["staff", "admin", "boss"]}/>}>
+            <Route path="/table" element={<Table />}/>
+            <Route path="/table/:tableID" element={<TableDetail />}/>
+            <Route path="/table/:tableID/order" element={<Order />}/>
+            <Route path="/reservation" element={<Reservation />}/>
+            <Route path="/bill" element={<Bill />}/>
+            <Route path="/bill/:billID" element={<BillDetail />}/>
+            <Route path="/customer" element={<Customer />}/>    
+            <Route path="/menu" element={<Menu />}/>
+          </Route>
+
+          <Route path = "/" element = {<ProtectedRoutes roleRequired= {["admin", "boss"]}/>}>
+            <Route path="/dashboard" element={<Dashboard />}/>
+            <Route path="/employee" element={<Employee />}/>
+            <Route path="/regional-menu" element={<RegionalMenu />}/>
+          </Route>
+
+
+          <Route path = "/" element = {<ProtectedRoutes roleRequired= {["boss"]}/>}>
+            <Route path="/company-dashboard" element={<CompanyDashboard />}/>
+            <Route path="/company-employee" element={<CompanyEmployee />}/>
+            <Route path="/company-menu" element={<CompanyMenu />}/>
+            <Route path="/company-customer" element={<CompanyCustomer />}/>
+          </Route>
+
+          <Route path="/login" element={<Login />}/>
+
       </Routes>
     </BrowserRouter>
   )

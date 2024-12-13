@@ -30,10 +30,14 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
+import {Link } from "react-router-dom"
+
 export function NavUser({
   user,
 }) {
   const { isMobile } = useSidebar()
+  const isBoss = JSON.parse(localStorage.getItem('user')).role === 'boss';
+
 
   return (
     <SidebarMenu>
@@ -75,10 +79,19 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                {user.role}
-              </DropdownMenuItem>
+              {isBoss && <Link to={"/company-dashboard"}>
+                <DropdownMenuItem>
+                  <Sparkles />
+                  {user.role}
+                </DropdownMenuItem>
+              </Link>}
+              {!isBoss && <Link to={"/reservation"}>
+                <DropdownMenuItem>
+                  <Sparkles />
+                  {user.role}
+                </DropdownMenuItem>
+              </Link>}
+
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>

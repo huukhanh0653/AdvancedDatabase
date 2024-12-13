@@ -1,75 +1,69 @@
-import { 
-  HandPlatter,
-  ConciergeBell,
-  Receipt,
+import {
   ChartColumnIncreasing,
   CircleUserRound,
   Utensils,
-  UtensilsCrossed,
   Contact,
   LifeBuoy,
   Send,
-
- } from "lucide-react"
+  Building,
+} from "lucide-react"
 import { AppSidebar } from "@/src/admin/components/sidebar"
+
 
 
 const data = {
   user: {
     name: "shadcn",
-    role: "Admin",
+    role: "Boss",
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
   branch: {
     name: "SuShiX",
-    address: "Chi nhánh 1",
-    url: "#",
+    address: "Công ty TNHH SuShiX",
+    url: "/company-dashboard",
   }
   ,
   navProfession: [
-    {
-      title: "Quản lí đặt món",
-      url: "/table",
-      icon: HandPlatter,
-      isActive: true,
-    },
-    {
-      title: "Quản lí đặt bàn",
-      url: "/reservation",
-      icon: ConciergeBell,
-    },
-    {
-      title: "Quản lí hóa đơn",
-      url: "/bill",
-      icon: Receipt,
-      isActive: false,
-    },
-  ],
+  {
+    title: "Chi nhánh",
+    url: "#",
+    icon: Building,
+    isActive: true,
+    items: [
+      {
+        title: "Chi nhánh 1",
+        url: "/reservation",
+      },
+      {
+        title: "Chi nhánh 2",
+        url: "/reservation",
+      },
+      {
+        title: "Chi nhánh 3",
+        url: "/reservation",
+      },
+    ],
+   }],
   navManagement: [
     {
       title: "Thống kê",
-      url: "/dashboard",
+      url: "/company-dashboard",
       icon: ChartColumnIncreasing,
     },
     {
       title: "Thông tin khách hàng",
-      url: "/customer",
+      url: "/company-customer",
       icon: CircleUserRound,
     },
     {
       title: "Thực đơn",
-      url: "/menu",
+      url: "/company-menu",
       icon: Utensils,
     },
     {
-      title: "Thực đơn khu vực",
-      url: "/regional-menu",
-      icon: UtensilsCrossed,
-    },
-    {
       title: "Danh sách nhân viên",
-      url: "/employee",
+      url: "/company-employee",
       icon: Contact,
     },
   ],
@@ -88,7 +82,7 @@ const data = {
 }
 
 
-export default function DefautLayout({ children }) {
+export default function BossLayout({ children }) {
   return (
     <div className="flex">
       {/* Sidebar */}
