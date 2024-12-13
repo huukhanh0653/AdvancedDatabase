@@ -1,0 +1,1 @@
+INSERT INTO KhuVuc (MaKV, TenKV) VALUES ('MB', 'MB'), ('MN', 'Miền Nam'), ('MT', 'Miền Trung')

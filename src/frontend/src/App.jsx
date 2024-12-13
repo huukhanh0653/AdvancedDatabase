@@ -11,14 +11,22 @@ import Reservation from './admin/pages/Reservation/Reservation.jsx'
 import Dashboard from './admin/pages/Dashboard/Dashboard.jsx'
 import RegionalMenu from './admin/pages/RegionalMenu/RegionalMenu.jsx';
 import Order from './admin/pages/Table/Order/Order.jsx';
-import Login from './admin/pages/Login.jsx';
+import AdminLogin from './admin/pages/Login.jsx';
 import ProtectedRoutes from './admin/routes/ProtectedRoutes.jsx';
-import PublicRoutes from './admin/routes/PublicRoutes.jsx';
-import PermissionDenied from './admin/pages/PermissionDenied.jsx';
 import CompanyCustomer from './admin/boss/pages/CompanyCustomer/CompanyCustomer.jsx';
 import CompanyMenu from './admin/boss/pages/CompanyMenu/CompanyMenu.jsx';
 import CompanyDashboard from './admin/boss/pages/CompanyDashboard/CompanyDashboard.jsx';
 import CompanyEmployee from './admin/boss/pages/CompanyEmployee/CompanyEmployee.jsx';
+
+
+import Header from "./components/Header"
+import Footer from "./components/Footer"
+import Home from "./pages/Home"
+import Category from "./pages/Category"
+import Cart from "./pages/Cart"
+import Login from "./pages/Login"
+import Product from "./pages/Product"
+import Signup from "./pages/Signup"
 
 
 export default function App() {
@@ -50,9 +58,20 @@ export default function App() {
             <Route path="/company-customer" element={<CompanyCustomer />}/>
           </Route>
 
-          <Route path="/login" element={<Login />}/>
+          <Route path="/admin-login" element={<AdminLogin />}/>
 
+
+          <Route path = "/" >
+              <Route path="product/:productId" element={<Product />}/>
+                {/*<Route path=":productId" element={<Product/>}/> */}
+              <Route path="cart-page" element={<Cart />}/>
+              <Route path="login" element={<Login />}/>
+              <Route path="signup" element={<Signup />}/>
+              {/* <Footer /> */}
+          </Route>
       </Routes>
+            
     </BrowserRouter>
+
   )
 }

@@ -23,8 +23,8 @@ const Hero = () => {
                 <div className='bold-16 sm:bold-20'> 176k <span className='regular-16 sm:regular-20'>Excellent Reviews </span></div>
             </div>
             <div className='max-xs:flex-col flex gap-2'>
-                <NavLink to='' className={"btn_dark_rounded flexCenter"}> Buy Now </NavLink>
-                <NavLink to='' className={"btn_dark_rounded flexCenter gap-x-1"}> <MdOutlineLocalOffer className='text-2x1'/> Offers </NavLink>
+                <NavLink to='/menu' className={"btn_dark_rounded flexCenter"}> Xem thực đơn </NavLink>
+                <NavLink to='/reservation' className={"btn_dark_rounded flexCenter gap-x-1"}> <MdOutlineLocalOffer className='text-2x1'/> Đặt bàn ngay </NavLink>
             </div>
         </div>
     </section>

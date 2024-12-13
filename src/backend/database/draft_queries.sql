@@ -1,0 +1,7 @@
+USE Draft
+GO
+
+SELECT *
+FROM TAIKHOAN
+WHERE Username = 'user1'
+GO
