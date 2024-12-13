@@ -1,42 +1,22 @@
 "use client"
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Command } from 'lucide-react';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { Link } from 'react-router-dom';
 
 
-
-
-export function NavBranch() {
-  const [branch, setBranch] = useState({});
-  const getBranch = () => {
-    if(JSON.parse(localStorage.getItem('user')).role === 'boss') {
-      setBranch({
-        branchID: localStorage.getItem('branch'),
-        branchUrl: '/dashboard',
-      })
-    }
-    else {
-      setBranch({
-        branchID: "1",
-        branchUrl: '/dashboard',
-      })
-    }
-  }
-  useEffect(() => {
-    getBranch();
-  },[]);
+export function NavCompany( { branch }) {
     return (
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <Link to={branch.branchUrl}>
+              <Link to={branch.url}>
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                   <Command className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">SuShiX</span>
-                  <span className="truncate text-xs">Chi nhánh {branch.branchID}</span>
+                  <span className="truncate font-semibold">{branch.name}</span>
+                  <span className="truncate text-xs">{branch.address}</span>
                 </div>
               </Link>
             </SidebarMenuButton>

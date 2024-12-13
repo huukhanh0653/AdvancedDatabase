@@ -7,6 +7,8 @@ import { NavMain } from "@/src/admin/components/nav-main"
 import { NavBranch } from "@/src/admin/components/nav-branch"
 import { NavSecondary } from "@/src/admin/components/nav-secondary"
 import { NavUser } from "@/src/admin/components/nav-user"
+import { NavSelectBranch } from "@/src/admin/components/nav-select-branch"
+import { NavCompany } from "@/src/admin/components/nav-company"
 import {
   Sidebar,
   SidebarContent,
@@ -22,15 +24,17 @@ import { Separator } from "@/components/ui/separator"
 
 
 
-export function AppSidebar({ props, children, data }) {
+export function AppSidebar({ props, children, data, forBoss }) {
   return (
     <SidebarProvider>
       <Sidebar variant="inset" {...props}>
         <SidebarHeader>
-          <NavBranch branch={data.branch}/>
+          {!forBoss && <NavBranch/>}
+          {forBoss && <NavCompany branch={data.branch}/>}
         </SidebarHeader>
         <SidebarContent>
-          <NavMain items={data.navProfession} title={'Nghiệp vụ'}/>
+          {!forBoss && <NavMain items={data.navProfession} title={'Nghiệp vụ'}/>}
+          {forBoss && <NavSelectBranch items={data.navProfession} title={'Chi nhánh'}/>}
           <NavMain items={data.navManagement } title= {'Quản lí'}/>
           <NavSecondary items={data.navSecondary} className="mt-auto" />
         </SidebarContent>

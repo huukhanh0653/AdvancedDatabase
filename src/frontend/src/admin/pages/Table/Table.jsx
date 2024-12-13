@@ -32,6 +32,27 @@ export default function Table() {
         return matchesSearch;
     });
   }, [data, searchQuery]);
+
+  // const fetchData = async () => {
+  //   try {
+  //       const response = await fetch('http://localhost:1433/api/tables/');
+  //       if (!response.ok) {
+  //           throw new Error('Failed to fetch data');
+  //       }
+  //       let temp = await response.json();
+  //       let data = []
+  //       for (let i = 0; i < temp.length; i++) {
+  //           if (temp[i].room === 'Bedroom') {
+  //               data.push(temp[i])
+  //           }
+  //       }
+  //       setData(data);
+  //       setLoading(false);
+  //   } catch (error) {
+  //       toast.error('Error fetching data');
+  //       setLoading(false);
+  //   }
+  // };
   
 
   useEffect(() => {

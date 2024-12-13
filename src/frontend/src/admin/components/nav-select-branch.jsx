@@ -1,7 +1,7 @@
 "use client"
 
 import { ChevronRight } from "lucide-react"
-import { Link } from "react-router-dom" // Import Link for navigation
+import { Link } from "react-router-dom" 
 
 import {
   Collapsible,
@@ -20,7 +20,11 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
 
-export function NavMain({
+const setBranch = (branch) => {
+  localStorage.setItem('branch', JSON.stringify(branch));
+}
+
+export function NavSelectBranch({
   items,
   title,
 }) {
@@ -47,12 +51,12 @@ export function NavMain({
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub>
-                      {item.items?.map((subItem) => (
+                      {item.items?.map((subItem, index) => (
                         <SidebarMenuSubItem key={subItem.title}>
-                          <SidebarMenuSubButton asChild>
-                            <a href={subItem.url}>
-                              <span>{subItem.title} </span>
-                            </a>
+                          <SidebarMenuSubButton onClick={() => setBranch(index + 1)} asChild>
+                            <Link to={subItem.url}>
+                              <span className="flex" >{subItem.title} </span>
+                            </Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                       ))}
