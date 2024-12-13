@@ -1,0 +1,10 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskName": "task-Insert_PhieuDatMon",
+      "appliesTo": "Insert_PhieuDatMon.sql",
+      "type": "launch"
+    }
+  ]
+}
