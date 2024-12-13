@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { FaStar } from 'react-icons/fa'
 import { MdOutlineLocalOffer } from 'react-icons/md'
+import { Button } from '@/components/ui/button'
 
 const Hero = () => {
   return (
@@ -10,6 +11,7 @@ const Hero = () => {
             <p className='text-gray-50 regular-16 mt-6 max-w-[33rem]'>
                 Lorem, ipsum dolor sit amet consectetur adipisicing elit. Magnam veritatis sapiente ullam animi nisi. Molestiae, nesciunt. Impedit rerum, quibusdam odit dolorem iste, aut illum aliquid facere nobis nostrum dolore exercitationem!
             </p>
+            <Button variant="outline">Button</Button>
             <div className='flexStart !items-center gap-x-4 my-10'>
                 <div className='!regular-24 flexCenter gap-x-3'>
                     <FaStar />
