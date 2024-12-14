@@ -348,3 +348,4 @@ BEGIN
         MaNV
     FROM INSERTED;
 END;
+GO

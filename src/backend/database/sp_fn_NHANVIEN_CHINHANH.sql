@@ -1,6 +1,20 @@
 USE QLY_NHAHANG
 GO
 
+-- Tính điểm phục vụ của nhân viên trong khoảng thời gian
+CREATE OR ALTER FUNCTION fn_DiemPhucVuNhanVien (@MaNV INT, @NgayBatDau DATE, @NgayKetThuc DATE)
+RETURNS DECIMAL(18, 2)
+AS
+BEGIN
+    RETURN (SELECT AVG(DiemPhucVu)
+            FROM PHIEUDANHGIA PDG
+            JOIN HOADON HD ON PDG.MaHD = HD.MaHD
+            JOIN PHIEUDATMON PDM ON HD.MaHD = PDM.MaHD
+            WHERE PDM.MaNV = @MaNV
+            AND HD.NgayLap >= @NgayBatDau AND HD.NgayLap <= @NgayKetThuc);
+END;
+GO
+
 -- ĐỔI chi nhánh
 CREATE PROCEDURE sp_DoiChiNhanh
     @MaNV INT,
