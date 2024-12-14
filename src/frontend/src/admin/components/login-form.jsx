@@ -28,6 +28,7 @@ export function LoginForm({ className, ...props }) {
     if(userName == "boss") {
       navigateUrl = "/company-dashboard"
     }
+
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
