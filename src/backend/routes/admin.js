@@ -87,8 +87,8 @@ router.get("/tables", isEmployee, async function (req, res, next) {
 
   // Lấy thông tin các bàn hiện tại của chi nhánh
   let tables = await queryDB.getAllTable(MaCN);
-
   
+
 
   if (!result)
     return res.status(500).json({ message: "Internal server error" });

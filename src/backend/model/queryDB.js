@@ -19,4 +19,5 @@ async function getAllTable(MaCN){
 
 module.exports = {
   query_paginating,
+  getAllTable,
 };
