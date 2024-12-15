@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-const Reservation = () => {
+const CustomerReservation = () => {
     const [areas, setAreas] = useState([]);
     const [branches, setBranches] = useState([]);
 
@@ -138,4 +138,4 @@ const Reservation = () => {
     )
 }
 
-export default Reservation
+export default CustomerReservation
