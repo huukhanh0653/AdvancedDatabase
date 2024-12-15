@@ -23,6 +23,7 @@ import Header from "./components/Header"
 import Footer from "./components/Footer"
 import Home from "./pages/Home"
 import Category from "./pages/Category"
+import Reservation from './pages/Reservation.jsx';
 import Cart from "./pages/Cart"
 import Login from "./pages/Login"
 import Product from "./pages/Product"
@@ -61,10 +62,12 @@ export default function App() {
           <Route path="/admin-login" element={<AdminLogin />}/>
 
 
-          <Route path = "/" >
+          <Route path = "/" element={<Home />} >
               <Route path="product/:productId" element={<Product />}/>
                 {/*<Route path=":productId" element={<Product/>}/> */}
               <Route path="cart-page" element={<Cart />}/>
+              <Route path="reservation" element={<Reservation />}/>
+              <Route path="menu" element={<Category />}/>
               <Route path="login" element={<Login />}/>
               <Route path="signup" element={<Signup />}/>
               {/* <Footer /> */}

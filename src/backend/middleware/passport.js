@@ -65,6 +65,71 @@ passport.use(
   })
 );
 
+// Passport "local-signup" strategy
+passport.use(
+  'local-signup',
+  new LocalStrategy(
+    {
+      passReqToCallback: true, // Allows passing the request object to the callback
+      usernameField: 'username', // Specify the username field in the request
+      passwordField: 'password', // Specify the password field in the request
+    },
+    async (req, username, password, done) => {
+      try {
+        const { fullname, cccd, email, phone } = req.body; // Extract additional fields from the request body
+        const pool = await poolPromise;
+
+        // Check if the username already exists in TAIKHOAN
+        const userResult = await pool
+          .request()
+          .input('username', username)
+          .query('SELECT * FROM TAIKHOAN WHERE Username = @username');
+
+        if (userResult.recordset.length > 0) {
+          return done(null, false, { message: 'Username đã được sử dụng. Vui lòng chọn tên khác.' });
+        }
+
+        // Insert new user into TAIKHOAN
+        await pool
+          .request()
+          .input('username', username)
+          .input('password', password)
+          .input('isActive', true) // Default value for IsActive
+          .query(
+            'INSERT INTO TAIKHOAN (Username, Password, IsActive) VALUES (@username, @password, @isActive)'
+          );
+
+        // Insert user details into KHACHHANG
+        await pool
+          .request()
+          .input('username', username)
+          .input('fullname', fullname)
+          .input('phone', phone)
+          .input('email', email)
+          .input('cccd', cccd)
+          .query(
+            `INSERT INTO KHACHHANG (Username, HoTen, SDT, Email, CCCD) 
+             VALUES (@username, @fullname, @phone, @email, @cccd)`
+          );
+
+        // Fetch the newly created user
+        const newUser = {
+          username,
+          fullname,
+          email,
+          phone,
+        };
+
+        // Successfully registered
+        return done(null, newUser);
+      } catch (error) {
+        console.error('Error during signup:', error);
+        return done(error);
+      }
+    }
+  )
+);
+
 // Serialize user
 passport.serializeUser((user, done) => {
   done(null, user);

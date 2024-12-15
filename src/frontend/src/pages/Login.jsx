@@ -27,6 +27,11 @@ const AdminLogin = () => {
       const result = await response.json();
       setSuccessMessage(result.message);
       setErrorMessage('');
+
+      // Redirect to the homepage
+       window.location.replace("/");
+       localStorage.setItem('username', username);
+
     } catch (error) {
       console.error(error);
       setErrorMessage('Có lỗi xảy ra!');
