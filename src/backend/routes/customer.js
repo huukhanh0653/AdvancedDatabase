@@ -192,7 +192,7 @@ router.get("/product/:id", async function (req, res, next) {
   }
 });
 
-router.post("/reservation", async function (req, res, next) {
+router.post("/customer-reservation", async function (req, res, next) {
   try {
     const { name, phone, rdate, ppl, note, selectedBranch } = req.body;
 
