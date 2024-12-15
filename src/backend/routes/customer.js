@@ -3,7 +3,7 @@ const passport = require("../middleware/passport");
 const { isEmployee } = require("../middleware/auth");
 var router = express.Router();
 const { sql, poolPromise } = require("../model/dbConfig");
-const { executeProcedure } = require("../middleware/queryDB");
+const { executeProcedure } = require("../model/queryDB");
 require("../model/query");
 
 router.get("/get-all-bophan", async function (req, res, next) {
