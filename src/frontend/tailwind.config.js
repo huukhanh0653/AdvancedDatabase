@@ -26,8 +26,8 @@ export default {
         },
       },
      backgroundImage: {
-        hero: "url('/src/assets/bgecom.png')",
-        banneroffer: "url('/src/assets/banneroffer.png')",
+        hero: "url('/src/assets/hero-banner.jpg')",
+        banneroffer: "url('/src/assets/banneroffer.jpg')",
       },
       screens: {
         xs: '400px',

@@ -209,6 +209,8 @@ BEGIN
 	INSERT INTO PHIEUDATMON(NgayLap, MaBan, MaCN, MaNV, MaHD)
     VALUES (GETDATE(), @MaBan, @MaCN, @MaNV, @MaHD);
 
+	SET @MaPhieu = SCOPE_IDENTITY(); -- Retrieve the newly created invoice ID
+
 	RETURN @MaPhieu;
 END;
 GO
@@ -376,3 +378,6 @@ END;
 --SELECT * FROM BAN
 
 --SELECT * FROM THETHANHVIEN
+
+SELECT * FROM KHACHHANG
+SELECT * FROM TAIKHOAN

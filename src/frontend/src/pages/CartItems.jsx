@@ -6,6 +6,28 @@ const CartItems = () => {
     
   const { all_products, cartItems, addToCart, removeFromCart, getTotalCartAmount } = useContext(ShopContext)
 
+  const handleCheckout = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/customer/cart-page", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cartItems, // Use the cartItems from context
+        }),
+      });
+  
+      const data = await response.json();
+      if (response.ok) {
+        alert(`Order placed successfully! Order ID: ${data.orderId}`);
+      } else {
+        alert(`Error: ${data.message}`);
+      }
+    } catch (error) {
+      console.error("Checkout error:", error);
+      alert("Failed to place order. Please try again later.");
+    }
+  };
+
   return (
     <section className='max_padd_container pt-28'>
         <table className='w-full mx-auto'>
@@ -21,15 +43,15 @@ const CartItems = () => {
             </thead>
             <tbody>
                 {all_products.map((e) => {
-                    if (cartItems[e.id] > 0) {
-                        return <tr key={e.id} className='border-b border-slate-900/20 p-6 medium-14 text-center'>
-                            <td className='flexCenter'><img src={e.image} alt="prdctImg" height={43} width={43} className='rounded-lg ring-1 ring-slate-900/5 my-1'/></td>
-                            <td><div className='line-clamp-3'>{e.name}</div></td>
-                            <td>${e.old_price}</td>
-                            <td className='w-16 h-16'>{cartItems[e.id]}</td>
-                            <td>${e.old_price * cartItems[e.id]}</td>
+                    if (cartItems[e.MaMon] > 0) {
+                        return <tr key={e.MaMon} className='border-b border-slate-900/20 p-6 medium-14 text-center'>
+                            <td className='flexCenter'><img src={e.HinhAnh} alt="prdctImg" height={43} width={43} className='rounded-lg ring-1 ring-slate-900/5 my-1'/></td>
+                            <td><div className='line-clamp-3'>{e.TenMon}</div></td>
+                            <td>${e.GiaTien}</td>
+                            <td className='w-16 h-16'>{cartItems[e.MaMon]}</td>
+                            <td>${e.GiaTien * cartItems[e.MaMon]}</td>
                             <td>
-                                <div className='bold-22 pl-14'> <TbTrash onClick={() => removeFromCart(e.id)} /></div>
+                                <div className='bold-22 pl-14'> <TbTrash onClick={() => removeFromCart(e.MaMon)} /></div>
                             </td>
                         </tr>
                     }

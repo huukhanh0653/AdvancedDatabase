@@ -9,9 +9,6 @@ import Product from "./pages/Product"
 import Signup from "./pages/Signup"
 
 //import images
-import bannermen from "./assets/bannermens.png"
-import bannerwomen from "./assets/bannerwomens.png"
-import bannerkid from "./assets/bannerkids.png"
 import Reservation from "./pages/Reservation"
 
 export default function App() {
@@ -21,7 +18,7 @@ export default function App() {
         <Header />
         <Routes>
             <Route path="/" element={<Home/>}/>
-            <Route path="/menu" element={<Category category="men" banner={bannermen}/>}/>
+            <Route path="/menu" element={<Category />}/>
             <Route path="/reservation" element={<Reservation />}/>
             <Route path="/product/:productId" element={<Product />}/>
               {/*<Route path=":productId" element={<Product/>}/> */}

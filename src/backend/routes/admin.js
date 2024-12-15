@@ -17,4 +17,4 @@ router.get("/get-all-bophan", async function (req, res, next) {
   return res.status(200).json(result.recordset);
 });
 
-// router.
+module.exports = router;
