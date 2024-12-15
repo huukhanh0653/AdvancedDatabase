@@ -1,7 +1,7 @@
-import { createContext, useEffect } from "react";
-import { useState } from "react";
+import { createContext, useEffect, useState } from "react";
+import PropTypes from 'prop-types';
 
-export const ShopContext = createContext(null);
+const ShopContext = createContext(null);
 
 const getDefaultCart = () => {
     let cart = {};
@@ -78,5 +78,8 @@ const ShopContextProvider = (props) => {
         </ShopContext.Provider>
     )
 }
+ShopContextProvider.propTypes = {
+    children: PropTypes.node.isRequired,
+};
 
-export default ShopContextProvider;
+export { ShopContextProvider, ShopContext };

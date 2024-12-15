@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FaSearch } from 'react-icons/fa'
 import { MdOutlineAddShoppingCart } from "react-icons/md";
-import { ShopContext } from '../Context/ShopContext';
+import { ShopContext } from '../context/ShopContext';
 
 const Item = ({ id, name, image, old_price }) => {
 
