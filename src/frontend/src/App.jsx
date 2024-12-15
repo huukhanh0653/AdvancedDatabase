@@ -1,33 +1,80 @@
+import React from 'react';
+import Employee from './admin/pages/Employee/Employee.jsx'
+import Menu from './admin/pages/Menu/Menu.jsx'
+import Customer from './admin/pages/Customer/Customer.jsx'
+import Bill from './admin/pages/Bill/Bill/Bill.jsx'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import BillDetail from './admin/pages/Bill/Bill/BillDetail.jsx'
+import Table from './admin/pages/Table/Table.jsx'
+import TableDetail from './admin/pages/Table/TableDetail.jsx'
+import Reservation from './admin/pages/Reservation/Reservation.jsx'
+import Dashboard from './admin/pages/Dashboard/Dashboard.jsx'
+import RegionalMenu from './admin/pages/RegionalMenu/RegionalMenu.jsx';
+import Order from './admin/pages/Table/Order/Order.jsx';
+import AdminLogin from './admin/pages/Login.jsx';
+import ProtectedRoutes from './admin/routes/ProtectedRoutes.jsx';
+import CompanyCustomer from './admin/boss/pages/CompanyCustomer/CompanyCustomer.jsx';
+import CompanyMenu from './admin/boss/pages/CompanyMenu/CompanyMenu.jsx';
+import CompanyDashboard from './admin/boss/pages/CompanyDashboard/CompanyDashboard.jsx';
+import CompanyEmployee from './admin/boss/pages/CompanyEmployee/CompanyEmployee.jsx';
+
+
 import Header from "./components/Header"
 import Footer from "./components/Footer"
-import { BrowserRouter, Routes, Route } from "react-router-dom"
 import Home from "./pages/Home"
 import Category from "./pages/Category"
+import Reservation from './pages/Reservation.jsx';
 import Cart from "./pages/Cart"
 import Login from "./pages/Login"
 import Product from "./pages/Product"
 import Signup from "./pages/Signup"
 
-//import images
-import Reservation from "./pages/Reservation"
 
 export default function App() {
   return (
-    <main className="bg-primary text-tertiary">
-      <BrowserRouter>
-        <Header />
-        <Routes>
-            <Route path="/" element={<Home/>}/>
-            <Route path="/menu" element={<Category />}/>
+    <BrowserRouter>
+      <Routes>
+          <Route path = "/" element = {<ProtectedRoutes roleRequired= {["staff", "admin", "boss"]}/>}>
+            <Route path="/table" element={<Table />}/>
+            <Route path="/table/:tableID" element={<TableDetail />}/>
+            <Route path="/table/:tableID/order" element={<Order />}/>
             <Route path="/reservation" element={<Reservation />}/>
-            <Route path="/product/:productId" element={<Product />}/>
-              {/*<Route path=":productId" element={<Product/>}/> */}
-            <Route path="/cart-page" element={<Cart />}/>
-            <Route path="/login" element={<Login />}/>
-            <Route path="/signup" element={<Signup />}/>
-        </Routes>
-        <Footer />
-      </BrowserRouter>
-    </main>
+            <Route path="/bill" element={<Bill />}/>
+            <Route path="/bill/:billID" element={<BillDetail />}/>
+            <Route path="/customer" element={<Customer />}/>    
+            <Route path="/menu" element={<Menu />}/>
+          </Route>
+
+          <Route path = "/" element = {<ProtectedRoutes roleRequired= {["admin", "boss"]}/>}>
+            <Route path="/dashboard" element={<Dashboard />}/>
+            <Route path="/employee" element={<Employee />}/>
+            <Route path="/regional-menu" element={<RegionalMenu />}/>
+          </Route>
+
+
+          <Route path = "/" element = {<ProtectedRoutes roleRequired= {["boss"]}/>}>
+            <Route path="/company-dashboard" element={<CompanyDashboard />}/>
+            <Route path="/company-employee" element={<CompanyEmployee />}/>
+            <Route path="/company-menu" element={<CompanyMenu />}/>
+            <Route path="/company-customer" element={<CompanyCustomer />}/>
+          </Route>
+
+          <Route path="/admin-login" element={<AdminLogin />}/>
+
+
+          <Route path = "/" element={<Home />} >
+              <Route path="product/:productId" element={<Product />}/>
+                {/*<Route path=":productId" element={<Product/>}/> */}
+              <Route path="cart-page" element={<Cart />}/>
+              <Route path="reservation" element={<Reservation />}/>
+              <Route path="menu" element={<Category />}/>
+              <Route path="login" element={<Login />}/>
+              <Route path="signup" element={<Signup />}/>
+              {/* <Footer /> */}
+          </Route>
+      </Routes>
+            
+    </BrowserRouter>
+
   )
 }

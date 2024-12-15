@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-const Login = () => {
+const AdminLogin = () => {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -55,4 +55,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default AdminLogin

@@ -8,7 +8,7 @@ passport.use(
   new LocalStrategy(async (username, password, done) => {
     try {
       const pool = await poolPromise;
-      const result = await pool
+      let result = await pool
         .request()
         .input("username", username)
         .query("SELECT * FROM TAIKHOAN WHERE Username = @username");
@@ -26,14 +26,36 @@ passport.use(
         return done(null, false, { message: "Incorrect password." });
       }
 
-      // const isPasswordValid = await bcrypt.compare(password, user.Password);
-      // if (!isPasswordValid) {
-      //   return done(null, false, { message: "Invalid password" });
-      // }
-
       // Check if user is active
       if (!user.IsActive) {
         return done(null, false, { message: "User is not active." });
+      }
+
+      result = await pool
+        .request()
+        .input("username", username)
+        .query("SELECT * FROM NHANVIEN WHERE Username = @username");
+
+      if (result.recordset.length > 0) {
+        user = result.recordset[0];
+        user = {
+          MaNV: user.MaNV,
+          Username: user.Username,
+          MaBP: user.MaBP,
+          MaCN: user.CN_HienTai,
+        };
+      } else {
+        result = await pool
+          .request()
+          .input("username", username)
+          .query("SELECT * FROM KHACHHANG WHERE Username = @username");
+
+        if (result.recordset.length > 0) {
+          user = result.recordset[0];
+          user = { MaKH: user.MaKH, Username: user.Username };
+        } else {
+          return done(null, false, { message: "User not found." });
+        }
       }
 
       return done(null, user);
