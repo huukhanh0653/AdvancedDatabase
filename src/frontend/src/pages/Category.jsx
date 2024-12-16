@@ -85,78 +85,80 @@ const Category = () => {
   };
 
   return (
-    <section className="max_padd_container py-5 xl:py-14">
-      <div>
-        <div className="flexBetween my-8 mx-2">
-          {/* Area Dropdown */}
-          <select
-            value={selectedArea}
-            onChange={handleAreaChange}
-            className="h-14 w-fit pl-5 bg-white outline-none rounded-xl border border-gray-300 "
-          >
-            <option value="">Chọn khu vực</option>
-            {areas.map((area) => (
-              <option key={area.id} value={area.id}>
-                {area.name}
-              </option>
-            ))}
-          </select>
-          {/* Branch Dropdown */}
-          <select
-            value={selectedBranch}
-            onChange={handleBranchChange}
-            className="h-14 w-1/2 pl-5 bg-white outline-none rounded-xl border border-gray-300 "
-            disabled={!selectedArea}
-          >
-            <option value="">Chọn chi nhánh</option>
-            {branches.map((branch) => (
-              <option key={branch.id} value={branch.id}>
-                {branch.name}
-              </option>
-            ))}
-          </select>
-          {/* Category Dropdown */}
-          <select
-            value={selectedCategory}
-            onChange={handleCategoryChange}
-            className="h-14 w-1/4 pl-5 bg-white outline-none rounded-xl border border-gray-300 "
-            disabled={!selectedBranch}
-          >
-            <option value="">Chọn phân loại</option>
-            {categories.map((category, index) => (
-              <option key={index} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
-        </div>
+    <main className="bg-primary text-tertiary">
+      <section className="max_padd_container py-5 xl:py-14">
+        <div>
+          <div className="flexBetween my-8 mx-2">
+            {/* Area Dropdown */}
+            <select
+              value={selectedArea}
+              onChange={handleAreaChange}
+              className="h-14 w-fit pl-5 bg-white outline-none rounded-xl border border-gray-300 "
+            >
+              <option value="">Chọn khu vực</option>
+              {areas.map((area) => (
+                <option key={area.id} value={area.id}>
+                  {area.name}
+                </option>
+              ))}
+            </select>
+            {/* Branch Dropdown */}
+            <select
+              value={selectedBranch}
+              onChange={handleBranchChange}
+              className="h-14 w-1/2 pl-5 bg-white outline-none rounded-xl border border-gray-300 "
+              disabled={!selectedArea}
+            >
+              <option value="">Chọn chi nhánh</option>
+              {branches.map((branch) => (
+                <option key={branch.id} value={branch.id}>
+                  {branch.name}
+                </option>
+              ))}
+            </select>
+            {/* Category Dropdown */}
+            <select
+              value={selectedCategory}
+              onChange={handleCategoryChange}
+              className="h-14 w-1/4 pl-5 bg-white outline-none rounded-xl border border-gray-300 "
+              disabled={!selectedBranch}
+            >
+              <option value="">Chọn phân loại</option>
+              {categories.map((category, index) => (
+                <option key={index} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <div className="flexBetween my-4 mx-2">
-          <h5>
-            <span className="font-bold">Hiển thị {products.length}</span> sản phẩm
-          </h5>
+            <h5>
+              <span className="font-bold">Hiển thị {products.length}</span> sản phẩm
+            </h5>
             <input type="text" placeholder='Tìm kiếm món ăn'
               className="flex h-14 w-1/3 pl-5 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
               aria-label="Search" />
-        </div>
+          </div>
 
-        {/* Products Grid */}
-        <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-          {products.map((item) => (
-            <Item
-              key={item.MaMon}
-              id={item.MaMon}
-              image={item.HinhAnh}
-              name={item.TenMon}
-              old_price={item.GiaTien}
-            />
-          ))}
+          {/* Products Grid */}
+          <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+            {products.map((item) => (
+              <Item
+                key={item.MaMon}
+                id={item.MaMon}
+                image={item.HinhAnh}
+                name={item.TenMon}
+                old_price={item.GiaTien}
+              />
+            ))}
+          </div>
+          <div className="mt-16 text-center">
+            <button className="btn_dark_rounded">Tải thêm</button>
+          </div>
         </div>
-        <div className="mt-16 text-center">
-          <button className="btn_dark_rounded">Tải thêm</button>
-        </div>
-      </div>
-    </section>
+      </section>
+    </main>
   );
 };
 
