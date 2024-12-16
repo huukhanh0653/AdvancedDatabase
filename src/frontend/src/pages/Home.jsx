@@ -7,9 +7,11 @@ import Popular from "../components/Popular"
 const Home = () => {
   return (
     <>
-      <Hero />
-      <Popular />
-      <Offer />
+      <main className="bg-primary text-tertiary">
+        <Hero />
+        <Popular />
+        <Offer />
+      </main>
     </>
   )
 }
