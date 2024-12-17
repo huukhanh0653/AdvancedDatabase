@@ -7,8 +7,7 @@ import { Icons } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useNavigate } from "react-router-dom"
-import { use } from "react"
+
 
 
 
@@ -16,30 +15,43 @@ export function LoginForm({ className, ...props }) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [userName, setUserName] = React.useState('')
   const [password, setPassword] = React.useState('');
-  const navigate = useNavigate()
-  let navigateUrl = "/reservation"
+  const [errorMessage, setErrorMessage] = React.useState('');
 
-  const onLogin = (e) => {
-    e.preventDefault();
-    if(userName === "" || password === "") {
-        alert("Vui lòng nhập đầy đủ thông tin")
-        return;
-    }
-    if(userName == "boss") {
-      navigateUrl = "/company-dashboard"
-    }
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      localStorage.setItem("user", JSON.stringify({ role: userName }));
-      navigate(navigateUrl);
-    }, 1000);
-
-}
+    const handleLogin = async (e) => {
+      e.preventDefault();
+      setIsLoading(true);
+      try {
+        const response = await fetch('http://localhost:5000/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userName, password }),
+        });
+  
+        if (!response.ok) {
+          const error = await response.json();
+          setErrorMessage(error.message || 'Login failed');
+          return;
+        }
+  
+        const result = await response.json();
+        setSuccessMessage(result.message);
+        setErrorMessage('');
+        setIsLoading(false);
+  
+        // Redirect to the homepage
+         window.location.replace("/");
+         localStorage.setItem('user', result.user);
+  
+      } catch (error) {
+        console.error(error);
+        setIsLoading(false);
+        setErrorMessage(error);
+      }
+    };
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
-      <form onSubmit={onLogin}>
+      <form onSubmit={handleLogin}>
         <div className="grid gap-2">
           <div className="grid gap-1">
             <Label  htmlFor="user">
@@ -73,7 +85,7 @@ export function LoginForm({ className, ...props }) {
               required
             />
           </div>
-          <Button onClick={onLogin} type = "submit" disabled={isLoading}>
+          <Button onClick={handleLogin} type = "submit" disabled={isLoading}>
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}

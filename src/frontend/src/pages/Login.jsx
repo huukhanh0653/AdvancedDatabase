@@ -27,6 +27,11 @@ const AdminLogin = () => {
       const result = await response.json();
       setSuccessMessage(result.message);
       setErrorMessage('');
+
+      // Redirect to the homepage
+       window.location.replace("/");
+       localStorage.setItem('username', username);
+
     } catch (error) {
       console.error(error);
       setErrorMessage('Có lỗi xảy ra!');
@@ -34,6 +39,7 @@ const AdminLogin = () => {
   };
 
   return (
+  <main className="bg-primary text-tertiary">
     <section className='max_padd_container flexCenter flex-col pt-32'>
       <div className='w-[555px] h-[450px] bg-white m-auto px-14 py-10 rounded-md'>
         <h3 className='h3'>Đăng nhập</h3>
@@ -47,6 +53,7 @@ const AdminLogin = () => {
         {successMessage && <p className='text-green-500'>{successMessage}</p>}
       </div>
     </section>
+  </main>
   )
 }
 
