@@ -23,7 +23,7 @@ const Hero = () => {
             </div>
             <div className='max-xs:flex-col flex gap-2'>
                 <NavLink to='/menu' className={"btn_dark_rounded flexCenter"}> Xem thực đơn </NavLink>
-                <NavLink to='/reservation' className={"btn_dark_rounded flexCenter gap-x-1"}> <MdOutlineLocalOffer className='text-2x1'/> Đặt bàn ngay </NavLink>
+                <NavLink to='/customer-reservation' className={"btn_dark_rounded flexCenter gap-x-1"}> <MdOutlineLocalOffer className='text-2x1'/> Đặt bàn ngay </NavLink>
             </div>
         </div>
     </section>

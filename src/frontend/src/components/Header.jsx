@@ -54,7 +54,7 @@ const Header = () => {
           )
           }
           <div className="flexBetween sm:gap-x-4">
-            <NavLink to={"cart-page"} className={"flex"}><FaOpencart
+            <NavLink to={"/cart-page"} className={"flex"}><FaOpencart
               className="p-1 h-8 w-8 ring-slate-900/30 ring-1 rounded-full" />
               <span className="relative flexCenter w-5 h-5 rounded-full bg-secondary text-white medium-14 -top-2">{getTotalCartItems()}</span>
             </NavLink>

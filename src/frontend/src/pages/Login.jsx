@@ -31,6 +31,7 @@ const AdminLogin = () => {
       // Redirect to the homepage
        window.location.replace("/");
        localStorage.setItem('username', username);
+       console.log(response.user)
 
     } catch (error) {
       console.error(error);
