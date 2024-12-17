@@ -25,7 +25,7 @@ export default function BillDetail() {
 
   useEffect(() => {
     fetchData();
-  });
+  }, []);
     
 
     return (

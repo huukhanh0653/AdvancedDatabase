@@ -2,7 +2,7 @@ import { LoginForm } from "@/src/admin/components/login-form"
 
 
 
-export default function Login() {
+export default function AdminLogin() {
   return (
     <>
       <div className="container relative hidden h-[922px] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">

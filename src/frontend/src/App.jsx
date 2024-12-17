@@ -11,7 +11,7 @@ import Reservation from './admin/pages/Reservation/Reservation.jsx'
 import Dashboard from './admin/pages/Dashboard/Dashboard.jsx'
 import RegionalMenu from './admin/pages/RegionalMenu/RegionalMenu.jsx';
 import Order from './admin/pages/Table/Order/Order.jsx';
-import AdminLogin from './admin/pages/Login.jsx';
+import AdminLogin from './admin/pages/AdminLogin.jsx';
 import ProtectedRoutes from './admin/routes/ProtectedRoutes.jsx';
 import CompanyCustomer from './admin/boss/pages/CompanyCustomer/CompanyCustomer.jsx';
 import CompanyMenu from './admin/boss/pages/CompanyMenu/CompanyMenu.jsx';
@@ -59,7 +59,6 @@ export default function App() {
           </Route>
 
           <Route path="/admin-login" element={<AdminLogin />}/>
-
 
           <Route path = "/" >
               <Route path="product/:productId" element={<Product />}/>

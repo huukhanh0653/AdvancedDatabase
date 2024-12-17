@@ -34,23 +34,17 @@ export default function Table() {
   }, [data, searchQuery]);
 
   // const fetchData = async () => {
+  //   const curBranch = localStorage.getItem('branch');
+  //   const api = `http://localhost:1433/api/tables/${curBranch ? curBranch : ''}`;
   //   try {
-  //       const response = await fetch('http://localhost:1433/api/tables/');
+  //       const response = await fetch(api);
   //       if (!response.ok) {
   //           throw new Error('Failed to fetch data');
   //       }
-  //       let temp = await response.json();
-  //       let data = []
-  //       for (let i = 0; i < temp.length; i++) {
-  //           if (temp[i].room === 'Bedroom') {
-  //               data.push(temp[i])
-  //           }
-  //       }
+  //       let data = await response.json();
   //       setData(data);
-  //       setLoading(false);
   //   } catch (error) {
   //       toast.error('Error fetching data');
-  //       setLoading(false);
   //   }
   // };
   
