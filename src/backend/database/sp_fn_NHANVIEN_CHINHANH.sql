@@ -43,7 +43,8 @@ AS
 BEGIN
     SELECT *
     FROM NHANVIEN
-    WHERE @MaCN = CN_Hientai;
+    WHERE @MaCN = CN_Hientai
+    AND NgayNghiViec IS NULL;
 END;
 GO
 
@@ -55,7 +56,9 @@ AS
 BEGIN
     SELECT *
     FROM NHANVIEN
-    WHERE @MaCN = CN_Hientai AND @MaBP = MaBP;
+    WHERE @MaCN = CN_Hientai 
+    AND @MaBP = MaBP
+    AND NgayNghiViec IS NULL;
 END;
 GO
 
