@@ -18,8 +18,8 @@ export default {
 					DEFAULT: 'hsl(var(--secondary))',
 					foreground: 'hsl(var(--secondary-foreground))'
 				},
-				// primary: '#f0f2f5',
-				// secondary: '#ff813f',
+				primary: '#f0f2f5',
+				secondary: '#ff813f',
 				tertiary: '#222222',
 				slate: {
 					'10': '#f1f3f4'

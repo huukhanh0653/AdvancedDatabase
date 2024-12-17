@@ -33,24 +33,53 @@ export default function Table() {
     });
   }, [data, searchQuery]);
 
-  // const fetchData = async () => {
-  //   const curBranch = localStorage.getItem('branch');
-  //   const api = `http://localhost:1433/api/tables/${curBranch ? curBranch : ''}`;
-  //   try {
-  //       const response = await fetch(api);
-  //       if (!response.ok) {
-  //           throw new Error('Failed to fetch data');
-  //       }
-  //       let data = await response.json();
-  //       setData(data);
-  //   } catch (error) {
-  //       toast.error('Error fetching data');
-  //   }
-  // };
+  const testfetchData = async () => {
+    let curBranch
+    let userinfo;
+    const _userbase64 = localStorage.getItem("user");
+    if (_userbase64) {
+      userinfo = JSON.parse(decodeURIComponent(escape(atob(_userbase64))));
+    }
+    if(userinfo.MaBP == 6) {
+      curBranch=`?id=${localStorage.getItem('branch')}`;
+    }
+    else {
+      curBranch = '';
+    }
+
+    const api = `http://localhost:5000/admin/info${curBranch}`;
+    console.log(api);
+    userinfo = JSON.stringify(userinfo);
+    console.log(userinfo);
+
+    try {
+        const response = await fetch(api, {
+            method: "POST", // Change to POST request
+            headers: {
+                "Content-Type": "application/json", // Specify the content type
+            },
+            body: JSON.stringify({
+             user: userinfo,
+            }), // Include user and branch in the body
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch data");
+        }
+
+        const data = await response.json(); // Parse the JSON response
+        console.log(data);
+        // setData(data); // Uncomment if you need to set data in your application
+    } catch (error) {
+        console.log("Error fetching data", error);
+    }
+
+  };
   
 
   useEffect(() => {
     fetchData();
+    testfetchData();
   });
     
 

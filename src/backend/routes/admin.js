@@ -66,12 +66,12 @@ router.get("/customers", async function (req, res, next) {
 });
 
 // Lay thong tin cac ban an trong mot chi nhanh bat ky
-router.get("/info", isEmployee, async function (req, res, next) {
+router.post("/info", isEmployee, async function (req, res, next) {
   let result = false;
   let MaCN = false;
 
-  if (isAdministrator(req.user)) MaCN = req.query.id;
-  else MaCN = req.user.CN_HienTai;
+  if (isAdministrator(req.body.user)) MaCN = req.query.id;
+  else MaCN = req.body.user.CN_HienTai;
 
   // Lấy thông tin các bàn hiện tại của chi nhánh
   result = await getTableInfo(MaCN);

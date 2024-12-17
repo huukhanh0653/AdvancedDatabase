@@ -10,17 +10,20 @@ import { Link } from 'react-router-dom';
 export function NavBranch() {
   const [branch, setBranch] = useState({});
   const getBranch = () => {
-    if(JSON.parse(localStorage.getItem('user')).role === 'boss') {
-      setBranch({
-        branchID: localStorage.getItem('branch'),
-        branchUrl: '/dashboard',
-      })
-    }
-    else {
-      setBranch({
-        branchID: "1",
-        branchUrl: '/dashboard',
-      })
+  const _userbase64 = localStorage.getItem("user");
+    if (_userbase64) {
+      const authuser = JSON.parse(decodeURIComponent(escape(atob(_userbase64))));
+      if(authuser.MaBP == 6) {
+        setBranch({
+          branchID: localStorage.getItem('branch'),
+          branchUrl: '/company-dashboard',
+        });
+      } else {
+        setBranch({
+          branchID: null,
+          branchUrl: '/dashboard',
+        });
+      }
     }
   }
   useEffect(() => {

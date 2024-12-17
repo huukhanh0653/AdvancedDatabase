@@ -107,7 +107,7 @@ export default function App() {
         <Route
           path="/"
           element={
-            <ProtectedRoutes roleRequired={["staff", "admin", "boss"]} />
+            <ProtectedRoutes roleRequired={[6, 1, 0]} />
           }
         >
           <Route path="/table" element={<Table />} />
@@ -117,19 +117,19 @@ export default function App() {
           <Route path="/bill" element={<Bill />} />
           <Route path="/bill/:billID" element={<BillDetail />} />
           <Route path="/customer" element={<Customer />} />
-          <Route path="/menu" element={<Menu />} />
+          <Route path="/admin-menu" element={<Menu />} />
         </Route>
 
         <Route
           path="/"
-          element={<ProtectedRoutes roleRequired={["admin", "boss"]} />}
+          element={<ProtectedRoutes roleRequired={[6, 1]} />}
         >
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/employee" element={<Employee />} />
           <Route path="/regional-menu" element={<RegionalMenu />} />
         </Route>
 
-        <Route path="/" element={<ProtectedRoutes roleRequired={["boss"]} />}>
+        <Route path="/" element={<ProtectedRoutes roleRequired={[6]} />}>
           <Route path="/company-dashboard" element={<CompanyDashboard />} />
           <Route path="/company-employee" element={<CompanyEmployee />} />
           <Route path="/company-menu" element={<CompanyMenu />} />

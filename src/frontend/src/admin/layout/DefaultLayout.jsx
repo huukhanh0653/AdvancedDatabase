@@ -59,7 +59,7 @@ const data = {
     },
     {
       title: "Thực đơn",
-      url: "/menu",
+      url: "/admin-menu",
       icon: Utensils,
     },
     {

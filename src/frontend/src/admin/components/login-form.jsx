@@ -7,15 +7,18 @@ import { Icons } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useNavigate } from "react-router-dom"
 
 
 
 
 export function LoginForm({ className, ...props }) {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [userName, setUserName] = React.useState('')
+  const [username, setUserName] = React.useState('')
   const [password, setPassword] = React.useState('');
   const [errorMessage, setErrorMessage] = React.useState('');
+  const [successMessage, setSuccessMessage] = React.useState('');
+  const navigate = useNavigate();
 
     const handleLogin = async (e) => {
       e.preventDefault();
@@ -24,7 +27,7 @@ export function LoginForm({ className, ...props }) {
         const response = await fetch('http://localhost:5000/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userName, password }),
+          body: JSON.stringify({ username, password }),
         });
   
         if (!response.ok) {
@@ -39,8 +42,17 @@ export function LoginForm({ className, ...props }) {
         setIsLoading(false);
   
         // Redirect to the homepage
-         window.location.replace("/");
-         localStorage.setItem('user', result.user);
+         const isBoss = result.user.MaBP == 6;
+        console.log(isBoss);
+         if(isBoss) {
+            navigate('/company-dashboard');
+          }
+          else {
+            navigate('/dashboard');
+          }
+         const base64Value = btoa(unescape(encodeURIComponent(JSON.stringify(result.user))));
+         localStorage.setItem('user', base64Value);
+
   
       } catch (error) {
         console.error(error);
