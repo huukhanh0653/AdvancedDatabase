@@ -7,6 +7,25 @@ const {
 } = require("../middleware/utils");
 const e = require("express");
 
+async function executeProcedure(procedureName, params) {
+  try {
+    const pool = await poolPromise;
+    const request = pool.request();
+
+    if (params) {
+      params.forEach((param) => {
+        request.input(param.name, param.type, param.value);
+      });
+    }
+
+    const result = await request.execute(procedureName);
+    return result;
+  } catch (err) {
+    console.error("Error executing procedure:", err);
+    return null;
+  }
+}
+
 async function queryDB(query) {
   try {
     const pool = await poolPromise;
@@ -214,4 +233,5 @@ module.exports = {
   getTableDetail,
   queryDB,
   getReservations,
+  executeProcedure,
 };
