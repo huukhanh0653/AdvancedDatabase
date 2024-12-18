@@ -14,7 +14,7 @@ BEGIN
     JOIN PHIEUDATMON PDM ON CM.MaPhieu = PDM.MaPhieu
     JOIN MONAN MA ON CM.MaMon = MA.MaMon
     JOIN HOADON HD ON PDM.MaHD = HD.MaHD
-    WHERE HD.MaCN = @MaCN
+    WHERE HD.MaCN = @MaCN AND CM.TraMon = 1
     AND MA.TenMon LIKE '%' + @TenMon + '%'
     AND @NgayBatDau <= HD.NgayLap AND HD.NgayLap <= @NgayKetThuc
     GROUP BY MA.TenMon, MA.HinhAnh, MA.GiaTien
@@ -35,7 +35,7 @@ BEGIN
     JOIN MONAN MA ON CM.MaMon = MA.MaMon
     JOIN HOADON HD ON PDM.MaHD = HD.MaHD
     JOIN CHINHANH CN ON HD.MaCN = CN.MaCN
-    WHERE CN.MaKV = @MaKV
+    WHERE CN.MaKV = @MaKV AND CM.TraMon = 1
     AND MA.TenMon LIKE '%' + @TenMon + '%'
     AND @NgayBatDau <= HD.NgayLap AND HD.NgayLap <= @NgayKetThuc
     GROUP BY MA.TenMon, MA.HinhAnh, MA.GiaTien
@@ -55,7 +55,7 @@ BEGIN
     JOIN PHIEUDATMON PDM ON CM.MaPhieu = PDM.MaPhieu
     JOIN MONAN MA ON CM.MaMon = MA.MaMon
     JOIN HOADON HD ON PDM.MaHD = HD.MaHD
-    WHERE HD.MaCN = @MaCN
+    WHERE HD.MaCN = @MaCN AND CM.TraMon = 1
     AND @NgayBatDau <= HD.NgayLap AND HD.NgayLap <= @NgayKetThuc
     GROUP BY MA.TenMon, MA.HinhAnh, MA.GiaTien
     ORDER BY DoanhThu DESC;
@@ -77,7 +77,7 @@ BEGIN
     JOIN MONAN MA ON CM.MaMon = MA.MaMon
     JOIN HOADON HD ON PDM.MaHD = HD.MaHD
     JOIN CHINHANH CN ON HD.MaCN = CN.MaCN
-    WHERE CN.MaKV = @MaKV
+    WHERE CN.MaKV = @MaKV AND CM.TraMon = 1
     AND @NgayBatDau <= HD.NgayLap AND HD.NgayLap <= @NgayKetThuc
     GROUP BY MA.TenMon, MA.HinhAnh, MA.GiaTien
     ORDER BY DoanhThu DESC;
@@ -97,7 +97,7 @@ BEGIN
     JOIN PHIEUDATMON PDM ON CM.MaPhieu = PDM.MaPhieu
     JOIN MONAN MA ON CM.MaMon = MA.MaMon
     JOIN HOADON HD ON PDM.MaHD = HD.MaHD
-    WHERE HD.MaCN = @MaCN
+    WHERE HD.MaCN = @MaCN AND CM.TraMon = 1
     AND @NgayBatDau <= HD.NgayLap AND HD.NgayLap <= @NgayKetThuc
     GROUP BY MA.TenMon, MA.HinhAnh, MA.GiaTien
     ORDER BY DoanhThu ASC;
@@ -118,7 +118,7 @@ BEGIN
     JOIN MONAN MA ON CM.MaMon = MA.MaMon
     JOIN HOADON HD ON PDM.MaHD = HD.MaHD
     JOIN CHINHANH CN ON HD.MaCN = CN.MaCN
-    WHERE CN.MaKV = @MaKV
+    WHERE CN.MaKV = @MaKV AND CM.TraMon = 1
     AND @NgayBatDau <= HD.NgayLap AND HD.NgayLap <= @NgayKetThuc
     GROUP BY MA.TenMon, MA.HinhAnh, MA.GiaTien
     ORDER BY DoanhThu ASC;
