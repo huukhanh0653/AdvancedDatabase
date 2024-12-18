@@ -12,8 +12,10 @@ BEGIN
     WHERE MaCN = @MaCN AND NgayLap = @Ngay
     RETURN @DoanhThu
 END
-
 GO
+
+SELECT dbo.fn_DoanhThuChiNhanhTheoNgay ('1', '2024-12-19');
+go
 
 CREATE OR ALTER FUNCTION fn_DoanhThuChiNhanhTheoThang (@MaCN CHAR(2), @Thang INT, @Nam INT)
 RETURNS INT
