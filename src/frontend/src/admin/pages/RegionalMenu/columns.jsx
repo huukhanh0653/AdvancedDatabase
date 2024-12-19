@@ -4,7 +4,7 @@
 import { ArrowUpDown, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import React from "react";
-import { AlertDialogComponent } from "../../components/alert-dialog";
+import { AlertDialogComponent } from "@/src/admin/components/alert-dialog";
 
 export const columns = [
     {

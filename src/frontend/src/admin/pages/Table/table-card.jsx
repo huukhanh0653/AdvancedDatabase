@@ -66,7 +66,7 @@ export function TableCard({ tableID, billID, date, time, createdBy, isPending, i
         {isPending && isPaid && <Button onClick={() => navigate(`/table/${tableID}/order`)} variant="outline" size="icon" className="h-10 w-10 rounded-lg border-zinc-800 bg-transparent text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
           <Pencil className="h-4 w-4 " />
         </Button>}
-        {isPending && !isPaid && <PopupModal open={payOpen} setOpen={setPayOpen} formComponent={BillSummary} props={{title: "", description: ""}} className="bg-zinc-900 border-transparent" isPaid = {isPaid} billID= {billID}>
+        {isPending && !isPaid && <PopupModal open={payOpen} setOpen={setPayOpen} formComponent={BillSummary} props={{title: "", description: ""}} className="bg-zinc-900 border-transparent" isPaid = {isPaid} billID= {billID} createdBy={createdBy} tableID= {tableID}>
           <Button className="ml-auto flex-1 rounded-lg bg-rose-200 text-rose-900 hover:bg-rose-300">
             Thanh toán
           </Button>
@@ -142,26 +142,54 @@ function getTableInfo({tableID}) {
 
 
 
-function BillSummary({ setOpen, isPaid, billID }) {
+function BillSummary({ setOpen, isPaid, billID, createdBy, tableID }) {
   function handleClose() {
     setOpen(false)
   }
   const [data, setData] = useState(fetchBillSummary());
+  // const [billInfo, setBillInfo] = useState({subtotal: 0, tax: 0, discount: 0, total: 0});
   const subtotal = data.orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
   const tax = subtotal * 0.05
   const discount = 10
   const total = subtotal + tax * (discount/ 100)
 
+
+  // const calculateBill = () => {
+  //   const subtotal = data.orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
+  //   const tax = subtotal * 0.05
+  //   const discount = 10
+  //   const total = subtotal + tax * (discount/ 100)
+
+  //   setBillInfo({subtotal, tax, discount, total});
+  // }
+
+  // const fetchBillSummary = async () => {
+  //   const curBranch = localStorage.getItem('branch');
+  //   const api = `http://localhost:1433/api/bill-summary/${billID}/${curBranch ? curBranch : ''}`;
+  //   try {
+  //       const response = await fetch(api);
+  //       if (!response.ok) {
+  //           throw new Error('Failed to fetch data');
+  //       }
+  //       let data = await response.json();
+  //       setData(data);
+  //   } catch (error) {
+  //       toast.error('Error fetching data');
+  //   }
+  // };
+
+
   useEffect(() => {
     setData(fetchBillSummary());
+    // calculateBill();
     }, []);
 
   return (
     <Card className="bg-zinc-900 flex flex-col h-[600px] border-transparent">
       <div className="p-4 border-b border-zinc-800 flex items-center justify-between">
         <div>
-          <h2 className="text-white text-lg font-medium">Bàn {data.tableID}</h2>
-          <p className="text-zinc-400 text-sm">NV: {data.employeeName}</p>
+          <h2 className="text-white text-lg font-medium">Bàn {tableID}</h2>
+          <p className="text-zinc-400 text-sm">NV: {createdBy}</p>
         </div>
       </div>
       <ScrollArea

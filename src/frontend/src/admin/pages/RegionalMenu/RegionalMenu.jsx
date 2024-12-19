@@ -3,15 +3,11 @@ import DefaultLayout from '@/src/admin/layout/DefaultLayout';
 import { DataTable } from '@/components/ui/data-table';
 import { columns } from './columns';
 import { dishes, categories } from './data';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Label } from "@/components/ui/label"
 import { CategoryCard } from '@/src/admin/components/category-card';
 
 
-
-function getCategory() {
-  return categories.slice(1);
-}
 
 async function fetchDishes() {
   return dishes;
@@ -28,33 +24,23 @@ function countDishesByCategory(dishes) {
         categoryCount[category] = 1;
       }
     });
-    categoryCount["Tất cả"] = dishes.length;
     return categoryCount;
   }
 
 export default function RegionalMenu() {
-  const [data, setData] = useState([]);  // Initialize empty array to store data
-  const [category, setCategory] = useState([]);  // Initialize empty array to store data
-  const [loading, setLoading] = useState(true);  // Track loading state
-  const [error, setError] = useState(null);  // Track error state
-  const [filteredData, setFilteredData] = useState([]);  // Track error state
+  const [data, setData] = useState([]);  
+  const [category, setCategory] = useState([]);  
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(null);  
   const [dishOfCategory, setDishOfCategory] = useState({})
-  const [curCategory, setCurCategory] = useState("Tất cả");
+  const [curCategory, setCurCategory] = useState('');
 
   
-  function filterDishesByCategory(data, curCategory) {
-    if (curCategory === "Tất cả") {
-        setFilteredData(data)
-    }
-    else {
-        const filteredData = data.filter((dish) => dish.category === curCategory);
-        setFilteredData(filteredData);
-    }
-  }
-
-  useEffect(() => {
-    filterDishesByCategory(data, curCategory);
-  }, [curCategory]);
+  const filteredData = useMemo(() => {
+    return data.filter(row => {
+      const matchesCategory = curCategory === '' || row.category === curCategory;
+      return matchesCategory;
+  })}, [data, curCategory]);
 
 
   useEffect(() => {
@@ -62,7 +48,6 @@ export default function RegionalMenu() {
       try {
         const dishes = await fetchDishes();
         setData(dishes);  // Update the state with fetched data
-        setFilteredData(dishes);
         setCategory(categories);
         setLoading(false);  // Set loading to false once data is fetched
       } catch (error) {
@@ -78,6 +63,22 @@ export default function RegionalMenu() {
   useEffect(() => {
     setDishOfCategory(countDishesByCategory(data));
     }, [data]);
+
+
+  // const fetchData = async () => {
+  //   const curBranch = localStorage.getItem('branch');
+  //   const api = `http://localhost:1433/api/regional-menu/${curBranch ? curBranch : ''}`;
+  //   try {
+  //       const response = await fetch(api);
+  //       if (!response.ok) {
+  //           throw new Error('Failed to fetch data');
+  //       }
+  //       let data = await response.json();
+  //       setData(data);
+  //   } catch (error) {
+  //       toast.error('Error fetching data');
+  //   }
+  // };
 
   if (loading) {
     return <div>Loading...</div>;  // Display loading message while fetching data

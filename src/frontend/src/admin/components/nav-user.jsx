@@ -36,7 +36,20 @@ export function NavUser({
   user,
 }) {
   const { isMobile } = useSidebar()
-  const isBoss = JSON.parse(localStorage.getItem('user')).role === 'boss';
+  const _userbase64 = localStorage.getItem("user");
+  let isBoss = false;
+  if (_userbase64) {
+    const authuser = JSON.parse(decodeURIComponent(escape(atob(_userbase64))));
+    if (authuser.MaBP == 6) {
+      isBoss = true;
+    }
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("branch");
+    window.location.replace("/");
+  };
 
 
   return (
@@ -109,12 +122,10 @@ export function NavUser({
                 </a>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <a href = "#">
-                <DropdownMenuItem>
-                  <LogOut />
-                  Đăng xuất
-                </DropdownMenuItem>
-            </a>
+              <DropdownMenuItem onClick={handleLogout}>
+                <LogOut />
+                Đăng xuất
+              </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

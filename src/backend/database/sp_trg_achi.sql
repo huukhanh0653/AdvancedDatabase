@@ -202,12 +202,12 @@ BEGIN
 END;
 GO
 
-CREATE OR ALTER PROCEDURE sp_TaoPDM_Moi(@MaBan CHAR(3), @MaCN CHAR(2), @MaNV int, @MaHD int)
+CREATE OR ALTER PROCEDURE sp_TaoPDM_Moi(@MaBan CHAR(3), @MaNV int, @MaHD int)
 AS 
 BEGIN 
 	DECLARE @MaPhieu int;
-	INSERT INTO PHIEUDATMON(NgayLap, MaBan, MaCN, MaNV, MaHD)
-    VALUES (GETDATE(), @MaBan, @MaCN, @MaNV, @MaHD);
+	INSERT INTO PHIEUDATMON(NgayLap, MaBan, MaNV, MaHD)
+    VALUES (GETDATE(), @MaBan, @MaNV, @MaHD);
 
 	SET @MaPhieu = SCOPE_IDENTITY(); -- Retrieve the newly created invoice ID
 
@@ -270,12 +270,12 @@ BEGIN
 
 	SELECT @MaBan = MaBan, @MaCN = MaCN
 	FROM BAN
-	WHERE MaHD = @MaHD AND TinhTrang = 1
+	WHERE MaHD = @MaHD AND TinhTrang = 0
 
 	IF (@MaBan is not NULL AND @MaCN is not NULL)
 	BEGIN 
 		UPDATE BAN
-		SET TinhTrang = 0, MaHD = NULL
+		SET TinhTrang = 1, MaHD = NULL
 		WHERE MaBan = @MaBan AND MaCN = @MaCN
 	END;
 END;
@@ -337,7 +337,7 @@ BEGIN
 			WHERE MaThe = @MaThe;
 		END;
 
-		EXEC sp_UpdateBanToEmpty @MaHD = @MaHD;
+		--EXEC sp_UpdateBanToEmpty @MaHD = @MaHD;
 	END;
 END;
 GO

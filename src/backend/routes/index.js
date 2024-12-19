@@ -36,7 +36,7 @@ router.post("/login", function (req, res, next) {
         return next(err);
       }
 
-      return res.json({ message: "Logged in" });
+      return res.json({ message: "Logged in", user: user });
     });
   })(req, res, next);
 });

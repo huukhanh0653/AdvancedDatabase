@@ -5,7 +5,7 @@ import { Pen, ArrowUpDown, Trash } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { PopupModal } from "@/components/ui/modal"
 import React from "react";
-import { AlertDialogComponent } from "../../components/alert-dialog";
+import { AlertDialogComponent } from "@/src/admin/components/alert-dialog";
 import { EditDishForm } from "./Menu";
 
 export const columns = [

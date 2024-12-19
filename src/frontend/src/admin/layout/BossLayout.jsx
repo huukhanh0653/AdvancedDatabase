@@ -10,6 +10,11 @@ import {
 import { AppSidebar } from "@/src/admin/components/sidebar"
 
 
+// const setBranch = (branch) => { 
+//   localStorage.setItem("branch", branch);
+// }
+
+
 
 const data = {
   user: {
@@ -86,7 +91,7 @@ export default function BossLayout({ children }) {
   return (
     <div className="flex">
       {/* Sidebar */}
-      <AppSidebar data={data}>
+      <AppSidebar data={data} forBoss ={true}>
         {/* Main Content */}
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           {children}

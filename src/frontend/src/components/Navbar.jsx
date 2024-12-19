@@ -6,7 +6,7 @@ const Navbar = ({containerStyles}) => {
     <nav className={`${containerStyles}`}>
       <NavLink to={'/'} className={({isActive}) => isActive ? "active_link" : ""}> <div className="flexCenter gap-x-1"> <MdHomeFilled />Trang chủ</div></NavLink>
       <NavLink to={'/menu'} className={({isActive}) => isActive ? "active_link" : ""}> <div className="flexCenter gap-x-1"> <MdCategory />Thực đơn </div></NavLink>
-      <NavLink to={'/reservation'} className={({isActive}) => isActive ? "active_link" : ""}> <div className="flexCenter gap-x-1"> <MdContacts />Đặt bàn</div></NavLink>
+      <NavLink to={'/customer-reservation'} className={({isActive}) => isActive ? "active_link" : ""}> <div className="flexCenter gap-x-1"> <MdContacts />Đặt bàn</div></NavLink>
     </nav>
   )
 }

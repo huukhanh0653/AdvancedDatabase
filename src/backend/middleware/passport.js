@@ -38,11 +38,12 @@ passport.use(
 
       if (result.recordset.length > 0) {
         user = result.recordset[0];
+        console.log("Nhan vien", user);
         user = {
           MaNV: user.MaNV,
           Username: user.Username,
           MaBP: user.MaBP,
-          MaCN: user.CN_HienTai,
+          CN_HienTai: user.CN_Hientai
         };
       } else {
         result = await pool

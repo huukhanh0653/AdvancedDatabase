@@ -42,6 +42,21 @@ export default function Reservation() {
       console.error(error);
     }
   }
+
+  // const fetchData = async () => {
+  //   const curBranch = localStorage.getItem('branch');
+  //   const api = `http://localhost:1433/api/reservations/${curBranch ? curBranch : ''}`;
+  //   try {
+  //       const response = await fetch(api);
+  //       if (!response.ok) {
+  //           throw new Error('Failed to fetch data');
+  //       }
+  //       let data = await response.json();
+  //       setData(data);
+  //   } catch (error) {
+  //       toast.error('Error fetching data');
+  //   }
+  // };
   
 
   useEffect(() => {

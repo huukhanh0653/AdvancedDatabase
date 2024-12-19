@@ -123,7 +123,6 @@ export const dishes =
 ]
 
 export const categories= [
-    "Tất cả",
     "Sashimi",
     "Sushi",
     "Yakimono",
