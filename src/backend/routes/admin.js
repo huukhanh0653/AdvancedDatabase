@@ -66,12 +66,18 @@ router.get("/customers", async function (req, res, next) {
 });
 
 // Lay thong tin cac ban an trong mot chi nhanh bat ky
-router.post("/info", isEmployee, async function (req, res, next) {
+router.get("/info", async function (req, res, next) {
   let result = false;
   let MaCN = false;
 
-  if (isAdministrator(req.body.user)) MaCN = req.query.id;
-  else MaCN = req.body.user.CN_HienTai;
+  // if (isAdministrator(req.body.user)) MaCN = req.query.id;
+  // else MaCN = req.body.user.CN_HienTai;
+  if(req.query.id != null) {
+    MaCN = req.query.id;
+  }
+  else {
+    // MaCN = req.body.user.CN_HienTai;
+  }
 
   // Lấy thông tin các bàn hiện tại của chi nhánh
   result = await getTableInfo(MaCN);
@@ -100,7 +106,13 @@ router.get("/table", async function (req, res, next) {
 router.get("/reservations", async function (req, res, next) {
   let result = false;
   // Nếu là admin thì dùng id truyền vào, còn không thì lấy chi nhánh hiện tại
-  let MaCN = isAdministrator(req.user)? req.query.id: req.user.CN_HienTai;
+  let MaCN = false;
+  if(req.query.id != null) {
+    MaCN = req.query.id;
+  }
+  else {
+    // MaCN = req.body.user.CN_HienTai;
+  }
   let Date = req.query.date
     ? formatAsSQLDate(req.query.date)
     : formatAsSQLDate(Date.now());

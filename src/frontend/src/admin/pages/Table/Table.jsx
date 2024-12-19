@@ -4,6 +4,7 @@ import { TableCard } from "./table-card";
 import { tableInfo } from "./data";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { set } from "date-fns";
 
 
 
@@ -14,26 +15,10 @@ const functionToFetchData = () => {
 
 
 export default function Table() {
-  const [data, setData] = useState(functionToFetchData());
+  const [data, setData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
 
   const fetchData = async () => {
-    try {
-      const tables = await functionToFetchData();
-      setData(tables);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  const filteredData = useMemo(() => {  
-    return data.filter(row => {
-        const matchesSearch = row.tableID.toString().toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesSearch;
-    });
-  }, [data, searchQuery]);
-
-  const testfetchData = async () => {
     let curBranch
     let userinfo;
     const _userbase64 = localStorage.getItem("user");
@@ -48,19 +33,13 @@ export default function Table() {
     }
 
     const api = `http://localhost:5000/admin/info${curBranch}`;
-    console.log(api);
-    userinfo = JSON.stringify(userinfo);
-    console.log(userinfo);
 
     try {
         const response = await fetch(api, {
-            method: "POST", // Change to POST request
+            method: "GET", // Change to POST request
             headers: {
                 "Content-Type": "application/json", // Specify the content type
             },
-            body: JSON.stringify({
-             user: userinfo,
-            }), // Include user and branch in the body
         });
 
         if (!response.ok) {
@@ -68,6 +47,7 @@ export default function Table() {
         }
 
         const data = await response.json(); // Parse the JSON response
+        setData(data);
         console.log(data);
         // setData(data); // Uncomment if you need to set data in your application
     } catch (error) {
@@ -75,12 +55,21 @@ export default function Table() {
     }
 
   };
+
+
+  const filteredData = useMemo(() => {  
+    return data.filter(row => {
+        const matchesSearch = row.tableID.toString().toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesSearch;
+    });
+  }, [data, searchQuery]);
+
+  
   
 
   useEffect(() => {
     fetchData();
-    testfetchData();
-  });
+  }, []);
     
 
     return (

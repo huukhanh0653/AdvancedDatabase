@@ -126,11 +126,12 @@ async function getTableInfo(MaCN) {
 }
 
 async function getReservations(MaCN, Date) {
-  let date = formatAsSQLDate(Date);
+  let date = Date
   try {
-    let query = `SELECT * FROM DATBAN WHERE CHINHANH = ${MaCN} AND 
+    let query = `SELECT * FROM DATBAN WHERE ChiNhanh = ${MaCN} AND 
                 CONVERT(DATE,NgayGioDat) = CONVERT(DATE,'${date}')`;
     let result = await queryDB(query);
+    console.log(result);
     if (!result) {
       return [];
     }
@@ -149,6 +150,7 @@ async function getReservations(MaCN, Date) {
       element["note"] = element["GhiChu"] ? element["GhiChu"] : null;
       delete element["GhiChu"];
     });
+
     return result;
   } catch (err) {
     console.error("Error executing getReservations:", err);

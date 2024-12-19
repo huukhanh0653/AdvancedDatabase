@@ -14,19 +14,31 @@ export default function Bill() {
   const [data, setData] = useState([]);  // Initialize empty array to store data
   const [loading, setLoading] = useState(true);  // Track loading state
   const [error, setError] = useState(null);  // Track error state
+  // const fetchData = async () => {
+  //   let curBranch
+  //   let userinfo;
+  //   const _userbase64 = localStorage.getItem("user");
+  //   if (_userbase64) {
+  //     userinfo = JSON.parse(decodeURIComponent(escape(atob(_userbase64))));
+  //   }
+  //   if(userinfo.MaBP == 6) {
+  //     curBranch=`?id=${localStorage.getItem('branch')}`;
+  //   }
+  //   else {
+  //     curBranch = '';
+  //   }
+  //   const api = `http://localhost:5000/admin/bill${curBranch}`;
+  //   try {
+  //     const data = await fetch(api)  // Fetch data from API
+  //     setData(data);  // Set data in state
+  //     setLoading(false);  // Update loading state
+  //   } catch (error) {
+  //     setError(error);  // Update error state
+  //     setLoading(false);  // Update loading state
+  //   }
+  // };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const bills = await fetchBills();
-        setData(bills);  // Update the state with fetched data
-        setLoading(false);  // Set loading to false once data is fetched
-      } catch (error) {
-        setError(error);  // Handle error if any
-        setLoading(false);  // Set loading to false even in case of error
-      }
-    };
-    
+  useEffect(() => {  
     fetchData();
   }, []);  // Empty dependency array means this effect runs once when the component mounts
 
