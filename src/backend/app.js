@@ -27,6 +27,7 @@ app.use(cors());
 const indexRouter = require("./routes/index");
 const customerRouter = require("./routes/customer");
 const adminRouter = require("./routes/admin");
+const companyRouter = require("./routes/company");
 const {isEmployee, isAdministrator, isManager } = require("./middleware/auth");
 
 app.use(logger("dev"));
@@ -36,6 +37,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/", indexRouter);
 app.use("/customer", customerRouter);
 app.use("/admin", adminRouter);
+app.use("/company", companyRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

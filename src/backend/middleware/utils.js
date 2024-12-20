@@ -53,6 +53,7 @@ function formatAsSQLDate(date) {
   return formattedDate;
 }
 
+
 module.exports = {
   formatCurrency,
   formatAsVietnameseDate,

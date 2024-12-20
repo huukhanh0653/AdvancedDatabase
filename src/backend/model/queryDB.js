@@ -6,6 +6,7 @@ const {
   formatAsVietnameseDate,
 } = require("../middleware/utils");
 const e = require("express");
+const { get } = require("../routes");
 
 async function executeProcedure(procedureName, params) {
   try {
@@ -19,9 +20,32 @@ async function executeProcedure(procedureName, params) {
     }
 
     const result = await request.execute(procedureName);
-    return result;
+    return result.recordset ? result.recordset : result;
   } catch (err) {
     console.error("Error executing procedure:", err);
+    return null;
+  }
+}
+
+async function callFunction(functionName, params) {
+  try {
+    const pool = await poolPromise;
+    const request = pool.request();
+
+    if (params) {
+      params.forEach((param) => {
+        request.input(param.name, param.type, param.value);
+      });
+    }
+
+    const result = await request.query(
+      `SELECT dbo.${functionName}(${params
+        .map((param) => param.name)
+        .join(",")})`
+    );
+    return result.recordset ? result.recordset : result;
+  } catch (err) {
+    console.error("Error executing function:", err);
     return null;
   }
 }
@@ -35,22 +59,27 @@ async function queryDB(query) {
       return null;
     }
 
-    return result;
+    return result.recordset ? result.recordset : result;
   } catch (err) {
     console.log(err);
     return null;
   }
 }
 
-async function queryPaginating(tableName, orderBy, pageSize, pageNumber) {
+async function queryPaginating(query, pageSize, pageNumber) {
   try {
-    const pool = await poolPromise;
-    const query = `SELECT * FROM ${tableName} 
-                   ORDER BY ${orderBy} ASC
-                   OFFSET ${pageSize * (pageNumber - 1)} ROWS
-                   FETCH NEXT ${pageSize} ROWS ONLY`;
-    const result = await pool.request().query(query);
-    return result.recordset;
+    const result = await executeProcedure("SP_QUERY_PAGE", [
+      { name: "Query", type: sql.NVarChar, value: query },
+      { name: "PageSize", type: sql.Int, value: pageSize },
+      { name: "Page", type: sql.Int, value: pageNumber },
+    ]);
+
+
+    if (!result) {
+      return [];
+    }
+
+    return result.recordset ? result.recordset : result;
   } catch (err) {
     console.error("Error executing paginated query:", err);
     return [];
@@ -59,64 +88,19 @@ async function queryPaginating(tableName, orderBy, pageSize, pageNumber) {
 
 async function getTableInfo(MaCN) {
   try {
-    // Get the amount of tables in the restaurant
-    let tableAmount = await queryDB(
-      `SELECT MABAN FROM BAN WHERE MaCN = ${MaCN}`
-    );
-    if (!tableAmount) {
+    let result = await executeProcedure("SP_ADMIN_GET_INFO", [
+      { name: "MACN", type: sql.Int, value: MaCN },
+    ]);
+
+
+    if (!result) {
       return [];
-    }
-    tableAmount = tableAmount.recordset;
-
-    // Get the amount of tables that are currently occupied
-    let query = `SELECT BAN.*, PHIEUDATMON.NgayLap, PHIEUDATMON.MaPhieu, 
-                NHANVIEN.HOTEN
-                FROM BAN
-                JOIN HOADON ON BAN.MaHD = HOADON.MaHD
-                JOIN PHIEUDATMON ON BAN.MaBan = PHIEUDATMON.MaBan
-                JOIN NHANVIEN ON NHANVIEN.MaNV = PHIEUDATMON.MaNV
-                WHERE BAN.MaCN = ${MaCN}
-                ORDER BY BAN.MABAN ASC`;
-
-    let table = await queryDB(query);
-    if (!table) {
-      return [];
-    }
-
-    // Get the amount of tables that have been paid
-    query = `SELECT MAHD FROM DATBAN WHERE CHINHANH = ${MaCN}`;
-    let datban = await queryDB(query);
-    if (!datban) {
-      return [];
-    }
-
-    let result = [];
-
-    const tableMap = new Map(table.recordset.map((item) => [item.MaBan, item]));
-    const datbanSet = new Set(datban.recordset.map((item) => item.MAHD));
-
-    for (let i = 0; i < tableAmount.length; i++) {
-      let item = {};
-      item["tableID"] = tableAmount[i].MABAN;
-
-      let temp = tableMap.get(item["tableID"]);
-
-      if (temp) {
-        item["billID"] = temp.MaHD;
-        item["date"] = temp.NgayLap.toISOString().split("T")[0];
-        item["time"] = temp.NgayLap.toISOString().split("T")[1].split(".")[0];
-        item["createdBy"] = temp.HOTEN;
-        item["isPending"] = true;
-        item["isPaid"] = datbanSet.has(temp.MaHD);
-      } else {
-        item["billID"] = null;
-        item["date"] = null;
-        item["createdBy"] = null;
-        item["isPending"] = false;
-        item["isPaid"] = null;
-      }
-      result.push(item);
-    }
+    };
+    result.forEach((element) => {
+      element["time"] = element["time"]
+        ? element["time"].toISOString().split("T")[1].split(".")[0]
+        : null;
+    });
 
     return result;
   } catch (err) {
@@ -130,8 +114,9 @@ async function getReservations(MaCN, Date) {
   try {
     let query = `SELECT * FROM DATBAN WHERE ChiNhanh = ${MaCN} AND 
                 CONVERT(DATE,NgayGioDat) = CONVERT(DATE,'${date}')`;
+
     let result = await queryDB(query);
-    console.log(result);
+
     if (!result) {
       return [];
     }
@@ -181,6 +166,7 @@ async function getTableDetail(MaBan) {
       item["time"] = PhieuDatMon[i].NgayLap.toISOString()
         .split("T")[1]
         .split(".")[0];
+
       query = `SELECT MONAN.TenMon, MONAN.GiaTien, CHONMON.SoLuong
               FROM CHONMON JOIN MONAN ON CHONMON.MaMon = MONAN.MaMon
               WHERE CHONMON.MaPhieu =  ${item["orderID"]}`;
@@ -216,24 +202,245 @@ async function getTableDetail(MaBan) {
 
 async function getBillDetail(MaHD) {
   try {
-    let query = `SELECT MAPHIEU FROM PHIEUDAT MON WHERE MAHD = ${MaHD}`;
+    let query = `SELECT PHIEUDATMON.*, NHANVIEN.HoTen FROM PHIEUDATMON
+                JOIN NHANVIEN ON NHANVIEN.MaNV = PHIEUDATMON.MaNV 
+                WHERE PHIEUDATMON.MaHD = ${MaHD}`;
     let PhieuDatMon = await queryDB(query);
     if (!PhieuDatMon) {
       return [];
     }
-    PhieuDatMon = PhieuDatMon.recordset;
     let result = [];
+
+
+    for (let i = 0; i < PhieuDatMon.length; i++) {
+      let item = {};
+      item["orderID"] = PhieuDatMon[i].MaPhieu;
+      item["createdBy"] = PhieuDatMon[i].HoTen;
+      item["date"] = PhieuDatMon[i].NgayLap.toISOString().split("T")[0];
+      item["time"] = PhieuDatMon[i].NgayLap.toISOString()
+        .split("T")[1]
+        .split(".")[0];
+
+      query = `SELECT MONAN.TenMon, MONAN.GiaTien, CHONMON.SoLuong
+              FROM CHONMON JOIN MONAN ON CHONMON.MaMon = MONAN.MaMon
+              WHERE CHONMON.MaPhieu = ${item["orderID"]}`;
+
+      let MonAn = await queryDB(query);
+      item["subTotal"] = 0;
+      if (MonAn) {
+        item["data"] = MonAn;
+        item["data"].forEach((element) => {
+          item["subTotal"] += element["GiaTien"].toFixed(0) * element["SoLuong"];
+
+          element["GiaTien"] = formatCurrency(element["GiaTien"].toFixed(0));
+          element["price"] = element["GiaTien"];
+          delete element["GiaTien"];
+
+          element["quantity"] = element["SoLuong"];
+          delete element["SoLuong"];
+
+          element["dishName"] = element["TenMon"];
+          delete element["TenMon"];
+
+
+        });
+      } else item["data"] = [];
+      item["subTotal"] = formatCurrency(item["subTotal"].toFixed(0));
+
+      result.push(item);
+    }
+
+
+    return result;
   } catch (err) {
     console.log(err);
     return [];
   }
 }
 
+async function getStatistic(MaCN, fromDate, toDate) {}
+
+async function getCustomer(pageSize, pageNumber) {
+  try {
+    let query = `SELECT * FROM KHACHHANG`;
+
+    const result = await queryPaginating(query, pageSize, pageNumber);
+
+    if (!result) return [];
+
+    result.forEach((element) => {
+      element["username"] = element["Username"];
+      delete element["Username"];
+      element["customerID"] = element["MaKH"];
+      delete element["MaKH"];
+      element["fullName"] = element["HoTen"];
+      delete element["HoTen"];
+      element["phoneNumber"] = element["SDT"];
+      delete element["SDT"];
+      element["email"] = element["Email"];
+      delete element["Email"];
+      element["address"] = element["DiaChi"];
+      delete element["DiaChi"];
+      element["ssn"] = element["cccd"];
+      delete element["cccd"];
+      element["gender"] = element["GioiTinh"];
+      delete element["GioiTinh"];
+    });
+
+    return result;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
+async function getDishes(MACN, Category, pageSize, pageNumber) {
+  try {
+    let result = await executeProcedure("SP_GETDISHES", [
+      { name: "MACN", type: sql.NVarChar, value: MACN },
+      { name: "CATEGORY", type: sql.NVarChar, value: Category },
+      { name: "PageSize", type: sql.Int, value: pageSize },
+      { name: "Page", type: sql.Int, value: pageNumber },
+    ]);
+
+    if (!result) return [];
+
+    result.forEach((element) => {
+      element["dishID"] = element["MaMon"];
+      delete element["MaMon"];
+      element["dishName"] = element["TenMon"];
+      delete element["TenMon"];
+      element["price"] = formatCurrency(element["GiaTien"].toFixed(0));
+      delete element["GiaTien"];
+      element["image"] = element["HinhAnh"];
+      delete element["HinhAnh"];
+      element["deliverable"] = element["GiaoHang"];
+      delete element["GiaoHang"];
+      element["category"] = element["PhanLoai"];
+      delete element["PhanLoai"];
+      element["availability"] = element["isServed"];
+      delete element["isServed"];
+
+
+    });
+
+    return result;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
+
+async function getCompanyDishes(Category, pageSize, pageNumber) {
+  try {
+    let result = await queryPaginating(
+      `SELECT MONAN.*, KV.MT, KV.MN, KV.MB
+       FROM (SELECT MONAN1.MaMon,
+            MAX(CASE WHEN THUCDON.MaKV = 'MB' THEN 1 ELSE 0 END) AS MB,
+            MAX(CASE WHEN THUCDON.MaKV = 'MT' THEN 1 ELSE 0 END) AS MT, 
+            MAX(CASE WHEN THUCDON.MaKV = 'MN' THEN 1 ELSE 0 END) AS MN
+            FROM MONAN MONAN1 JOIN THUCDON ON MONAN1.MaMon = THUCDON.MaMon 
+            WHERE MONAN1.PhanLoai = '${Category}'
+			GROUP BY MONAN1.MaMon) AS KV
+      JOIN MONAN ON KV.MaMon = MONAN.MaMon`,
+      pageSize,
+      pageNumber
+    )
+
+    if (!result) return [];
+
+    result.forEach((element) => {
+      element["dishID"] = element["MaMon"];
+      delete element["MaMon"];
+      element["dishName"] = element["TenMon"];
+      delete element["TenMon"];
+      element["price"] = formatCurrency(element["GiaTien"].toFixed(0));
+      delete element["GiaTien"];
+      element["image"] = element["HinhAnh"];
+      delete element["HinhAnh"];
+      element["deliverable"] = element["GiaoHang"];
+      delete element["GiaoHang"];
+      element["category"] = element["PhanLoai"];
+      delete element["PhanLoai"];
+      element["availability"] = element["isServed"];
+      delete element["isServed"];
+
+
+    });
+
+    return result;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
+
+async function getRegionalDishes(MAKV, Category, pageSize, pageNumber) {
+  try {
+    let query = `SELECT MONAN.* FROM THUCDON JOIN MONAN 
+                ON THUCDON.MaMon = MONAN.MaMon 
+                WHERE THUCDON.MaKV = '${MAKV}' AND PhanLoai LIKE '${Category}'`;
+    let result = await queryPaginating(query, pageSize, pageNumber);
+
+    if (!result) return [];
+
+        result.forEach((element) => {
+          element["dishID"] = element["MaMon"];
+          delete element["MaMon"];
+          element["dishName"] = element["TenMon"];
+          delete element["TenMon"];
+          element["price"] = formatCurrency(element["GiaTien"].toFixed(0));
+          delete element["GiaTien"];
+          element["image"] = element["HinhAnh"];
+          delete element["HinhAnh"];
+          element["delivable"] = element["GiaoHang"];
+          delete element["GiaoHang"];
+          element["category"] = element["PhanLoai"];
+          delete element["PhanLoai"];
+
+          element["delivable"] = element["delivable"] === 1 ? "Có" : "Không";
+        });
+
+    return result;
+
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
+async function getMember(MaKH) {
+  try {
+    let query = `SELECT * FROM TheThanhVien WHERE MaKH = ${MaKH}`;
+
+    let result = await queryDB(query);
+
+    if (!result) return null;
+
+    return result.recordset ? result.recordset : result;
+
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+  
+
 module.exports = {
   queryPaginating,
   getTableInfo,
   getTableDetail,
+  getBillDetail,
   queryDB,
   getReservations,
   executeProcedure,
+  callFunction,
+  getCustomer,
+  getStatistic,
+  getDishes,
+  getMember,
+  getRegionalDishes,
+  getCompanyDishes,
 };

@@ -19,6 +19,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 const setBranch = (branch) => {
   localStorage.setItem('branch', JSON.stringify(branch));
@@ -50,17 +51,19 @@ export function NavSelectBranch({
                     </SidebarMenuAction>
                   </CollapsibleTrigger>
                   <CollapsibleContent>
-                    <SidebarMenuSub>
-                      {item.items?.map((subItem, index) => (
-                        <SidebarMenuSubItem key={subItem.title}>
-                          <SidebarMenuSubButton onClick={() => setBranch(index + 1)} asChild>
-                            <Link to={subItem.url}>
-                              <span className="flex" >{subItem.title} </span>
-                            </Link>
-                          </SidebarMenuSubButton>
-                        </SidebarMenuSubItem>
-                      ))}
-                    </SidebarMenuSub>
+                    <ScrollArea className="h-[200px]">
+                      <SidebarMenuSub>
+                        {item.items?.map((subItem, index) => (
+                          <SidebarMenuSubItem key={subItem.title}>
+                            <SidebarMenuSubButton onClick={() => setBranch(index + 1)} asChild>
+                              <Link to={subItem.url}>
+                                <span className="flex">{subItem.title}</span>
+                              </Link>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        ))}
+                      </SidebarMenuSub>
+                    </ScrollArea>
                   </CollapsibleContent>
                 </>
               ) : null}

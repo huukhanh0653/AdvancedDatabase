@@ -35,20 +35,11 @@ const data = {
     url: "#",
     icon: Building,
     isActive: true,
-    items: [
-      {
-        title: "Chi nhánh 1",
-        url: "/reservation",
-      },
-      {
-        title: "Chi nhánh 2",
-        url: "/reservation",
-      },
-      {
-        title: "Chi nhánh 3",
-        url: "/reservation",
-      },
-    ],
+    // generate 15 items for each branch
+    items: Array.from({ length: 15 }, (_, i) => ({
+      title: `Chi nhánh ${i + 1}`,
+      url: "/dashboard",
+    })),
    }],
   navManagement: [
     {

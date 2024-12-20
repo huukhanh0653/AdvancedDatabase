@@ -32,9 +32,9 @@ export function CompletedOrderCard({data , orderID, date, time, subTotal, create
           <div className="space-y-3 py-2">
             {data.map((row, i) => (
               <div key={i} className="grid grid-cols-[auto_2.5fr_auto] items-center gap-5 text-sm">
-                <div className="text-zinc-400">{row.SoLuong}</div>
-                <div>        {row.MonAn}</div>
-                <div>{row.GiaTien * 10000}</div>
+                <div className="text-zinc-400">{row.quantity}</div>
+                <div>        {row.dishName}</div>
+                <div>{row.price}</div>
               </div>
             ))}
           </div>

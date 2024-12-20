@@ -34,7 +34,7 @@ function isManager(req, res, next) {
 
 // This function is used to check if the user is an administrator
 
-function isAdministrator(user)
+function _isAdministrator(user)
 {
   if (user.MaNV && user.MaBP == 6) return true; // 6 is the code for the administrator department
   return false;
@@ -53,5 +53,5 @@ module.exports = {
   isAuthenticated,
   isEmployee,
   isManager,
-  isAdministrator
+  _isAdministrator
 };
