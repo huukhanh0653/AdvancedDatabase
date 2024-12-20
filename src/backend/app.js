@@ -1,37 +1,23 @@
-const createError = require("http-errors");
 const express = require("express");
-require("dotenv").config();
-const session = require("express-session");
-const path = require("path");
 const logger = require("morgan");
-const fs = require("fs");
 const cors = require("cors");
-
-
-const { sql, poolPromise } = require("./model/dbConfig");
-
-const app = express();
-
-app.set("trust proxy", 1); // trust first proxy
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: true },
-  })
-);
-
-app.use(cors());
-
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const createError = require("http-errors");
+const multer = require("multer");
 const indexRouter = require("./routes/index");
 const customerRouter = require("./routes/customer");
 const adminRouter = require("./routes/admin");
-const {isEmployee, isAdministrator, isManager } = require("./middleware/auth");
+
+const app = express();
 
 app.use(logger("dev"));
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ extended: false }));
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+const upload = multer(); // Cấu hình multer để xử lý form-data
 
 app.use("/", indexRouter);
 app.use("/customer", customerRouter);
@@ -49,7 +35,11 @@ app.use(function (err, req, res, next) {
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
   // render the error page
-  res.send("Unexpected Error").status(err.status || 500);
+  res.status(err.status || 500);
+  res.json({
+    message: err.message,
+    error: req.app.get("env") === "development" ? err : {}
+  });
 });
 
 module.exports = app;
