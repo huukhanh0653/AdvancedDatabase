@@ -1,27 +1,41 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState} from "react";
 import DefaultLayout from "@/src/admin/layout/DefaultLayout";
 import { CompletedOrderCard } from "../completed-order-card";
-import { Orders } from "./data";
+import { useParams } from "react-router-dom";
 
 
-const functionToFetchData = () => {
-  return Orders;
-}
+
+
 
 
 
 export default function BillDetail() {
   const [data, setData] = useState(functionToFetchData());
+  const billID = useParams().billID;
+
 
   const fetchData = async () => {
+    const api = `http://localhost:5000/admin/bill-detail?billID=${billID}`;
+
     try {
-      const orders = await functionToFetchData();
-      setData(orders);
+      const response = await fetch(api, {
+        method: "GET", 
+        headers: {
+          "Content-Type": "application/json"
+      }});
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await response.json();
+
+      setData(data);
     } catch (error) {
       console.error(error);
     }
-  }
-  
+  };
+    
 
   useEffect(() => {
     fetchData();

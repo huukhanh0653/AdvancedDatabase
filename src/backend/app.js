@@ -8,8 +8,20 @@ const multer = require("multer");
 const indexRouter = require("./routes/index");
 const customerRouter = require("./routes/customer");
 const adminRouter = require("./routes/admin");
-
+const companyRouter = require("./routes/company");
+require("dotenv").config();
+const session = require("express-session");
 const app = express();
+
+app.set("trust proxy", 1); // trust first proxy
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true },
+  })
+);
 
 app.use(logger("dev"));
 app.use(cors());
@@ -22,6 +34,7 @@ const upload = multer(); // Cấu hình multer để xử lý form-data
 app.use("/", indexRouter);
 app.use("/customer", customerRouter);
 app.use("/admin", adminRouter);
+app.use("/company", companyRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

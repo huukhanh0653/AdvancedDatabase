@@ -43,24 +43,44 @@ export default function Reservation() {
     }
   }
 
-  // const fetchData = async () => {
-  //   const curBranch = localStorage.getItem('branch');
-  //   const api = `http://localhost:1433/api/reservations/${curBranch ? curBranch : ''}`;
+  // const testfetchData = async () => {
+  //   let curBranch
+  //   let userinfo;
+  //   const _userbase64 = localStorage.getItem("user");
+  //   if (_userbase64) {
+  //     userinfo = JSON.parse(decodeURIComponent(escape(atob(_userbase64))));
+  //   }
+  //   if(userinfo.MaBP == 6) {
+  //     curBranch=`?id=${localStorage.getItem('branch')}`;
+  //   }
+  //   else {
+  //     curBranch = '';
+  //   }
+  //   const formattedDate = new Intl.DateTimeFormat('en-GB').format(date); 
+  //   const api = `http://localhost:5000/admin/reservations${curBranch ? curBranch : ''}&date=2024-12-05`;
   //   try {
-  //       const response = await fetch(api);
+  //       const response = await fetch(api, 
+  //         {
+  //           method: "GET",
+  //           headers: {
+  //               "Content-Type": "application/json",
+  //           },
+  //         }
+  //       );
   //       if (!response.ok) {
   //           throw new Error('Failed to fetch data');
   //       }
   //       let data = await response.json();
-  //       setData(data);
+  //       console.log(data);
   //   } catch (error) {
-  //       toast.error('Error fetching data');
+  //       console.log('Error fetching data');
   //   }
   // };
   
 
   useEffect(() => {
     fetchData();
+    // testfetchData();
   });
     
 

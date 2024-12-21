@@ -3,11 +3,10 @@ import DefaultLayout from '@/src/admin/layout/DefaultLayout';
 import { DataTable } from '@/components/ui/data-table';
 import { Button } from '@/components/ui/button';
 import { columns } from './columns';
-import { employees } from './data';
 import { useEffect, useState } from 'react';
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { cn } from "@/lib/utils"
+import { cn, formattedDate } from "@/lib/utils"
 import { PopupModal } from "@/components/ui/modal"
 import { DatePicker } from '@/components/ui/date-picker';
 import {
@@ -26,42 +25,67 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 
-async function fetchEmployees() {
-  return employees;
-}   
 
 export default function Employee() {
   const [data, setData] = useState([]);  // Initialize empty array to store data
-  const [loading, setLoading] = useState(true);  // Track loading state
   const [error, setError] = useState(null);  // Track error state
   const [AddEmployeeOpen, setAddEmployeeOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(5);
+  const [totalSize, setTotalSize] = useState(0);
+
+  const handlePrevPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  };
+
+  const fetchData = async () => {
+    let curBranch
+    let userinfo;
+    const _userbase64 = localStorage.getItem("user");
+    if (_userbase64) {
+      userinfo = JSON.parse(decodeURIComponent(escape(atob(_userbase64))));
+    }
+    if(userinfo.MaBP == 6) {
+      curBranch=`?CurBranch=${localStorage.getItem('branch')}`;
+    }
+    else {
+      curBranch = '';
+    }
+    try {
+      const totalSize = await fetch(`http://localhost:5000/admin/total-employee${curBranch}`);
+      
+      const total = await totalSize.json();
+      setTotalSize(total.TotalEmployee);
+      setTotalPages(Math.ceil(total.TotalEmployee / 10));
+    }
+    catch (error) {
+      console.error(error);
+    }
+    try {
+      const data = await fetch(`http://localhost:5000/admin/employees${curBranch}&PageSize=10&CurrentPage=${currentPage}`).then((response) => response.json());
+      setData(data);  // Set data in state
+    } catch (error) {
+      setError(error);  // Update error state
+    }
+  };
+
+
+
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const employees = await fetchEmployees();
-        setData(employees);  // Update the state with fetched data
-        setLoading(false);  // Set loading to false once data is fetched
-      } catch (error) {
-        setError(error);  // Handle error if any
-        setLoading(false);  // Set loading to false even in case of error
-      }
-    };
-    
     fetchData();
-  }, []);  // Empty dependency array means this effect runs once when the component mounts
-
-  if (loading) {
-    return <div>Loading...</div>;  // Display loading message while fetching data
-  }
-
+  }, [currentPage]);  
   if (error) {
-    return <div>Error: {error.message}</div>;  // Display error if any
+    return <div>Error: {error.message}</div>;  
   }
   return (
       <DefaultLayout>
          <div className="flex justify-between items-center mb-7 mt-0">
-          <h1 className="text-2xl font-normal ">Nhân viên ({data.length})</h1>
+          <h1 className="text-2xl font-normal ">Nhân viên ({totalSize})</h1>
           
             <PopupModal open={AddEmployeeOpen} setOpen={setAddEmployeeOpen} formComponent={AddEmployeeForm} props={{title: "Thêm nhân viên mới", description: "Nhập thông tin nhân viên"}}>
               <Button className="px-6 py-0 text-sm font-semibold bg-blue-500 text-white hover:bg-blue-600 rounded-lg ml-6">
@@ -71,6 +95,24 @@ export default function Employee() {
 
           </div>
         <DataTable columns={columns} data={data} filterProps={{column: "HoTen", placeholder: "Tìm nhân viên bằng tên..."}}/>
+        <div className="flex items-center justify-end space-x-2 py-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </Button>
+          </div>
       </DefaultLayout>
   )
 }
@@ -110,10 +152,6 @@ function AddEmployeeForm({ className, setOpen }) {
         />
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="username">Tên đăng nhập tài khoản POS</Label>
-        <Input id="username" defaultValue="@shadcn" />
-      </div>
-      <div className="grid gap-2">
         <Label htmlFor="department">Mã bộ phận</Label>
         <Input id="department" defaultValue="1" />
       </div>
@@ -124,13 +162,13 @@ function AddEmployeeForm({ className, setOpen }) {
 }
 
 
-export function EditEmployeeForm({ className, setOpen }) {
+export function EditEmployeeForm({ className, setOpen, employee }) {
   const handleClose = () => {
     setOpen(false); // This will close the popup modal
   };
-  const [birthDate, setBirthDate] = useState(null);
-  const [startDate, setStartDate] = useState(null);
-  const [terminateDate, setTerminateDate] = useState(null);
+  const [birthDate, setBirthDate] = useState(employee.NgaySinh);
+  const [startDate, setStartDate] = useState(employee.NgayVaoLam);
+  const [terminateDate, setTerminateDate] = useState(employee.NgayNghiViec);
 
 
   const handleSubmit = (e) => {
@@ -142,7 +180,7 @@ export function EditEmployeeForm({ className, setOpen }) {
     <form onSubmit={handleSubmit} className={cn("grid items-start gap-4", className)}>
       <div className="grid gap-2">
         <Label htmlFor="name">Họ tên</Label>
-        <Input type="text" id="name" defaultValue="Nguyễn Văn A" />
+        <Input type="text" id="name" defaultValue={employee.HoTen}/>
       </div>
       <div className="grid gap-2">
         <Label htmlFor="dob">Ngày sinh</Label>
@@ -166,24 +204,20 @@ export function EditEmployeeForm({ className, setOpen }) {
         />
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="username">Tên đăng nhập tài khoản POS</Label>
-        <Input id="username" defaultValue="@shadcn" />
-      </div>
-      <div className="grid gap-2">
         <Label htmlFor="department">Mã bộ phận</Label>
-        <Input id="department" defaultValue="1" />
+        <Input id="department" defaultValue={employee.MaBP} />
       </div>
-      <Button type="submit">Sửa</Button>
+      <Button className="bg-blue-500 text-white" type="submit">Sửa</Button>
       <Button onClick={handleClose} variant="outline">Hủy</Button>
     </form>
   )
 }
 
-export function TransferEmployeeForm({ className, setOpen }) {
+export function TransferEmployeeForm({ className, setOpen, curBranch }) {
   const handleClose = () => {
     setOpen(false); // This will close the popup modal
   };
-  const [startDate, setStartDate] = useState(null);
+  const [startDate, setStartDate] = useState(new Date());
 
 
   const handleSubmit = (e) => {
@@ -195,11 +229,11 @@ export function TransferEmployeeForm({ className, setOpen }) {
     <form onSubmit={handleSubmit} className={cn("grid items-start gap-4", className)}>
       <div className="grid gap-2">
         <Label htmlFor="branch">Chi nhánh công tác hiện tại</Label>
-        <Input type="text" id="branch" defaultValue="1" />
+        <Input type="text" id="branch" defaultValue={curBranch} />
       </div>
       <div className="grid gap-2">
         <Label htmlFor="new_branch">Chi nhánh công tác mới</Label>
-        <Input type="text" id="new_branch" defaultValue="2" />
+        <Input type="text" id="new_branch" defaultValue="Chi nhánh mới..." />
       </div>
       <div className="grid gap-2">
         <Label htmlFor="start_date">Ngày bắt đầu công tác</Label>
@@ -210,9 +244,9 @@ export function TransferEmployeeForm({ className, setOpen }) {
       </div>
       <div className="grid gap-2">
         <Label htmlFor="manager_confirm">Nhập mật khẩu quản lí để xác nhận</Label>
-        <Input type="password" id="manager_confirm" defaultValue="****" />
+        <Input type="password" id="manager_confirm" defaultValue="" />
       </div>
-      <Button type="submit">Xác nhận</Button>
+      <Button className="bg-blue-500 text-white" type="submit">Xác nhận</Button>
       <Button onClick={handleClose} variant="outline">Hủy</Button>
     </form>
   )
@@ -248,25 +282,23 @@ export function TerminateEmployeeForm({ className, setOpen }) {
   )
 }
 
-export function WorkHistoryDetail({ className }) {
+export function WorkHistoryDetail({ className, employeeID, employeeDepartment }) {
   const rowsPerPage = 5;
   const [startIndex, setStartIndex] = useState(0);
   const [endIndex, setEndIndex] = useState(5);
-  const data = [
-    { branch: "Hà Nội", startDate: "2024-11-01", endDate: "2024-11-15", department: "Nhân sự" },
-    { branch: "TP. HCM", startDate: "2024-11-05", endDate: "2024-11-20", department: "Kế toán" },
-    { branch: "Đà Nẵng", startDate: "2024-10-25", endDate: "2024-11-10", department: "Kỹ thuật" },
-    { branch: "Cần Thơ", startDate: "2024-11-03", endDate: "2024-11-18", department: "Marketing" },
-    { branch: "Hải Phòng", startDate: "2024-10-30", endDate: "2024-11-12", department: "Bán hàng" },
-    { branch: "Nha Trang", startDate: "2024-11-07", endDate: "2024-11-21", department: "Thiết kế" },
-    { branch: "Nha Trang", startDate: "2024-11-09", endDate: "2024-11-21", department: "Thiết kế" },
-  ];
+  const [data, setData] = useState([]);
   
-  const getData = async () => {
-    return data;
+  
+  const fetchData = async () => {
+    try {
+      const data = await fetch(`http://localhost:5000/admin/work-history?employeeID=${employeeID}`).then((response) => response.json());
+      setData(data);  // Set data in state
+    } catch (error) {
+      setError(error);  // Update error state
+    }
   }
   useEffect(() => {
-    getData();
+    fetchData();
   }, [])
 
   
@@ -284,12 +316,12 @@ export function WorkHistoryDetail({ className }) {
         <TableBody >
           {data.slice(startIndex, endIndex).map((item) => {
             return (
-            <React.Fragment key={`${item.branch}-${item.startDate}-${item.endDate}`}>
+            <React.Fragment key={`${item.MaCN}-${item.NgayBatDau}-${item.NgayKetThuc}`}>
               <TableRow >
-                <TableCell >{item.branch}</TableCell>
-                <TableCell>{item.startDate}</TableCell>
-                <TableCell>{item.endDate}</TableCell>
-                <TableCell>{item.department}</TableCell>
+                <TableCell >{item.MaCN}</TableCell>
+                <TableCell>{formattedDate(item.NgayBatDau)}</TableCell>
+                <TableCell>{formattedDate(item.NgayKetThuc)}</TableCell>
+                <TableCell>{employeeDepartment}</TableCell>
               </TableRow>
             </React.Fragment>
             )

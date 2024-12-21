@@ -12,7 +12,7 @@ import {
   import { Button } from "@/components/ui/button"
 import { set } from "date-fns";
   
-  export function AlertDialogComponent({ setOpen, open, setValue, title, description }) {
+  export function AlertDialogComponent({ setOpen, open, setValue, title, description, ...props }) {
     function handleCancel() {
       setOpen(false);
       setValue(false);
@@ -32,7 +32,7 @@ import { set } from "date-fns";
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick = {handleCancel}>Hủy</AlertDialogCancel>
-            <AlertDialogAction onClick= {handleContinue}>Xác nhận</AlertDialogAction>
+            <AlertDialogAction className="hover:bg-red-400" onClick= {handleContinue}>Xác nhận</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

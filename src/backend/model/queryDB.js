@@ -76,7 +76,6 @@ async function queryPaginating(query, pageSize, pageNumber) {
       { name: "Page", type: sql.Int, value: pageNumber },
     ]);
 
-    console.log(result);
 
     if (!result) {
       return [];
@@ -91,14 +90,14 @@ async function queryPaginating(query, pageSize, pageNumber) {
 
 async function getTableInfo(MaCN) {
   try {
-    let result = await executeProcedure("ADMIN_GET_INFO", [
-      { name: "MaCN", type: sql.Int, value: MaCN },
+    let result = await executeProcedure("SP_ADMIN_GET_INFO", [
+      { name: "MACN", type: sql.Int, value: MaCN },
     ]);
+
 
     if (!result) {
       return [];
-    }
-
+    };
     result.forEach((element) => {
       element["time"] = element["time"]
         ? element["time"].toISOString().split("T")[1].split(".")[0]
@@ -116,7 +115,7 @@ async function getReservations(MaCN, Date) {
   let date = Date;
   let result = null;
   try {
-    let query = `SELECT * FROM DATBAN WHERE CHINHANH = ${MaCN} AND 
+    let query = `SELECT * FROM DATBAN WHERE ChiNhanh = ${MaCN} AND 
                 CONVERT(DATE,NgayGioDat) = CONVERT(DATE,'${date}')`;
 
     result = await queryDB(query);
@@ -139,6 +138,7 @@ async function getReservations(MaCN, Date) {
       element["note"] = element["GhiChu"] ? element["GhiChu"] : null;
       delete element["GhiChu"];
     });
+
     return result;
   } catch (err) {
     console.error("Error executing getReservations:", err);
@@ -205,19 +205,20 @@ async function getTableDetail(MaBan) {
 
 async function getBillDetail(MaHD) {
   try {
-    let query = `SELECT PHIEUDATMON.*, NHANVIEN.HOTEN FROM PHIEUDATMON
+    let query = `SELECT PHIEUDATMON.*, NHANVIEN.HoTen FROM PHIEUDATMON
                 JOIN NHANVIEN ON NHANVIEN.MaNV = PHIEUDATMON.MaNV 
-                WHERE MAHD = ${MaHD}`;
+                WHERE PHIEUDATMON.MaHD = ${MaHD}`;
     let PhieuDatMon = await queryDB(query);
     if (!PhieuDatMon) {
       return [];
     }
     let result = [];
 
+
     for (let i = 0; i < PhieuDatMon.length; i++) {
       let item = {};
       item["orderID"] = PhieuDatMon[i].MaPhieu;
-      item["createdBy"] = PhieuDatMon[i].HOTEN;
+      item["createdBy"] = PhieuDatMon[i].HoTen;
       item["date"] = PhieuDatMon[i].NgayLap.toISOString().split("T")[0];
       item["time"] = PhieuDatMon[i].NgayLap.toISOString()
         .split("T")[1]
@@ -228,10 +229,12 @@ async function getBillDetail(MaHD) {
               WHERE CHONMON.MaPhieu = ${item["orderID"]}`;
 
       let MonAn = await queryDB(query);
-
+      item["subTotal"] = 0;
       if (MonAn) {
         item["data"] = MonAn;
         item["data"].forEach((element) => {
+          item["subTotal"] += element["GiaTien"].toFixed(0) * element["SoLuong"];
+
           element["GiaTien"] = formatCurrency(element["GiaTien"].toFixed(0));
           element["price"] = element["GiaTien"];
           delete element["GiaTien"];
@@ -241,11 +244,15 @@ async function getBillDetail(MaHD) {
 
           element["dishName"] = element["TenMon"];
           delete element["TenMon"];
+
+
         });
       } else item["data"] = [];
+      item["subTotal"] = formatCurrency(item["subTotal"].toFixed(0));
 
       result.push(item);
     }
+
 
     return result;
   } catch (err) {
@@ -362,17 +369,14 @@ async function getDishes(MACN, Category, pageSize, pageNumber) {
       delete element["GiaTien"];
       element["image"] = element["HinhAnh"];
       delete element["HinhAnh"];
-      element["delivable"] = element["GiaoHang"];
+      element["deliverable"] = element["GiaoHang"];
       delete element["GiaoHang"];
       element["category"] = element["PhanLoai"];
       delete element["PhanLoai"];
-      element["avalability"] = element["isServed"];
+      element["availability"] = element["isServed"];
       delete element["isServed"];
 
-      element["avalability"] =
-        element["avalability"] === 1 ? "Đang phục vụ" : "Ngừng phục vụ";
 
-      element["delivable"] = element["delivable"] === 1 ? "Có" : "Không";
     });
 
     return result;
@@ -381,6 +385,52 @@ async function getDishes(MACN, Category, pageSize, pageNumber) {
     return null;
   }
 }
+
+
+async function getCompanyDishes(Category, pageSize, pageNumber) {
+  try {
+    let result = await queryPaginating(
+      `SELECT MONAN.*, KV.MT, KV.MN, KV.MB
+       FROM (SELECT MONAN1.MaMon,
+            MAX(CASE WHEN THUCDON.MaKV = 'MB' THEN 1 ELSE 0 END) AS MB,
+            MAX(CASE WHEN THUCDON.MaKV = 'MT' THEN 1 ELSE 0 END) AS MT, 
+            MAX(CASE WHEN THUCDON.MaKV = 'MN' THEN 1 ELSE 0 END) AS MN
+            FROM MONAN MONAN1 JOIN THUCDON ON MONAN1.MaMon = THUCDON.MaMon 
+            WHERE MONAN1.PhanLoai = '${Category}'
+			GROUP BY MONAN1.MaMon) AS KV
+      JOIN MONAN ON KV.MaMon = MONAN.MaMon`,
+      pageSize,
+      pageNumber
+    )
+
+    if (!result) return [];
+
+    result.forEach((element) => {
+      element["dishID"] = element["MaMon"];
+      delete element["MaMon"];
+      element["dishName"] = element["TenMon"];
+      delete element["TenMon"];
+      element["price"] = formatCurrency(element["GiaTien"].toFixed(0));
+      delete element["GiaTien"];
+      element["image"] = element["HinhAnh"];
+      delete element["HinhAnh"];
+      element["deliverable"] = element["GiaoHang"];
+      delete element["GiaoHang"];
+      element["category"] = element["PhanLoai"];
+      delete element["PhanLoai"];
+      element["availability"] = element["isServed"];
+      delete element["isServed"];
+
+
+    });
+
+    return result;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
 
 async function getRegionalDishes(MAKV, Category, pageSize, pageNumber) {
   try {
@@ -444,4 +494,5 @@ module.exports = {
   getDishes,
   getMember,
   getRegionalDishes,
+  getCompanyDishes,
 };

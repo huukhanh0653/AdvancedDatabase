@@ -5,7 +5,7 @@ import { MoreHorizontal, ArrowUpDown } from "lucide-react"
 import { EditCustomerForm, MemberShipDetail } from "./Customer";
 import { Button } from "@/components/ui/button"
 import { PopupModal } from "@/components/ui/modal"
-import React from "react";
+import React, { useEffect } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,10 +15,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { AlertDialogComponent } from "../../components/alert-dialog";
+import { use } from "react";
+import { set } from "date-fns";
 
 export const columns = [
     {
-      accessorKey: "MaKH",
+      accessorKey: "customerID",
       header: ({ column }) => {
         return (
           <Button 
@@ -33,19 +35,19 @@ export const columns = [
       },
     },
     {
-      accessorKey: "HoTen",
+      accessorKey: "fullName",
       header: "Họ Tên",
     },
     {
-      accessorKey: "Email",
+      accessorKey: "email",
       header: "Email",
     },
     {
-      accessorKey: "SDT",
+      accessorKey: "phoneNumber",
       header: "Số Điện Thoại",
     },
     {
-      accessorKey: "GioiTinh",
+      accessorKey: "gender",
       header: ({ column }) => {
         return (
           <Button 
@@ -58,9 +60,12 @@ export const columns = [
           </Button>
         )
       },
+      cell: ({ row }) => {
+          return row.original.gender == "Male" ? "Nam" : "Nữ"
+        }
     },
     {
-      accessorKey: "Username",
+      accessorKey: "username",
       header: "Tên Đăng Nhập",
     },
     {
@@ -72,7 +77,10 @@ export const columns = [
       const [memberOpen, setMemberOpen] = React.useState(false)
       const [deleteOpen, setDeleteOpen] = React.useState(false)
       const [deleteOption, setDeleteOption] = React.useState(false)
-
+      useEffect(() => {
+        setDeleteOption(false)
+        setCreateMemberOption(false)
+      }, [])
       return (
         <>
         <PopupModal
@@ -80,6 +88,7 @@ export const columns = [
           setOpen={setEditOpen}
           props={{title:"Chỉnh sửa thông tin khách hàng", description:"Nhập thông tin chỉnh sửa của khách hàng"}}
           formComponent={EditCustomerForm}
+          customer = {row.original}
         >
         </PopupModal> 
 
@@ -88,6 +97,7 @@ export const columns = [
           setOpen={setMemberOpen}
           props={{title:"Thông tin thành viên", description:"Thông tin chi tiết lịch sử thẻ thành viên"}}
           formComponent={MemberShipDetail}
+          customerID = {row.original.customerID}
         >
         </PopupModal> 
         

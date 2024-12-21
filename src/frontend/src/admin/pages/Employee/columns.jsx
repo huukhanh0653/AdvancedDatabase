@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { set } from "date-fns";
 
+import { formattedDate } from "@/lib/utils";
+
 export const columns = [
     {
       accessorKey: "MaNV",
@@ -50,6 +52,7 @@ export const columns = [
           </Button>
         )
       },
+      cell: ({ row }) => formattedDate(row.original.NgaySinh),
     },
     {
       accessorKey: "NgayVaoLam",
@@ -67,6 +70,7 @@ export const columns = [
           </Button>
         )
       },
+      cell: ({ row }) => formattedDate(row.original.NgayVaoLam),
     },
     {
       accessorKey: "NgayNghiViec",
@@ -85,7 +89,7 @@ export const columns = [
       cell: ({ row }) =>
         row.original.NgayNghiViec ? (
           <span>
-            {row.original.NgayNghiViec} 
+            {formattedDate(row.original.NgayNghiViec)}
           </span>
         ) : (
           <span>Đang Làm Việc</span> // "Still Working" in Vietnamese
@@ -124,6 +128,7 @@ export const columns = [
           setOpen={setEditOpen}
           props={{title:"Chỉnh sửa thông tin nhân viên", description:"Nhập thông tin nhân viên"}}
           formComponent={EditEmployeeForm}
+          employee = {row.original}
         >
         </PopupModal> 
 
@@ -132,6 +137,7 @@ export const columns = [
           setOpen={setTransferOpen}
           props={{title:"Chuyển công tác nhân viên", description:"Nhập thông tin công tác mới"}}
           formComponent={TransferEmployeeForm}
+          curBranch = {row.original.CN_Hientai}
         >
         </PopupModal> 
 
@@ -140,6 +146,7 @@ export const columns = [
           setOpen={setTerminateOpen}
           props={{title:"Xác nhận thông tin nghỉ việc", description:"Nhập ngày nghỉ việc của nhân viên"}}
           formComponent={TerminateEmployeeForm}
+          employeeID = {row.original.MaNV}
         >
         </PopupModal> 
         <PopupModal
@@ -147,6 +154,8 @@ export const columns = [
           setOpen={setWorkHistoryOpen}
           props={{title:"Lịch sử công tác", description:"Chi tiết lịch sử công tác của nhân viên"}}
           formComponent={WorkHistoryDetail}
+          employeeID = {row.original.MaNV}
+          employeeDepartment = {row.original.MaBP}
         >
         </PopupModal> 
 

@@ -2,88 +2,76 @@ import React from 'react';
 import DefaultLayout from '@/src/admin/layout/DefaultLayout';
 import { DataTable } from '@/components/ui/data-table';
 import { columns } from './columns';
-import { dishes, categories } from './data';
+import { categories } from '@/lib/publicData';
 import { useEffect, useState, useMemo } from 'react';
 import { Label } from "@/components/ui/label"
 import { CategoryCard } from '@/src/admin/components/category-card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 
-
-async function fetchDishes() {
-  return dishes;
-}   
-
-function countDishesByCategory(dishes) {
-    const categoryCount = {};
-  
-    dishes.forEach((dish) => {
-      const { category } = dish;
-      if (categoryCount[category]) {
-        categoryCount[category]++;
-      } else {
-        categoryCount[category] = 1;
-      }
-    });
-    return categoryCount;
-  }
+function fetchCategories() {
+  return categories;
+}
 
 export default function RegionalMenu() {
   const [data, setData] = useState([]);  
-  const [category, setCategory] = useState([]);  
-  const [loading, setLoading] = useState(true); 
+  const [category, setCategory] = useState(fetchCategories());  
   const [error, setError] = useState(null);  
   const [dishOfCategory, setDishOfCategory] = useState({})
-  const [curCategory, setCurCategory] = useState('');
+  const [curCategory, setCurCategory] = useState('Sushi');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(5);
 
-  
-  const filteredData = useMemo(() => {
-    return data.filter(row => {
-      const matchesCategory = curCategory === '' || row.category === curCategory;
-      return matchesCategory;
-  })}, [data, curCategory]);
+  const handlePrevPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
 
+  const handleNextPage = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  };
+
+
+  const fetchData = async () => {
+    let curBranch
+    let userinfo;
+    const _userbase64 = localStorage.getItem("user");
+    if (_userbase64) {
+      userinfo = JSON.parse(decodeURIComponent(escape(atob(_userbase64))));
+    }
+    if(userinfo.MaBP == 6) {
+      curBranch=`?CurBranch=${localStorage.getItem('branch')}`;
+    }
+    else {
+      curBranch = '';
+    }
+    try {
+      const response = await fetch(`http://localhost:5000/admin/regional-dish-info${curBranch}`).then((response) => response.json());
+      setDishOfCategory(response.data);
+
+      setTotalPages(Math.ceil(response.total / 10));
+
+      const data = await fetch(`http://localhost:5000/admin/regional-dishes${curBranch}&Category=${curCategory}&PageSize=10&CurrentPage=${currentPage}`).then((response) => response.json());
+      setData(data);  
+    }
+    catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const dishes = await fetchDishes();
-        setData(dishes);  // Update the state with fetched data
-        setCategory(categories);
-        setLoading(false);  // Set loading to false once data is fetched
-      } catch (error) {
-        setError(error);  // Handle error if any
-        setLoading(false);  // Set loading to false even in case of error
-      }
-    };
-
-    
-    
+    setCurrentPage(1);
     fetchData();
-  }, []);  // Empty dependency array means this effect runs once when the component mounts
+  }, [curCategory]);  
+
   useEffect(() => {
-    setDishOfCategory(countDishesByCategory(data));
-    }, [data]);
+    fetchData();
+    }, []);
 
-
-  // const fetchData = async () => {
-  //   const curBranch = localStorage.getItem('branch');
-  //   const api = `http://localhost:1433/api/regional-menu/${curBranch ? curBranch : ''}`;
-  //   try {
-  //       const response = await fetch(api);
-  //       if (!response.ok) {
-  //           throw new Error('Failed to fetch data');
-  //       }
-  //       let data = await response.json();
-  //       setData(data);
-  //   } catch (error) {
-  //       toast.error('Error fetching data');
-  //   }
-  // };
-
-  if (loading) {
-    return <div>Loading...</div>;  // Display loading message while fetching data
-  }
-
+  useEffect(() => {
+    fetchData();
+  }, [currentPage]);
+  
   if (error) {
     return <div>Error: {error.message}</div>;  // Display error if any
   }
@@ -91,7 +79,7 @@ export default function RegionalMenu() {
   
   return (
       <DefaultLayout>
-          <Label className="text-2xl font-normal flex justify-between items-center mb-0 mt-3 ">Phân loại ({category.length - 1})</Label>
+          <Label className="text-2xl font-normal flex justify-between items-center mb-0 mt-3 ">Phân loại ({category.length})</Label>
           {/* loop to create card for categories */}
           <div className="grid grid-cols-10">
             {category.map((item) => (
@@ -101,7 +89,25 @@ export default function RegionalMenu() {
             }} />
             ))}
           </div>
-        <DataTable columns={columns} data={filteredData} filterProps={{column: "name", placeholder: "Tìm món ăn bằng tên..."}}/>
+        <DataTable columns={columns} data={data} filterProps={{column: "dishName", placeholder: "Tìm món ăn bằng tên..."}}/>
+        <div className="flex items-center justify-end space-x-2 py-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handlePrevPage}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </Button>
+        </div>
       </DefaultLayout>
   )
 }

@@ -1,26 +1,13 @@
 import React, { useEffect, useState, useMemo } from "react";
 import DefaultLayout from "@/src/admin/layout/DefaultLayout";
 import { TableCard } from "./table-card";
-import { tableInfo } from "./data";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
-const functionToFetchData = () => {
-  return tableInfo;
-};
-
 export default function Table() {
-  const [data, setData] = useState(functionToFetchData());
+  const [data, setData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const fetchData = async () => {
-    try {
-      const tables = await functionToFetchData();
-      setData(tables);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const filteredData = useMemo(() => {
     return data.filter((row) => {
@@ -32,7 +19,7 @@ export default function Table() {
     });
   }, [data, searchQuery]);
 
-  const testfetchData = async () => {
+  const fetchData = async () => {
     let curBranch;
     let userinfo;
     const _userbase64 = localStorage.getItem("user");
@@ -40,33 +27,27 @@ export default function Table() {
       userinfo = JSON.parse(decodeURIComponent(escape(atob(_userbase64))));
     }
     if (userinfo.MaBP == 6) {
-      curBranch = `?id=${localStorage.getItem("branch")}`;
+      curBranch = `?CurBranch=${localStorage.getItem("branch")}`;
     } else {
       curBranch = "";
     }
 
     const api = `http://localhost:5000/admin/info${curBranch}`;
-    console.log(api);
-    userinfo = JSON.stringify(userinfo);
-    console.log(userinfo);
 
     try {
-      const response = await fetch(api, {
-        method: "GET", // Change to POST request
-        headers: {
-          "Content-Type": "application/json", // Specify the content type
-        },
-        query: { id: 1 }, // Include user and branch in the body
-        user: userinfo,
-      });
+        const response = await fetch(api, {
+            method: "GET", 
+            headers: {
+                "Content-Type": "application/json", 
+            },
+        });
 
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }
 
-      const data = await response.json(); // Parse the JSON response
-      console.log(data);
-      // setData(data); // Uncomment if you need to set data in your application
+      const data = await response.json(); 
+      setData(data); 
     } catch (error) {
       console.log("Error fetching data", error);
     }
@@ -74,8 +55,7 @@ export default function Table() {
 
   useEffect(() => {
     fetchData();
-    testfetchData();
-  });
+  }, []);
 
   return (
     <DefaultLayout>
