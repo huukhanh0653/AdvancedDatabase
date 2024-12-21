@@ -9,8 +9,10 @@ const indexRouter = require("./routes/index");
 const customerRouter = require("./routes/customer");
 const adminRouter = require("./routes/admin");
 
+
 const companyRouter = require("./routes/company");
 const app = express();
+
 
 app.use(logger("dev"));
 app.use(cors());
