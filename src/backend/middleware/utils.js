@@ -42,13 +42,21 @@ function formatAsSQLDatetime(date) {
 }
 
 function formatAsSQLDate(date) {
+  // Chuyển đổi giá trị số nguyên thành đối tượng Date nếu cần thiết
+  const dateObj =
+    typeof date === "number" ? new Date(date) 
+    : new Date(Date.parse(date));
+
   // Ensure the date is a valid date
-  if (isNaN(Date.parse(date))) {
+  if (isNaN(dateObj.getTime())) {
     return "Invalid date";
   }
 
-  // Format the date as SQL date
-  const formattedDate = new Date(date).toISOString().slice(0, 10);
+  // Format the date as "YYYY-MM-DD"
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  const formattedDate = `${year}-${month}-${day}`;
 
   return formattedDate;
 }

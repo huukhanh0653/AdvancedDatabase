@@ -7,6 +7,7 @@ const {
 } = require("../middleware/utils");
 const e = require("express");
 const { get } = require("../routes");
+const { pool } = require("mssql");
 
 async function executeProcedure(procedureName, params) {
   try {
@@ -20,6 +21,7 @@ async function executeProcedure(procedureName, params) {
     }
 
     const result = await request.execute(procedureName);
+
     return result.recordset ? result.recordset : result;
   } catch (err) {
     console.error("Error executing procedure:", err);
@@ -97,7 +99,6 @@ async function getTableInfo(MaCN) {
       return [];
     }
 
-    result = result.recordset;
     result.forEach((element) => {
       element["time"] = element["time"]
         ? element["time"].toISOString().split("T")[1].split(".")[0]
@@ -112,17 +113,18 @@ async function getTableInfo(MaCN) {
 }
 
 async function getReservations(MaCN, Date) {
-  let date = formatAsSQLDate(Date);
+  let date = Date;
+  let result = null;
   try {
     let query = `SELECT * FROM DATBAN WHERE CHINHANH = ${MaCN} AND 
                 CONVERT(DATE,NgayGioDat) = CONVERT(DATE,'${date}')`;
 
-    let result = await queryDB(query);
+    result = await queryDB(query);
 
-    if (!result) {
+    if (result === null) {
       return [];
     }
-    result = result.recordset;
+
     result.forEach((element) => {
       element["reservationID"] = element["MaDatBan"];
       delete element["MaDatBan"];
@@ -157,7 +159,7 @@ async function getTableDetail(MaBan) {
     if (!PhieuDatMon) {
       return [];
     }
-    PhieuDatMon = PhieuDatMon.recordset;
+
     let result = [];
 
     for (let i = 0; i < PhieuDatMon.length; i++) {
@@ -174,7 +176,7 @@ async function getTableDetail(MaBan) {
 
       let MonAn = await queryDB(query);
       if (MonAn) {
-        item["data"] = MonAn.recordset;
+        item["data"] = MonAn;
         item["data"].forEach((element) => {
           element["GiaTien"] = formatCurrency(element["GiaTien"].toFixed(0));
           element["price"] = element["GiaTien"];
@@ -210,7 +212,6 @@ async function getBillDetail(MaHD) {
     if (!PhieuDatMon) {
       return [];
     }
-    PhieuDatMon = PhieuDatMon.recordset;
     let result = [];
 
     for (let i = 0; i < PhieuDatMon.length; i++) {
@@ -229,7 +230,7 @@ async function getBillDetail(MaHD) {
       let MonAn = await queryDB(query);
 
       if (MonAn) {
-        item["data"] = MonAn.recordset;
+        item["data"] = MonAn;
         item["data"].forEach((element) => {
           element["GiaTien"] = formatCurrency(element["GiaTien"].toFixed(0));
           element["price"] = element["GiaTien"];
@@ -253,7 +254,59 @@ async function getBillDetail(MaHD) {
   }
 }
 
-async function getStatistic(MaCN, fromDate, toDate) {}
+async function getStatistic(MaCN, fromDate, toDate) {
+  //! Còn lỗi, đang chờ fix
+  try {
+    const pool = await poolPromise;
+    const request = pool.request();
+
+    let totalBills;
+    let totalRevenue;
+    let totalNewMember;
+
+    request.input("MaCN", sql.Int, MaCN);
+    request.input("StartDate", sql.Date, fromDate);
+    request.input("EndDate", sql.Date, toDate);
+
+    const result = await request.execute("sp_GetTotalRevenue");
+
+    //! Lỗi không lấy được giá trị output từ stored procedure
+    // totalRevenue = request.parameters.TotalRevenue.value;
+    // totalNewMember = request.parameters.TotalNewMember.value;
+    // totalBills = request.parameters.TotalBills.value;
+
+
+    totalRevenue = await queryDB(
+      `SELECT COUNT(MaHD) FROM hoadon WHERE (NgayLap BETWEEN ${fromDate} AND ${toDate}) AND HOADON.MaCN = ${MaCN}`
+    );
+    totalNewMember = await queryDB(`SELECT COUNT(MaThe) FROM thethanhvien
+                    WHERE (NgayLap BETWEEN ${fromDate} AND ${toDate})
+                    AND (THETHANHVIEN.MaKH NOT IN ( SELECT makh FROM THETHANHVIEN tv1 WHERE tv1.NgayLap BETWEEN '1970-01-01' AND DateAdd(Day, -1, ${fromDate})))
+                    AND THETHANHVIEN.MaNV IN (SELECT MANV FROM DOICN WHERE DOICN.MaCN = ${MaCN} AND THETHANHVIEN.NgayLap 
+                    BETWEEN NgayBatDau AND (CASE WHEN NgayKetThuc IS NULL THEN GETDATE() ELSE NgayKetThuc END))`);
+
+    totalBills = await queryDB(
+      `SELECT COUNT(MaHD)
+      FROM hoadon
+      WHERE (NgayLap BETWEEN ${fromDate} AND ${toDate}) AND HOADON.MaCN = ${MaCN}`
+    );
+
+    //! Ba biến này vẫn đang bị null
+    console.log(totalRevenue, totalNewMember, totalBills);
+
+    return {
+      totalRevenue: totalRevenue
+        ? formatCurrency(totalRevenue.toFixed(0))
+        : "0",
+      totalNewMember: totalNewMember || 0,
+      totalBills: totalBills || 0,
+      recentSales: result.recordset ? result.recordset : result,
+    };
+  } catch (err) {
+    console.error("Error executing getStatistic:", err);
+    return [];
+  }
+}
 
 async function getCustomer(pageSize, pageNumber) {
   try {
@@ -338,25 +391,24 @@ async function getRegionalDishes(MAKV, Category, pageSize, pageNumber) {
 
     if (!result) return [];
 
-        result.forEach((element) => {
-          element["dishID"] = element["MaMon"];
-          delete element["MaMon"];
-          element["dishName"] = element["TenMon"];
-          delete element["TenMon"];
-          element["price"] = formatCurrency(element["GiaTien"].toFixed(0));
-          delete element["GiaTien"];
-          element["image"] = element["HinhAnh"];
-          delete element["HinhAnh"];
-          element["delivable"] = element["GiaoHang"];
-          delete element["GiaoHang"];
-          element["category"] = element["PhanLoai"];
-          delete element["PhanLoai"];
+    result.forEach((element) => {
+      element["dishID"] = element["MaMon"];
+      delete element["MaMon"];
+      element["dishName"] = element["TenMon"];
+      delete element["TenMon"];
+      element["price"] = formatCurrency(element["GiaTien"].toFixed(0));
+      delete element["GiaTien"];
+      element["image"] = element["HinhAnh"];
+      delete element["HinhAnh"];
+      element["delivable"] = element["GiaoHang"];
+      delete element["GiaoHang"];
+      element["category"] = element["PhanLoai"];
+      delete element["PhanLoai"];
 
-          element["delivable"] = element["delivable"] === 1 ? "Có" : "Không";
-        });
+      element["delivable"] = element["delivable"] === 1 ? "Có" : "Không";
+    });
 
     return result;
-
   } catch (err) {
     console.log(err);
     return null;
@@ -372,13 +424,11 @@ async function getMember(MaKH) {
     if (!result) return null;
 
     return result.recordset ? result.recordset : result;
-
   } catch (err) {
     console.log(err);
     return null;
   }
 }
-  
 
 module.exports = {
   queryPaginating,
