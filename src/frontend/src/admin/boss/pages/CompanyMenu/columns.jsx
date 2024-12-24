@@ -110,15 +110,25 @@ export const columns = [
     cell: ({ row }) => {
       const [editOpen, setEditOpen] = React.useState(false)
       const [deleteOpen, setDeleteOpen] = React.useState(false)
-      const [deleteOption, setDeleteOption] = React.useState(false)
       const [northChecked, setNorthChecked] = React.useState(false)
       const [midChecked, setMidChecked] = React.useState(false)
       const [southChecked, setSouthChecked] = React.useState(false)
+
+      const deleteDish = async () => {
+        const res = await fetch(`http://localhost:5000/admin/delete_dish?DishID=${row.original.dishID}`, {
+          method: "DELETE",
+        });
+        if (res.ok) {
+          console.log("Deleted");
+        }
+        else {
+          alert("Xóa món ăn thất bại");
+        }
+      }
       useEffect(() => {
         setNorthChecked(row.original.MB == 1)
         setMidChecked(row.original.MT == 1)
         setSouthChecked(row.original.MN == 1)
-        setDeleteOption(false)
       }, [row.original])
       return (
         <>
@@ -134,7 +144,7 @@ export const columns = [
         <AlertDialogComponent 
           open= {deleteOpen} 
           setOpen={setDeleteOpen} 
-          setValue={setDeleteOption} 
+          func={deleteDish}
           title={"Bạn có chắc chắn muốn xóa không?"} 
           description={"Hành động này sẽ xóa hoàn toàn và không thể khôi phục !"} 
           >

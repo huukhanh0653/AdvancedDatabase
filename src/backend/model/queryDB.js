@@ -90,19 +90,17 @@ async function queryPaginating(query, pageSize, pageNumber) {
 
 async function getTableInfo(MaCN) {
   try {
-    let result = await executeProcedure("SP_ADMIN_GET_INFO", [
+    let result = await executeProcedure("SP_ADMIN_GET_ALL_TABLE", [
       { name: "MACN", type: sql.Int, value: MaCN },
     ]);
+    console.log(result);
 
 
     if (!result) {
       return [];
     };
-    result.forEach((element) => {
-      element["time"] = element["time"]
-        ? element["time"].toISOString().split("T")[1].split(".")[0]
-        : null;
-    });
+
+
 
     return result;
   } catch (err) {
@@ -202,6 +200,7 @@ async function getTableDetail(MaBan) {
     return [];
   }
 }
+
 
 async function getBillDetail(MaHD) {
   try {
@@ -378,7 +377,6 @@ async function getDishes(MACN, Category, pageSize, pageNumber) {
 
 
     });
-
     return result;
   } catch (err) {
     console.log(err);
@@ -395,7 +393,7 @@ async function getCompanyDishes(Category, pageSize, pageNumber) {
             MAX(CASE WHEN THUCDON.MaKV = 'MB' THEN 1 ELSE 0 END) AS MB,
             MAX(CASE WHEN THUCDON.MaKV = 'MT' THEN 1 ELSE 0 END) AS MT, 
             MAX(CASE WHEN THUCDON.MaKV = 'MN' THEN 1 ELSE 0 END) AS MN
-            FROM MONAN MONAN1 JOIN THUCDON ON MONAN1.MaMon = THUCDON.MaMon 
+            FROM MONAN MONAN1 LEFT JOIN THUCDON ON MONAN1.MaMon = THUCDON.MaMon 
             WHERE MONAN1.PhanLoai = '${Category}'
 			GROUP BY MONAN1.MaMon) AS KV
       JOIN MONAN ON KV.MaMon = MONAN.MaMon`,
@@ -450,12 +448,11 @@ async function getRegionalDishes(MAKV, Category, pageSize, pageNumber) {
       delete element["GiaTien"];
       element["image"] = element["HinhAnh"];
       delete element["HinhAnh"];
-      element["delivable"] = element["GiaoHang"];
+      element["deliverable"] = element["GiaoHang"];
       delete element["GiaoHang"];
       element["category"] = element["PhanLoai"];
       delete element["PhanLoai"];
 
-      element["delivable"] = element["delivable"] === 1 ? "Có" : "Không";
     });
 
     return result;

@@ -8,11 +8,20 @@ const multer = require("multer");
 const indexRouter = require("./routes/index");
 const customerRouter = require("./routes/customer");
 const adminRouter = require("./routes/admin");
-
-
 const companyRouter = require("./routes/company");
+require("dotenv").config();
+const session = require("express-session");
 const app = express();
 
+app.set("trust proxy", 1); // trust first proxy
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true },
+  })
+);
 
 app.use(logger("dev"));
 app.use(cors());

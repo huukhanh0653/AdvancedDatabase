@@ -126,16 +126,32 @@ function AddEmployeeForm({ className, setOpen }) {
   const [startDate, setStartDate] = useState(null);
 
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Selected Date:", birthDate);
+  const handleSubmit = async (e) => {
+    const response = await fetch(`http://localhost:5000/admin/new_employee?CurBranch=${e.target.branch.value}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        fullName: e.target.full_name.value,
+        dob: birthDate,
+        startDate: startDate,
+        dept: e.target.department.value,
+      }),
+    });
+    if (response.ok) {
+      console.log("Thêm nhân viên mới thành công");
+    }
+    else {
+      alert("Thêm nhân viên mới thất bại");
+    }
   };
-  
+
   return (
     <form onSubmit={handleSubmit} className={cn("grid items-start gap-4", className)}>
       <div className="grid gap-2">
         <Label htmlFor="name">Họ tên</Label>
-        <Input type="text" id="name" defaultValue="Nguyễn Văn A" />
+        <Input type="text" id="full_name" defaultValue="Nguyễn Văn A" />
       </div>
       <div className="grid gap-2">
         <Label htmlFor="dob">Ngày sinh</Label>
@@ -150,6 +166,10 @@ function AddEmployeeForm({ className, setOpen }) {
           date={startDate} /* Pass state value */
           onDateChange={setStartDate} /* Pass state handlers */
         />
+      </div>
+      <div className="grid gap-2">
+        <Label htmlFor="branch">Mã Chi nhánh</Label>
+        <Input id="branch" defaultValue="1" />
       </div>
       <div className="grid gap-2">
         <Label htmlFor="department">Mã bộ phận</Label>
@@ -213,44 +233,44 @@ export function EditEmployeeForm({ className, setOpen, employee }) {
   )
 }
 
-export function TransferEmployeeForm({ className, setOpen, curBranch }) {
-  const handleClose = () => {
-    setOpen(false); // This will close the popup modal
-  };
-  const [startDate, setStartDate] = useState(new Date());
+// export function TransferEmployeeForm({ className, setOpen, curBranch }) {
+//   const handleClose = () => {
+//     setOpen(false); // This will close the popup modal
+//   };
+//   const [startDate, setStartDate] = useState(new Date());
 
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Selected Date:", startDate);
-  };
+//   const handleSubmit = (e) => {
+//     e.preventDefault();
+//     console.log("Selected Date:", startDate);
+//   };
   
-  return (
-    <form onSubmit={handleSubmit} className={cn("grid items-start gap-4", className)}>
-      <div className="grid gap-2">
-        <Label htmlFor="branch">Chi nhánh công tác hiện tại</Label>
-        <Input type="text" id="branch" defaultValue={curBranch} />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="new_branch">Chi nhánh công tác mới</Label>
-        <Input type="text" id="new_branch" defaultValue="Chi nhánh mới..." />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="start_date">Ngày bắt đầu công tác</Label>
-        <DatePicker 
-          date={startDate} /* Pass state value */
-          onDateChange={setStartDate} /* Pass state handlers */
-        />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="manager_confirm">Nhập mật khẩu quản lí để xác nhận</Label>
-        <Input type="password" id="manager_confirm" defaultValue="" />
-      </div>
-      <Button className="bg-blue-500 text-white" type="submit">Xác nhận</Button>
-      <Button onClick={handleClose} variant="outline">Hủy</Button>
-    </form>
-  )
-}
+//   return (
+//     <form onSubmit={handleSubmit} className={cn("grid items-start gap-4", className)}>
+//       <div className="grid gap-2">
+//         <Label htmlFor="branch">Chi nhánh công tác hiện tại</Label>
+//         <Input type="text" id="branch" defaultValue={curBranch} />
+//       </div>
+//       <div className="grid gap-2">
+//         <Label htmlFor="new_branch">Chi nhánh công tác mới</Label>
+//         <Input type="text" id="new_branch" defaultValue="Chi nhánh mới..." />
+//       </div>
+//       <div className="grid gap-2">
+//         <Label htmlFor="start_date">Ngày bắt đầu công tác</Label>
+//         <DatePicker 
+//           date={startDate} /* Pass state value */
+//           onDateChange={setStartDate} /* Pass state handlers */
+//         />
+//       </div>
+//       <div className="grid gap-2">
+//         <Label htmlFor="manager_confirm">Nhập mật khẩu quản lí để xác nhận</Label>
+//         <Input type="password" id="manager_confirm" defaultValue="" />
+//       </div>
+//       <Button className="bg-blue-500 text-white" type="submit">Xác nhận</Button>
+//       <Button onClick={handleClose} variant="outline">Hủy</Button>
+//     </form>
+//   )
+// }
 
 
 export function TerminateEmployeeForm({ className, setOpen }) {
