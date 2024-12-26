@@ -2,6 +2,7 @@ const { sql, poolPromise } = require("./dbConfig");
 const {
   formatCurrency,
   formatAsSQLDate,
+  convertToSQLDate,
   formatAsSQLDatetime,
   formatAsVietnameseDate,
 } = require("../middleware/utils");
@@ -93,7 +94,6 @@ async function getTableInfo(MaCN) {
     let result = await executeProcedure("SP_ADMIN_GET_ALL_TABLE", [
       { name: "MACN", type: sql.Int, value: MaCN },
     ]);
-    console.log(result);
 
 
     if (!result) {
@@ -260,7 +260,7 @@ async function getBillDetail(MaHD) {
   }
 }
 
-async function getStatistic(MaCN, fromDate, toDate) {
+async function getStatisticBranch(MaCN, fromDate, toDate) {
   //! Còn lỗi, đang chờ fix
   try {
     const pool = await poolPromise;
@@ -269,43 +269,66 @@ async function getStatistic(MaCN, fromDate, toDate) {
     let totalBills;
     let totalRevenue;
     let totalNewMember;
+    let totalCustomer;
+
+    const sqlFromDate = convertToSQLDate(fromDate);
+    const sqlToDate = convertToSQLDate(toDate);
 
     request.input("MaCN", sql.Int, MaCN);
-    request.input("StartDate", sql.Date, fromDate);
-    request.input("EndDate", sql.Date, toDate);
+    request.input("NgayBatDau", sqlFromDate);
+    request.input("NgayKetThuc", sqlToDate);
 
-    const result = await request.execute("sp_GetTotalRevenue");
+    const result = await request.execute("sp_TopMonAnChayNhatChiNhanh");
+    totalCustomer = await queryDB(
+      `SELECT COUNT(MaKH) as totalCustomer FROM KHACHHANG`
+    );
 
-    //! Lỗi không lấy được giá trị output từ stored procedure
-    // totalRevenue = request.parameters.TotalRevenue.value;
-    // totalNewMember = request.parameters.TotalNewMember.value;
-    // totalBills = request.parameters.TotalBills.value;
-
+    dailyRevenue = await queryDB(
+      `SELECT HD.NgayLap as date, SUM(CM.SoLuong * MA.GiaTien) as Revenue
+      FROM CHONMON CM
+      JOIN PHIEUDATMON PDM ON CM.MaPhieu = PDM.MaPhieu
+      JOIN MONAN MA ON CM.MaMon = MA.MaMon
+      JOIN HOADON HD ON PDM.MaHD = HD.MaHD
+      WHERE HD.MaCN = ${MaCN}
+      AND '${sqlFromDate}' <= HD.NgayLap AND HD.NgayLap <= '${sqlToDate}'
+      GROUP BY HD.NgayLap`
+  
+    );
 
     totalRevenue = await queryDB(
-      `SELECT COUNT(MaHD) FROM hoadon WHERE (NgayLap BETWEEN ${fromDate} AND ${toDate}) AND HOADON.MaCN = ${MaCN}`
+      `SELECT SUM(CM.SoLuong * MA.GiaTien) as totalRevenue
+      FROM CHONMON CM
+      JOIN PHIEUDATMON PDM ON CM.MaPhieu = PDM.MaPhieu
+      JOIN MONAN MA ON CM.MaMon = MA.MaMon
+      JOIN HOADON HD ON PDM.MaHD = HD.MaHD
+      WHERE HD.MaCN = ${MaCN}
+      AND '${sqlFromDate}' <= HD.NgayLap AND HD.NgayLap <= '${sqlToDate}'`
     );
-    totalNewMember = await queryDB(`SELECT COUNT(MaThe) FROM thethanhvien
-                    WHERE (NgayLap BETWEEN ${fromDate} AND ${toDate})
-                    AND (THETHANHVIEN.MaKH NOT IN ( SELECT makh FROM THETHANHVIEN tv1 WHERE tv1.NgayLap BETWEEN '1970-01-01' AND DateAdd(Day, -1, ${fromDate})))
-                    AND THETHANHVIEN.MaNV IN (SELECT MANV FROM DOICN WHERE DOICN.MaCN = ${MaCN} AND THETHANHVIEN.NgayLap 
-                    BETWEEN NgayBatDau AND (CASE WHEN NgayKetThuc IS NULL THEN GETDATE() ELSE NgayKetThuc END))`);
+
+
+    totalNewMember = await queryDB(
+      `SELECT COUNT(MaThe) as totalNewMember FROM THETHANHVIEN WHERE NgayLap BETWEEN '${sqlFromDate}' AND '${sqlToDate}'`
+    );
 
     totalBills = await queryDB(
-      `SELECT COUNT(MaHD)
+      `SELECT COUNT(MaHD) as totalBills
       FROM hoadon
-      WHERE (NgayLap BETWEEN ${fromDate} AND ${toDate}) AND HOADON.MaCN = ${MaCN}`
+      WHERE (NgayLap BETWEEN '${sqlFromDate}' AND '${sqlToDate}') AND HOADON.MaCN = ${MaCN}`
     );
 
-    //! Ba biến này vẫn đang bị null
-    console.log(totalRevenue, totalNewMember, totalBills);
+    dailyRevenue.forEach((element) => {
+      element["date"] = formatAsVietnameseDate(element["date"]);
+    }
+    );
 
     return {
-      totalRevenue: totalRevenue
-        ? formatCurrency(totalRevenue.toFixed(0))
+      dailyRevenue: dailyRevenue ? dailyRevenue : [],
+      totalRevenue: totalRevenue[0].totalRevenue
+        ? formatCurrency(totalRevenue[0].totalRevenue.toFixed(0))
         : "0",
-      totalNewMember: totalNewMember || 0,
-      totalBills: totalBills || 0,
+      totalNewMember: totalNewMember[0].totalNewMember || 0,
+      totalBills: totalBills[0].totalBills || 0,
+      totalCustomer: totalCustomer ? totalCustomer[0].totalCustomer : 0,
       recentSales: result.recordset ? result.recordset : result,
     };
   } catch (err) {
@@ -313,6 +336,191 @@ async function getStatistic(MaCN, fromDate, toDate) {
     return [];
   }
 }
+
+async function getStatisticCompany(fromDate, toDate) {
+  //! Còn lỗi, đang chờ fix
+  try {
+    const pool = await poolPromise;
+    const request = pool.request();
+
+    let totalBills;
+    let totalRevenue;
+    let totalNewMember;
+    let totalCustomer;
+
+
+    const sqlFromDate = convertToSQLDate(fromDate);
+    const sqlToDate = convertToSQLDate(toDate);
+
+    request.input("NgayBatDau", sqlFromDate);
+    request.input("NgayKetThuc", sqlToDate);
+
+    const result = await request.execute("sp_TopMonAnChayNhatCty");
+    totalCustomer = await queryDB(
+      `SELECT COUNT(MaKH) as totalCustomer FROM KHACHHANG`
+    );
+
+    dailyRevenue = await queryDB(
+      `SELECT HD.NgayLap as date, SUM(CM.SoLuong * MA.GiaTien) as Revenue
+      FROM CHONMON CM
+      JOIN PHIEUDATMON PDM ON CM.MaPhieu = PDM.MaPhieu
+      JOIN MONAN MA ON CM.MaMon = MA.MaMon
+      JOIN HOADON HD ON PDM.MaHD = HD.MaHD
+      WHERE '${sqlFromDate}' <= HD.NgayLap AND HD.NgayLap <= '${sqlToDate}'
+      GROUP BY HD.NgayLap`
+  
+    );
+
+    totalRevenue = await queryDB(
+      `SELECT SUM(CM.SoLuong * MA.GiaTien) as totalRevenue
+      FROM CHONMON CM
+      JOIN PHIEUDATMON PDM ON CM.MaPhieu = PDM.MaPhieu
+      JOIN MONAN MA ON CM.MaMon = MA.MaMon
+      JOIN HOADON HD ON PDM.MaHD = HD.MaHD
+      WHERE'${sqlFromDate}' <= HD.NgayLap AND HD.NgayLap <= '${sqlToDate}'`
+    );
+
+
+    totalNewMember = await queryDB(
+      `SELECT COUNT(MaThe) as totalNewMember FROM THETHANHVIEN WHERE NgayLap BETWEEN '${sqlFromDate}' AND '${sqlToDate}'`
+    );
+
+    totalBills = await queryDB(
+      `SELECT COUNT(MaHD) as totalBills
+      FROM hoadon
+      WHERE (NgayLap BETWEEN '${sqlFromDate}' AND '${sqlToDate}')`
+    );
+
+    dailyRevenue.forEach((element) => {
+      element["date"] = formatAsVietnameseDate(element["date"]);
+    }
+    );
+
+    return {
+      dailyRevenue: dailyRevenue ? dailyRevenue : [],
+      totalRevenue: totalRevenue[0].totalRevenue
+        ? formatCurrency(totalRevenue[0].totalRevenue.toFixed(0))
+        : "0",
+      totalNewMember: totalNewMember[0].totalNewMember || 0,
+      totalBills: totalBills[0].totalBills || 0,
+      totalCustomer: totalCustomer ? totalCustomer[0].totalCustomer : 0,
+      recentSales: result.recordset ? result.recordset : result,
+    };
+  } catch (err) {
+    console.error("Error executing getStatistic:", err);
+    return [];
+  }
+}
+
+
+async function getStatisticRegion(region, fromDate, toDate) {
+  //! Còn lỗi, đang chờ fix
+  try {
+    const pool = await poolPromise;
+    const request = pool.request();
+
+    let totalBills;
+    let totalRevenue;
+    let totalNewMember;
+    let totalCustomer;
+
+
+    const sqlFromDate = convertToSQLDate(fromDate);
+    const sqlToDate = convertToSQLDate(toDate);
+
+    request.input("MaKV", region);
+    request.input("NgayBatDau", sqlFromDate);
+    request.input("NgayKetThuc", sqlToDate);
+
+    const result = await request.execute("sp_TopMonAnChayNhatKhuVuc");
+    totalCustomer = await queryDB(
+      `SELECT COUNT(MaKH) as totalCustomer FROM KHACHHANG`
+    );
+
+    dailyRevenue = await queryDB(
+      `SELECT HD.NgayLap as date, SUM(CM.SoLuong * MA.GiaTien) as Revenue
+      FROM CHONMON CM
+      JOIN PHIEUDATMON PDM ON CM.MaPhieu = PDM.MaPhieu
+      JOIN MONAN MA ON CM.MaMon = MA.MaMon
+      JOIN HOADON HD ON PDM.MaHD = HD.MaHD
+      JOIN CHINHANH CN ON HD.MaCN = CN.MaCN
+      WHERE '${sqlFromDate}' <= HD.NgayLap AND HD.NgayLap <= '${sqlToDate}'
+      AND CN.MaKV = '${region}'
+      GROUP BY HD.NgayLap`
+  
+    );
+
+    totalRevenue = await queryDB(
+      `SELECT SUM(CM.SoLuong * MA.GiaTien) as totalRevenue
+      FROM CHONMON CM
+      JOIN PHIEUDATMON PDM ON CM.MaPhieu = PDM.MaPhieu
+      JOIN MONAN MA ON CM.MaMon = MA.MaMon
+      JOIN HOADON HD ON PDM.MaHD = HD.MaHD
+      JOIN CHINHANH CN ON HD.MaCN = CN.MaCN
+      WHERE'${sqlFromDate}' <= HD.NgayLap AND HD.NgayLap <= '${sqlToDate}'
+      AND CN.MaKV = '${region}'`
+    );
+
+
+    totalNewMember = await queryDB(
+      `SELECT COUNT(MaThe) as totalNewMember FROM THETHANHVIEN WHERE NgayLap BETWEEN '${sqlFromDate}' AND '${sqlToDate}'`
+    );
+
+    totalBills = await queryDB(
+      `SELECT COUNT(MaHD) as totalBills
+      FROM hoadon
+      JOIN CHINHANH ON HOADON.MaCN = CHINHANH.MaCN
+      WHERE (NgayLap BETWEEN '${sqlFromDate}' AND '${sqlToDate}')
+      AND CHINHANH.MaKV = '${region}'`
+    );
+
+    dailyRevenue.forEach((element) => {
+      element["date"] = formatAsVietnameseDate(element["date"]);
+    }
+    );
+
+    return {
+      dailyRevenue: dailyRevenue ? dailyRevenue : [],
+      totalRevenue: totalRevenue[0].totalRevenue
+        ? formatCurrency(totalRevenue[0].totalRevenue.toFixed(0))
+        : "0",
+      totalNewMember: totalNewMember[0].totalNewMember || 0,
+      totalBills: totalBills[0].totalBills || 0,
+      totalCustomer: totalCustomer ? totalCustomer[0].totalCustomer : 0,
+      recentSales: result.recordset ? result.recordset : result,
+    };
+  } catch (err) {
+    console.error("Error executing getStatistic:", err);
+    return [];
+  }
+}
+
+
+async function searchStatisticDish(MaCN, fromDate, toDate, dishName) {
+  //! Còn lỗi, đang chờ fix
+  try {
+    const pool = await poolPromise;
+    const request = pool.request();
+
+    const sqlFromDate = convertToSQLDate(fromDate);
+    const sqlToDate = convertToSQLDate(toDate);
+    console.log(sqlFromDate, sqlToDate);
+
+    request.input("MaCN", sql.Int, MaCN);
+    request.input("NgayBatDau", sqlFromDate);
+    request.input("NgayKetThuc", sqlToDate);
+    request.input("TenMon", sql.NVarChar, dishName);
+
+    const result = await request.execute("sp_SearchDoanhThuMonAnCN");
+    return result.recordset ? result.recordset : result;
+
+  } catch (err) {
+    console.error("Error executing getStatistic:", err);
+    return [];
+  }
+}
+
+
 
 async function getCustomer(pageSize, pageNumber) {
   try {
@@ -487,9 +695,12 @@ module.exports = {
   executeProcedure,
   callFunction,
   getCustomer,
-  getStatistic,
+  getStatisticBranch,
   getDishes,
   getMember,
   getRegionalDishes,
   getCompanyDishes,
+  searchStatisticDish,
+  getStatisticCompany,
+  getStatisticRegion,
 };

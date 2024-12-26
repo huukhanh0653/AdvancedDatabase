@@ -4,6 +4,7 @@ import {
     AvatarFallback,
     AvatarImage,
   } from "@/components/ui/avatar"
+import { use } from "react"
   function fetchDishSales() {
     return [
         {
@@ -88,36 +89,41 @@ import {
   }      
 
   
-  export function RecentSales({searchQuery}) {
-    const [dishes, setDishes] = useState(fetchDishSales())
+  export function RecentSales({data, searchQuery}) {
+    const [dishes, setDishes] = useState([])
 
-    const filteredItems = useMemo(() => {
-        return dishes.filter(item => {
-          const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase())
-          return matchesSearch
-        })
-      }, [searchQuery])
+    const filteredData = useMemo(() => {
+        if (!searchQuery) {
+            return data
+        }
+        return data.filter((dish) => dish.TenMon.toLowerCase().includes(searchQuery.toLowerCase()))
+    }, [data, searchQuery])
 
     useEffect(() => {
-        setDishes(fetchDishSales())
-    }, [])
+        setDishes(data ? data : [])
+    }, [data])
+
+
+
+
+
 
     return (
       <div className="space-y-8">
-            {filteredItems.slice(0,5).map((dish, i) => (
+            {filteredData.slice(0,5).map((dish, i) => (
                 <React.Fragment key = {i}>
                     <div className="flex items-center">
                         <Avatar className="h-10 w-10">
-                            <AvatarImage src={dish.image} alt="Avatar" />
+                            <AvatarImage src={dish.HinhAnh} alt="Avatar" />
                             <AvatarFallback>OM</AvatarFallback>
                         </Avatar>
                         <div className="ml-4 space-y-1">
-                            <p className="text-sm font-medium leading-none">{dish.name}</p>
-                            <p className="text-sm text-muted-foreground">
-                            {dish.category}
-                            </p>
+                            <p className="text-sm font-medium leading-none">{dish.TenMon}</p>
                         </div>
-                        <div className="ml-auto font-medium">{dish.totalsales} VNĐ</div>
+                        <div className="ml-20 space-y-1">
+                            <p className="text-sm font-medium leading-none">{dish.SoLuong}</p>
+                        </div>
+                        <div className="ml-auto font-medium">{dish.DoanhThu.toLocaleString("vi-VN", {style: "currency", currency: "VND"})}</div>
                     </div>
                 </React.Fragment>
             ))}
