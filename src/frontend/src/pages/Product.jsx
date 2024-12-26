@@ -37,8 +37,8 @@ const Product = () => {
   return (
     <section className='max_padd_container py-20'>
       <div >
-        <ProductHd product={product}/>
-        <ProductDisplay product={product}/>
+        <ProductHd product={product[0]}/>
+        <ProductDisplay product={product[0]}/>
       </div>
     </section>
   )
