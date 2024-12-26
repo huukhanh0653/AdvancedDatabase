@@ -9,20 +9,20 @@ export function OrderProvider({ children }) {
 
   const addItem = useCallback((item) => {
     setOrderItems((prevItems) => {
-      const existingItem = prevItems.find((i) => i.id === item.id)
+      const existingItem = prevItems.find((i) => i.dishID=== item.dishID)
       if (existingItem) {
         return prevItems.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+          i.dishID === item.dishID ? { ...i, quantity: i.quantity + 1 } : i
         )
       }
       return [...prevItems, { ...item, quantity: 1 }]
     })
   }, [])
 
-  const removeItem = useCallback((id) => {
+  const removeItem = useCallback((dishID) => {
     setOrderItems((prevItems) =>
       prevItems.reduce((acc, item) => {
-        if (item.id === id) {
+        if (item.dishID === dishID) {
           if (item.quantity > 1) {
             acc.push({ ...item, quantity: item.quantity - 1 })
           }
@@ -34,10 +34,10 @@ export function OrderProvider({ children }) {
     )
   }, [])
 
-  const updateQuantity = useCallback((id, quantity) => {
+  const updateQuantity = useCallback((dishID, quantity) => {
     setOrderItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === id ? { ...item, quantity } : item
+        item.dishID === dishID ? { ...item, quantity } : item
       )
     )
   }, [])

@@ -29,7 +29,6 @@ router.get("/menu-info", async function (req, res, next) {
 
   result = {"totalDish": totalDish, "data": data};
 
-  console.log(result);
   if (!result || result.length === 0) {
     return res.status(500).json({ message: "Internal server error" });
   }
@@ -44,7 +43,6 @@ router.get("/dishes", async function (req, res, next) {
   let Category  = req.query.Category ? req.query.Category : "%";
 
   result = await getCompanyDishes(Category, PageSize, PageNumber);
-  console.log(result);
 
   if (!result || result.length === 0) {
     return res.status(500).json({ message: "Internal server error" });

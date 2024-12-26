@@ -53,7 +53,7 @@ export default function CompanyCustomer() {
       const data = await fetch(`http://localhost:5000/admin/customers?PageSize=10&CurrentPage=${currentPage}`).then((response) => response.json());
       setData(data);  // Set data in state
     } catch (error) {
-      setError(error);  // Update error state
+      console.log(error);  // Set error in state
     }
   };
   
@@ -108,16 +108,34 @@ function AddCustomerForm({ className, setOpen, customer }) {
   };
 
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Selected Date:", birthDate);
+  const handleSubmit = async (e) => {
+    const response = await fetch("http://localhost:5000/admin/new_customer", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        fullName: e.target.full_name.value,
+        phoneNumber: e.target.phone_number.value,
+        ssn: e.target.id_number.value,
+        isMale: gender === "Nam" ? 1 : 0,
+        email: e.target.email.value,
+      }),
+    });
+    
+    if (response.ok) {
+      console.log("Thêm khách hàng mới thành công");
+    }
+    else {
+      alert("Thêm khách hàng mới thất bại");
+    }
   };
   
   return (
     <form onSubmit={handleSubmit} className={cn("grid items-start gap-4", className)}>
       <div className="grid gap-2">
         <Label htmlFor="name">Họ tên</Label>
-        <Input type="text" id="name" defaultValue="Nguyen Van A" />
+        <Input type="text" id="full_name" defaultValue="Nguyen Van A" />
       </div>
       <div className="grid gap-2">
         <Label htmlFor="gender">Giới tính</Label>
@@ -196,7 +214,7 @@ export function MemberShipDetail({ className, customerID }) {
       setData(data);  
       setTotalPages(Math.ceil(data.length / 4));
     } catch (error) {
-      setError(error);  
+      console.log(error); 
     }
   }
   useEffect(() => {
@@ -225,7 +243,7 @@ export function MemberShipDetail({ className, customerID }) {
                 <TableCell>{formattedDate(item.NgayLap)}</TableCell>
                 <TableCell>{item.LoaiThe}</TableCell>
                 <TableCell>{item.DiemTichLuy}</TableCell>
-                <TableCell>{item.isActive === "1" ? "Đang hoạt động" : "Ngưng hoạt động"}</TableCell>
+                <TableCell>{item.IsActive == "1" ? "Đang hoạt động" : "Ngưng hoạt động"}</TableCell>
               </TableRow>
             </React.Fragment>
             )

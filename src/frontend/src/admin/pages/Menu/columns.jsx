@@ -59,9 +59,9 @@ export const columns = [
         cell: ({ row }) => {
           return (
             <Badge 
-              variant={row.original.availability === 1 ? "success" : "danger"}
-              className={row.original.availability === 1 ? "bg-emerald-500/10 text-emerald-500" : "bg-rose-500/10 text-rose-500"}>
-              {row.original.availability === 1 ? "Đang phục vụ" : "Ngưng phục vụ"}
+              variant={row.original.availability == true ? "success" : "danger"}
+              className={row.original.availability == true ? "bg-emerald-500/10 text-emerald-500" : "bg-rose-500/10 text-rose-500"}>
+              {row.original.availability == true ? "Đang phục vụ" : "Ngưng phục vụ"}
             </Badge>
           )
         },
@@ -72,9 +72,9 @@ export const columns = [
         cell: ({ row }) => {
           return (
             <Badge 
-              variant={row.original.deliverable === 1 ? "success" : "danger"}
-              className={row.original.deliverable === 1 ? "bg-emerald-500/10 text-emerald-500" : "bg-rose-500/10 text-rose-500"}>
-              {row.original.deliverable === 1 ? "Có" : "Không"}
+              variant={row.original.deliverable == true ? "success" : "danger"}
+              className={row.original.deliverable == true ? "bg-emerald-500/10 text-emerald-500" : "bg-rose-500/10 text-rose-500"}>
+              {row.original.deliverable == true ? "Có" : "Không"}
             </Badge>
           )
         },
@@ -97,40 +97,24 @@ export const columns = [
     {
     id: "actions",
     cell: ({ row }) => {
-      const [editOpen, setEditOpen] = React.useState(false)
       const [deleteOpen, setDeleteOpen] = React.useState(false)
-      const [deleteOption, setDeleteOption] = React.useState(false)
-      useEffect(() => {
-        setDeleteOption(false)
-      }, [])
+      
       return (
         <>
-        <PopupModal
-          open={editOpen}
-          setOpen={setEditOpen}
-          props={{title:"Chỉnh sửa thông tin món ăn", description:"Nhập thông tin chỉnh sửa của món ăn"}}
-          formComponent={EditDishForm}
-          dish={row.original}
-        >
-        </PopupModal> 
-
         <AlertDialogComponent 
           open= {deleteOpen} 
           setOpen={setDeleteOpen} 
-          setValue={setDeleteOption} 
-          title={"Bạn có chắc chắn muốn xóa không?"} 
-          description={"Hành động này sẽ xóa hoàn toàn và không thể khôi phục !"} 
+          func={() => {}}
+          title={"Ngưng phục vụ món ăn"} 
+          description={"Hành động này sẽ cập nhật trạng thái món ăn thành ngưng phục vụ!"} 
           >
         </AlertDialogComponent>
 
 
         <span className="flex items-center justify-center">
             {/* pen icon and delete icon */}
-            <Button variant="ghost" onClick={() => setEditOpen(true)}>
-                <Pen/>
-            </Button>
             <Button variant="ghost" onClick={() => setDeleteOpen(true)}>
-                <Trash/>
+                <Pen/>
             </Button>
         </span>
         </>

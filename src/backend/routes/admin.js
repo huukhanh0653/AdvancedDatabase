@@ -50,7 +50,6 @@ router.get("/get-all-bophan", async function (req, res, next) {
 });
 
 router.get("/get-all-nhanvien", async function (req, res, next) {
-  console.log(req.query);
 
   let pageSize = req.query.PageSize ? parseInt(req.query.PageSize, 10) : 25;
   let pageNumber = req.query.PageNumber
@@ -70,7 +69,6 @@ router.get("/get-all-nhanvien", async function (req, res, next) {
 });
 
 router.get("/customers", async function (req, res, next) {
-  console.log(req.query);
 
   let pageSize = req.query.PageSize ? parseInt(req.query.PageSize, 10) : 25;
   let pageNumber = req.query.CurrentPage
@@ -160,6 +158,7 @@ router.get("/bill", async function (req, res, next) {
   return res.status(200).json(result);
 });
 
+
 // Lay toan bo hoa don trong mot ngay cu the tai mot chi nhanh
 router.get("/total-bill", async function (req, res, next) {
   let result = false;
@@ -169,7 +168,6 @@ router.get("/total-bill", async function (req, res, next) {
   result = await queryDB(
     `SELECT COUNT(*) AS TotalBill FROM HOADON WHERE MaCN = ${MaCN}`
   )
-  console.log(result[0]);
 
   if (!result || result.length === 0) {
     return res.status(500).json({ message: "Internal server error" });
@@ -221,7 +219,6 @@ router.get("/dish-per-category", async function (req, res, next) {
 
   result = data;
 
-  console.log(result);
   if (!result || result.length === 0) {
     return res.status(500).json({ message: "Internal server error" });
   }
@@ -257,7 +254,6 @@ router.get("/regional-dishes", async function (req, res, next) {
     `SELECT MaKV FROM CHINHANH WHERE MaCN = ${MaCN}`
   );
   MaKV = MaKV[0].MaKV;
-  console.log(MaKV);
 
   if (!MaKV) {
     return res.status(400).json({ message: "Cannot find region" });
@@ -287,7 +283,6 @@ router.get("/regional-dish-info", async function (req, res, next) {
     WHERE THUCDON.MaKV = '${MaKV[0].MaKV}'
     GROUP BY MONAN.PhanLoai`
   )
-  console.log(result);
 
   let data = {};
   let total = 0;
@@ -298,7 +293,6 @@ router.get("/regional-dish-info", async function (req, res, next) {
 
   result = {"data": data, "total": total};
 
-  console.log(result);
   if (!result || result.length === 0) {
     return res.status(500).json({ message: "Internal server error" });
   }
@@ -524,9 +518,7 @@ router.post(
 
 //! proc ở sql chạy được nhưng mà lên đây nó load mãi không ra -> chưa fix kịp
 router.post("/new_membership", upload.none(), async function (req, res, next) {
-  console.log(req.query);
   let customerID = req.query.CustomerID ? req.query.CustomerID : null;
-  console.log(customerID);
   let MaThe = await queryDB(
     `SELECT TOP 1 MaThe FROM THETHANHVIEN ORDER BY MaThe DESC`
   );
@@ -552,9 +544,22 @@ router.post(
   upload.none(),
   async function (req, res, next) {
     let dishBranch = req.body;
+    if(req.query.CurBranch == -1) {
+      let staff = req.query.Staff;
+      const branch = await queryDB(
+        `SELECT CN_HienTai FROM NHANVIEN WHERE MaNV = ${staff}`
+      );  
+      if (!branch || branch.length === 0)
+        return res.status(500).json({ message: "Internal server error" });
+  
+      dishBranch.CurBranch = branch[0].CN_HienTai;
+    }
+    else {
+      dishBranch.CurBranch = req.query.CurBranch;
+    }
+
 
     //& Sẽ bổ sung phần xác thực phân quyền cho chức năng này
-    dishBranch.curBranch = req.query.CurBranch ? req.query.CurBranch : 1;
 
     const result = await addDishToBranch(dishBranch);
 
@@ -593,9 +598,20 @@ router.delete("/delete_order", async function (req, res, next) {
   return res.status(200).json(result);
 });
 
+router.post("/open_table_for_preorder", upload.none(), async function (req, res, next) {
+  let MaBan = req.query.TableID;
+
+    const response = await queryDB (
+      `UPDATE BAN SET TinhTrang = 0, MaHD = NULL WHERE MaBan = ${MaBan}`
+    );
+    if (!response || response.length === 0)
+      return res.status(500).json({ message: "Internal server error" });
+    else return res.status(200).json(response);
+});
+
 //! Buồn ngủ quá -> Chưa test
 router.delete("/delete_customer", async function (req, res, next) {
-  let MaKH = req.query.id;
+  let MaKH = req.query.CustomerID;
 
   const result = await deleteCustomer(MaKH);
 
@@ -608,7 +624,7 @@ router.delete("/delete_customer", async function (req, res, next) {
 
 //! Buồn ngủ quá -> Chưa test
 router.delete("/delete_dish", async function (req, res, next) {
-  let MaMon = req.query.id;
+  let MaMon = req.query.DishID;
 
   const result = await deleteDish(MaMon);
 
@@ -617,6 +633,7 @@ router.delete("/delete_dish", async function (req, res, next) {
 
   return res.status(200).json(result);
 });
+
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //^ Route dùng để test các chức năng mới

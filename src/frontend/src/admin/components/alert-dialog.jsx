@@ -12,14 +12,14 @@ import {
   import { Button } from "@/components/ui/button"
 import { set } from "date-fns";
   
-  export function AlertDialogComponent({ setOpen, open, setValue, title, description, ...props }) {
+  export function AlertDialogComponent({ setOpen, open, func, title, description, ...props }) {
     function handleCancel() {
       setOpen(false);
       setValue(false);
     }
     function handleContinue() {
-        setOpen(false);
-        setValue(true);
+      setOpen(false);
+      func();
     }
     return (
       <AlertDialog open= {open} onOpenChange={setOpen}>

@@ -81,11 +81,8 @@ export default function Table() {
               key={i}
               tableID={table.tableID}
               billID={table.billID}
-              time={table.time}
               date={table.date}
-              createdBy={table.createdBy}
               isPending={table.isPending}
-              isPaid={table.isPaid}
             />
           ))}
         </div>

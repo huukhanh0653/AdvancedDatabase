@@ -141,6 +141,7 @@ export const columns = [
         props={{title:"Chuyển công tác nhân viên", description:"Nhập thông tin công tác mới"}}
         formComponent={TransferEmployeeForm}
         curBranch = {row.original.CN_Hientai}
+        employeeID = {row.original.MaNV}
       >
       </PopupModal> 
 

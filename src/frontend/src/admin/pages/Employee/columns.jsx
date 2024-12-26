@@ -2,7 +2,7 @@
 "use client";
 
 import { MoreHorizontal, ArrowUpDown } from "lucide-react"
-import { EditEmployeeForm, TransferEmployeeForm, WorkHistoryDetail, TerminateEmployeeForm } from "./Employee";
+import { EditEmployeeForm, WorkHistoryDetail, TerminateEmployeeForm } from "./Employee";
 import { Button } from "@/components/ui/button"
 import { PopupModal } from "@/components/ui/modal"
 import React from "react";
@@ -132,14 +132,14 @@ export const columns = [
         >
         </PopupModal> 
 
-        <PopupModal
+        {/* <PopupModal
           open={transferOpen}
           setOpen={setTransferOpen}
           props={{title:"Chuyển công tác nhân viên", description:"Nhập thông tin công tác mới"}}
           formComponent={TransferEmployeeForm}
           curBranch = {row.original.CN_Hientai}
         >
-        </PopupModal> 
+        </PopupModal>  */}
 
         <PopupModal
           open={terminateOpen}
@@ -175,9 +175,9 @@ export const columns = [
             <DropdownMenuItem onClick= {setWorkHistoryOpen}>
               Xem lịch sử công tác
             </DropdownMenuItem>
-            <DropdownMenuItem onClick= {setTransferOpen}>
+            {/* <DropdownMenuItem onClick= {setTransferOpen}>
               Chuyển công tác
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick= {setEditOpen}>
               Chỉnh sửa thông tin

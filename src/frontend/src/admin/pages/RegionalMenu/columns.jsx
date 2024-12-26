@@ -52,30 +52,17 @@ export const columns = [
     },
   },
   {
-      accessorKey: "availability",
-      header: "Tình trạng",
-      cell: ({ row }) => {
-        return (
-          <Badge 
-            variant={row.original.availability === 1 ? "success" : "danger"}
-            className={row.original.availability === 1 ? "bg-emerald-500/10 text-emerald-500" : "bg-rose-500/10 text-rose-500"}>
-            {row.original.availability === 1 ? "Đang phục vụ" : "Ngưng phục vụ"}
-          </Badge>
-        )
-      },
-  },
-  {
     accessorKey: "deliverable",
     header: "Giao hàng",
-      cell: ({ row }) => {
-        return (
-          <Badge 
-            variant={row.original.deliverable === 1 ? "success" : "danger"}
-            className={row.original.deliverable === 1 ? "bg-emerald-500/10 text-emerald-500" : "bg-rose-500/10 text-rose-500"}>
-            {row.original.deliverable === 1 ? "Có" : "Không"}
-          </Badge>
-        )
-      },
+    cell: ({ row }) => {
+      return (
+        <Badge 
+          variant={row.original.deliverable == true ? "success" : "danger"}
+          className={row.original.deliverable == true ? "bg-emerald-500/10 text-emerald-500" : "bg-rose-500/10 text-rose-500"}>
+          {row.original.deliverable == true ? "Có" : "Không"}
+        </Badge>
+      )
+    },
   },
   {
     accessorKey: "price",
@@ -96,11 +83,38 @@ export const columns = [
   id: "actions",
   cell: ({ row }) => {
     const [addOpen, setAddOpen] = React.useState(false)
-    const [addOption, setAddOption] = React.useState(false)
+
+    const handleAdd = async () => {
+      let userinfo;
+      let curBranch = -1;
+      const _userbase64 = localStorage.getItem("user");
+      if (_userbase64) {
+        userinfo = JSON.parse(decodeURIComponent(escape(atob(_userbase64))));
+      }
+      if(userinfo.MaBP == 6) {
+        curBranch = JSON.parse(localStorage.getItem("branch"));
+      }
+      const response = await fetch(`http://localhost:5000/admin/add_dish_to_branch?Staff=${userinfo.MaNV}&CurBranch=${curBranch}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          DishID: row.original.dishID,
+        }),
+      });
+      if (response.ok) {
+        console.log("Thêm món ăn thành công");
+      }
+      else {
+        alert("Thêm món ăn thất bại");
+      }
+    }
+
     return (
       <>
 
-      <AlertDialogComponent open= {addOpen} setOpen={setAddOpen} setValue={setAddOption} title={"Thêm món ăn"} description={"Thêm món ăn này vào thực đơn phục vụ hiện tại của chi nhánh?"} >
+      <AlertDialogComponent open= {addOpen} setOpen={setAddOpen} func={handleAdd} title={"Thêm món ăn"} description={"Thêm món ăn này vào thực đơn phục vụ hiện tại của chi nhánh?"} >
       </AlertDialogComponent>
 
 

@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { AlertDialogComponent } from "@/src/admin/components/alert-dialog";
 import { set } from "date-fns";
+import { use } from "react";
 
 export const columns = [
     {
@@ -72,14 +73,44 @@ export const columns = [
     cell: ({ row }) => {
       const [editOpen, setEditOpen] = React.useState(false)
       const [createMemberOpen, setCreateMemberOpen] = React.useState(false)
-      const [createMemberOption, setCreateMemberOption] = React.useState(false)
       const [memberOpen, setMemberOpen] = React.useState(false)
       const [deleteOpen, setDeleteOpen] = React.useState(false)
-      const [deleteOption, setDeleteOption] = React.useState(false)
-      useEffect(() => {
-        setDeleteOption(false)
-        setCreateMemberOption(false)
-      }, [])
+
+      const deleteCustomer = async () => {
+        const response = await fetch(`http://localhost:5000/admin/delete_customer?CustomerID=${row.original.customerID}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.ok) {
+          console.log("Xóa khách hàng thành công");
+          setDeleteOpen(false);
+        }
+        else {
+          alert("Xóa khách hàng thất bại");
+        }
+      }
+
+      const createMembership = async () => {
+        const response = await fetch(`http://localhost:5000/admin/new_membership?CustomerID=${row.original.customerID}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          console.log("Tạo thẻ thành viên thành công");
+          setCreateMemberOpen(false);
+        }
+        else {
+          alert("Tạo thẻ thành viên thất bại");
+        }
+      }
+
+
+      
       return (
         <>
         <PopupModal
@@ -101,10 +132,10 @@ export const columns = [
         </PopupModal> 
         
 
-        <AlertDialogComponent open= {deleteOpen} setOpen={setDeleteOpen} setValue={setDeleteOption} title={"Bạn có chắc chắn muốn xóa không?"} description={"Hành động này sẽ xóa hoàn toàn và không thể khôi phục !"} >
+        <AlertDialogComponent open= {deleteOpen} setOpen={setDeleteOpen} func={deleteCustomer} title={"Bạn có chắc chắn muốn xóa không?"} description={"Hành động này sẽ xóa hoàn toàn và không thể khôi phục !"} >
         </AlertDialogComponent>
         
-        <AlertDialogComponent open= {createMemberOpen} setOpen={setCreateMemberOpen} setValue={setCreateMemberOption} title={"Tạo thẻ thành viên?"} description={"Xác nhận tạo thêm thẻ thành viên!"} >
+        <AlertDialogComponent open= {createMemberOpen} setOpen={setCreateMemberOpen} func={createMembership} title={"Tạo thẻ thành viên?"} description={"Xác nhận tạo thêm thẻ thành viên!"} >
         </AlertDialogComponent>
 
         

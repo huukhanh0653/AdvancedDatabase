@@ -75,7 +75,6 @@ async function createNewMember(member) {
       throw new Error("Missing required member properties");
     }
     const pool = await poolPromise;
-    console.log(member);
     const result = await pool
       .request()
       .input("MATHE", sql.Char(6), member.mathe)
@@ -91,11 +90,12 @@ async function createNewMember(member) {
 
 async function addDishToBranch(dishBranch) {
   try {
+    console.log(dishBranch);
     const pool = await poolPromise;
     const result = await pool
       .request()
       .input("MAMON", sql.Int, dishBranch.DishID)
-      .input("MACN", sql.NVarChar(2), dishBranch.macn)
+      .input("MACN", sql.NVarChar(2), dishBranch.CurBranch)
       .execute("SP_ADD_DISH_TO_BRANCH");
     return result.recordset ? result.recordset : result;
   } catch (error) {
@@ -122,7 +122,6 @@ async function createNewOrder(order) {
     VALUES (${MaHD}, ${order.createdBy}, ${order.tableID}, ${order.isEatIn}); 
     SET IDENTITY_INSERT HOADON OFF;`;
 
-    console.log(result);
     return result;
   } catch (error) {
     console.error("Error creating new order:", error);
