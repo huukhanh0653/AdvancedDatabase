@@ -3,7 +3,7 @@ const passport = require("../middleware/passport");
 const { isEmployee } = require("../middleware/auth");
 var router = express.Router();
 const { sql, poolPromise } = require("../model/dbConfig");
-const { query_paginating, getTableInfo } = require("../model/queryDB");
+const { query_paginating, getTableInfo, queryDB } = require("../model/queryDB");
 
 router.get("/get-all-bophan", async function (req, res, next) {
   let query = `SELECT * FROM BOPHAN`;
@@ -177,13 +177,13 @@ router.get("/product/:id", async function (req, res, next) {
     const dishDetail = await queryDB(`SELECT * FROM MONAN WHERE MaMon = '${id}'`);
 
     // Check if the dish exists
-    if (!dishDetail || dishDetail.recordset.length === 0) {
+    if (!dishDetail ) {
       return res.status(404).json({ message: "No product found" });
     }
 
     // Return the dish details
-    console.log(dishDetail.recordset[0]);
-    return res.status(200).json(dishDetail.recordset[0]);
+    console.log(dishDetail);
+    return res.status(200).json(dishDetail);
 
   } catch (error) {
     console.error("Error fetching product:", error);
@@ -230,7 +230,7 @@ router.post("/cart-page", async function (req, res, next) {
     // Fetch products from database to validate cart items and calculate totals
     const pool = await poolPromise; // Assuming you're using SQL Server with a pool
     const productIds = Object.keys(cartItems).map(id => `'${id}'`).join(',');
-    const query = `SELECT MaMon, GiaTien FROM MONAN WHERE MaMon IN (${productIds})`;
+    const query = `SELECT MaMon, TenMon, HinhAnh, GiaTien FROM MONAN WHERE MaMon IN (${productIds})`;
 
     const result = await pool.request().query(query);
     const products = result.recordset;
