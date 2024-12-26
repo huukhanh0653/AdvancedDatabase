@@ -16,14 +16,17 @@ const {
   getBillDetail,
   getCustomer,
   getDishes,
-  getStatistic,
+  getStatisticBranch,
+  getStatisticCompany,
+  getStatisticRegion,
   getMember,
   getRegionalDishes,
   executeProcedure,
   queryDB,
+  searchStatisticDish,
 } = require("../model/queryDB");
 
-const { formatAsSQLDate } = require("../middleware/utils");
+const { formatAsSQLDate, convertToSQLDate } = require("../middleware/utils");
 
 const {
   createNewDish,
@@ -427,20 +430,61 @@ router.get("/customers", async function (req, res, next) {
 });
 
 
-router.get("/statistic", async function (req, res, next) {
+router.get("/statistic-branch", async function (req, res, next) {
   let result = false;
   let MaCN = req.query.CurBranch ? req.query.CurBranch : 1;
   let fromDate = req.query.FromDate
-    ? formatAsSQLDate(req.query.FromDate)
-    : null;
   let toDate = req.query.ToDate
-    ? formatAsSQLDate(req.query.ToDate)
-    : formatAsSQLDate(Date.now());
 
   if (!MaCN || !fromDate || !toDate)
     return res.status(400).json({ message: "Invalid Branch ID or Date" });
 
-  result = await getStatistic(MaCN, fromDate, toDate);
+  result = await getStatisticBranch(MaCN, fromDate, toDate);
+
+  if (!result || result.length === 0)
+    return res
+      .status(500)
+      .json({ message: "Internal server error or empty data" });
+
+  return res.status(200).json(result);
+});
+
+router.get("/statistic-company", async function (req, res, next) {
+  let result = false;
+  let KhuVuc = req.query.Region ? req.query.Region : 'all';
+  let fromDate = req.query.FromDate
+  let toDate = req.query.ToDate
+
+  if (!KhuVuc || !fromDate || !toDate)
+    return res.status(400).json({ message: "Invalid Branch ID or Date" });
+
+  if(KhuVuc === 'company') {
+    result = await getStatisticCompany(fromDate, toDate);
+  }
+  else {
+    result = await getStatisticRegion(KhuVuc, fromDate, toDate);
+  }
+  console.log(result);
+
+  if (!result || result.length === 0)
+    return res
+      .status(500)
+      .json({ message: "Internal server error or empty data" });
+
+  return res.status(200).json(result);
+});
+
+router.get("/search-dish", async function (req, res, next) {
+  let result = false;
+  let MaCN = req.query.CurBranch ? req.query.CurBranch : 1;
+  let fromDate = req.query.FromDate
+  let toDate = req.query.ToDate
+  let dishName = req.query.DishName
+
+  if (!MaCN || !fromDate || !toDate || !dishName)
+    return res.status(400).json({ message: "Invalid Branch ID or Date" });
+
+  result = await searchStatisticDish(MaCN, fromDate, toDate, dishName);
 
   if (!result || result.length === 0)
     return res

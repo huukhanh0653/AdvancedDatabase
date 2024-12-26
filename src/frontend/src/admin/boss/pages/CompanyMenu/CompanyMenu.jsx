@@ -203,7 +203,7 @@ function AddDishForm({ className, setOpen }) {
               <Input type="text" id="dish_name" defaultValue="Sushi cá hồi" />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="category">Giá tiền</Label>
+            <Label htmlFor="category">Phân loại</Label>
             <DropdownOption id = "category" className="w-full" options={categories} value={selectedOption} onValueChange={setSelectedOption}/>
           </div>
           <div className="grid gap-2">

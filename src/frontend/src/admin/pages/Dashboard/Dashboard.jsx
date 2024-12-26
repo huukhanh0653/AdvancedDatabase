@@ -1,5 +1,5 @@
 import DefautLayout from "../../layout/DefaultLayout"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   Card,
   CardContent,
@@ -16,22 +16,74 @@ import { CalendarDateRangePicker } from "./components/date-range-picker"
 import { Overview } from "./components/overview"
 import { RecentSales } from "./components/recent-sales"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { use } from "react"
+import { formattedDate } from "@/lib/utils"
+import { set } from "date-fns"
 
+
+const options = [
+    "Cấp công ty", 
+    "Miền Nam",
+    "Miền Trung",
+    "Miền Bắc"
+]
 
 
 export default function DashboardPage() {
     const [searchDishQuery, setSearchDishQuery] = useState('');
+    const [data, setData] = useState([]);
+    const [recentSales, setRecentSales] = useState([]);
+    const [dailyRevenue, setDailyRevenue] = useState([]);
     const [date, setDate] = useState({
         from: new Date(2023, 0, 20),
         to: new Date(),
     });
 
+
+
+    const handleFilter = async () => {
+        let curBranch
+        let userinfo;
+        const _userbase64 = localStorage.getItem("user");
+        if (_userbase64) {
+            userinfo = JSON.parse(decodeURIComponent(escape(atob(_userbase64))));
+        }
+        if(userinfo.MaBP == 6) {
+            curBranch=`?CurBranch=${localStorage.getItem('branch')}`;
+        }
+        else {
+            curBranch = '';
+        }
+        try {
+            const reponse = await fetch(`http://localhost:5000/admin/statistic-branch${curBranch}&FromDate=${formattedDate(date.from)}&ToDate=${formattedDate(date.to)}`).then((response) => response.json());
+            console.log(reponse);
+            setData(reponse);
+            setRecentSales(reponse.recentSales);
+            setDailyRevenue(reponse.dailyRevenue);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+
+    useEffect(() => {
+        handleFilter();
+    }, []);
+
+
   return (
     <DefautLayout>
         <div className="flex items-center justify-between space-y-5">
         <h2 className="text-3xl font-bold tracking-tight">Thống kê</h2>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 justify-between">
             <CalendarDateRangePicker date={date} onDateChange={setDate} />
+            <Button 
+                className="bg-blue-500 text-white"
+                onClick= {handleFilter}
+            >Xem thống kê
+            </Button>
         </div>
         </div>
         <Tabs defaultValue="overview" className="space-y-5">
@@ -59,10 +111,7 @@ export default function DashboardPage() {
                         </svg>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">$45,231.89</div>
-                        <p className="text-xs text-muted-foreground">
-                            +20.1% from last month
-                        </p>
+                        <div className="text-2xl font-bold">{data.totalRevenue}</div>
                     </CardContent>
                 </Card>
                 <Card>
@@ -86,10 +135,7 @@ export default function DashboardPage() {
                         </svg>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">+2350</div>
-                        <p className="text-xs text-muted-foreground">
-                            +180.1% from last month
-                        </p>
+                        <div className="text-2xl font-bold">{data.totalNewMember}</div>
                     </CardContent>
                 </Card>
                 <Card>
@@ -110,16 +156,13 @@ export default function DashboardPage() {
                         </svg>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">+12,234</div>
-                        <p className="text-xs text-muted-foreground">
-                            +19% from last month
-                        </p>
+                        <div className="text-2xl font-bold">{data.totalBills}</div>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                        Khách hàng mới
+                        Tổng khách hàng
                     </CardTitle>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -135,10 +178,7 @@ export default function DashboardPage() {
                     </svg>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">+573</div>
-                        <p className="text-xs text-muted-foreground">
-                            +201 since last hour
-                        </p>
+                        <div className="text-2xl font-bold">{data.totalCustomer}</div>
                     </CardContent>
                 </Card>
                 </div>
@@ -148,7 +188,8 @@ export default function DashboardPage() {
                             <CardTitle>Overview</CardTitle>
                         </CardHeader>
                         <CardContent className="pl-2 pt-2">
-                            <Overview />
+                            
+                            <Overview dailyRevenue={dailyRevenue}/>
                         </CardContent>
                     </Card>
                     <Card className="col-span-3">
@@ -159,12 +200,13 @@ export default function DashboardPage() {
                                     type="search"
                                     placeholder="Tìm kiếm theo tên món ăn..."
                                     className="md:w-[100px] lg:w-[300px]"
-                                    onChange={e => setSearchDishQuery(e.target.value)}
+                                    value={searchDishQuery}
+                                    onChange={(e) => setSearchDishQuery(e.target.value)}
                                 />
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <RecentSales searchQuery={searchDishQuery}/>
+                            <RecentSales data={recentSales} searchQuery={searchDishQuery}/>
                         </CardContent>
                     </Card>
                 </div>

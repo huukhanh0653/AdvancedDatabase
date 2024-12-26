@@ -2,93 +2,39 @@
 
 import { Bar, BarChart, ResponsiveContainer, Tooltip, Legend, Rectangle, XAxis, YAxis } from 'recharts'
 
-const fetchData = () => {
 
+function log(data) {
+  console.log(data)
 }
-
-const data = [
-  {
-    name: "Jan",
-    Revenue: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Feb",
-    Revenue: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Mar",
-    Revenue: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Apr",
-    Revenue: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "May",
-    Revenue: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Jun",
-    Revenue: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Jul",
-    Revenue: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Aug",
-    Revenue: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Sep",
-    Revenue: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Oct",
-    Revenue: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Nov",
-    Revenue: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Dec",
-    Revenue: Math.floor(Math.random() * 5000) + 1000,
-  },
-]
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload) {
     return (
       <div className="custom-tooltip">
-        <p className="label">Hello world</p>
-        <p className="intro">How are u</p>
-        <p className="desc">Anything you want can be displayed here.</p>
+        <p className="label">Date: {payload[0].payload.date}</p>
+        <p className="intro">Revenue: {payload[0].payload.Revenue.toLocaleString(
+          "vi-VN",
+          { style: "currency", currency: "VND" }
+        )} </p>
       </div>
     );
   }
   return null;
 }
 
-export function Overview() {
+export function Overview(dailyRevenue) {
   return (
-    <ResponsiveContainer width="100%" height={350}>
-      <BarChart data={data}>
-        <XAxis
-          dataKey="name"
-          stroke="#888888"
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
-        />
+    <ResponsiveContainer width="100%" height={370}>
+      <BarChart data={dailyRevenue.dailyRevenue}>
         <YAxis
           stroke="#888888"
+          color='red'
           fontSize={12}
           tickLine={false}
           axisLine={false}
-          tickFormatter={(value) => `$${value}`}
+          tickFormatter={(value) => `${value / 1000000} tr`}
         />
-        <Tooltip  content={<CustomTooltip/>}/>
+        <Tooltip  content={<CustomTooltip />}/>
         <Legend />
         <Bar
           dataKey="Revenue"

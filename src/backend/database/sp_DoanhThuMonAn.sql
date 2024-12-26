@@ -104,6 +104,9 @@ BEGIN
 END;
 GO
 
+
+
+
 -- Tìm kiếm top 5 món ăn bán chậm nhất của khu vực
 CREATE OR ALTER PROCEDURE sp_TOP5MonAnChamNhatKV (@MaKV CHAR(2), @NgayBatDau DATE, @NgayKetThuc DATE)
 AS

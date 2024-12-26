@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { FaSearch } from 'react-icons/fa'
 import { MdOutlineAddShoppingCart } from "react-icons/md";
@@ -6,13 +6,18 @@ import { ShopContext } from '../context/ShopContext';
 
 const Item = ({ id, name, image, old_price }) => {
 
-  const { addToCart } = useContext(ShopContext);
+  const { addToCart, cartItems } = useContext(ShopContext);
   const [quantity, setQuantity] = useState(1);
 
   const handleAddToCart = () => {
     addToCart(id, quantity);
     alert(`${quantity} ${name} đã được thêm vào giỏ hàng!`);
   };
+
+  useEffect(() => {
+    // Lưu `cartItems` vào localStorage mỗi khi nó thay đổi
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+}, [cartItems]);
 
   return (
     <div className='rounded-x1 overflow-hidden shadow-lg'>

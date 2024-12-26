@@ -70,7 +70,11 @@ const ShopContextProvider = (props) => {
         return totalItem;
     }
 
-    const contextValue = { all_products, cartItems, addToCart, removeFromCart, getTotalCartItems, getTotalCartAmount, product, fetchProduct}
+    const getProductById = (id) => {
+        return all_products.find((product) => product.MaMon === id);
+      };
+
+    const contextValue = { all_products, cartItems, addToCart, removeFromCart, getTotalCartItems, getTotalCartAmount, product, fetchProduct, getProductById}
 
     return (
         <ShopContext.Provider value={contextValue}>

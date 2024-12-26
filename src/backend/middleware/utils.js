@@ -61,10 +61,16 @@ function formatAsSQLDate(date) {
   return formattedDate;
 }
 
+const convertToSQLDate = (inputDate) => {
+  const [day, month, year] = inputDate.split('/');
+  return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+};
+
 
 module.exports = {
   formatCurrency,
   formatAsVietnameseDate,
   formatAsSQLDatetime,
   formatAsSQLDate,
+  convertToSQLDate
 };
