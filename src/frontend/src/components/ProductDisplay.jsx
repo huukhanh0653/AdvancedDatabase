@@ -27,11 +27,11 @@ const ProductDisplay = (props) => {
           <h3 className='h3'>{product.TenMon}</h3>
           <p><span className='medium-12 text-tertiary'>Phân loại: </span> {product.PhanLoai} </p>
           <div className='flex justify-between items-center my-4 max-w-[555px]'>
-            <div className='text-secondary bold-25 medium-20'>
-              {product.GiaTien.toLocaleString("vi-VN", {
+            <div className='text-secondary bold-25 medium-20'> {product.GiaTien}
+              {/* {product.GiaTien.toLocaleString("vi-VN", {
                 style: "currency",
                 currency: "VND",
-              })}
+              })} */}
             </div>
             <div>
               <span>Số lượng: </span>
