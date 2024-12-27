@@ -105,6 +105,22 @@ async function addDishToBranch(dishBranch) {
   }
 }
 
+async function createNewOrderDetail(orderDetail) {
+  try {
+    const pool = await poolPromise;
+    const result = await pool
+      .request()
+      .input("MAPHIEU", sql.Int, orderDetail.mapheu)
+      .input("MAMON", sql.Int, orderDetail.mamon)
+      .input("SL", sql.Int, orderDetail.soluong)
+      .execute("SP_CREATE_CHONMON");
+    return result;
+  } catch (error) {
+    console.error("Error creating new order detail:", error);
+    throw error;
+  }
+}
+
 async function createNewOrder(order) {
   try {
     const pool = await poolPromise;
@@ -146,7 +162,7 @@ async function createNewOrder(order) {
       return false;
     }
 
-    //^ Thêm món vào hóa đơn
+    //^ Thêm món vào bảng chọn món
     query = `INSERT INTO CHONMON (MAPHIEU, MAMON, SOLUONG, TRAMON) VALUES `;
     for (let i = 0; i < _order.data.length; i++) {
       query += `(${MaPhieu}, ${_order.data[i].dishID}, ${_order.data[i].quantity}, 0), `;
@@ -170,22 +186,6 @@ async function createNewOrder(order) {
     }
   } catch (error) {
     console.error("Error creating new order:", error);
-    throw error;
-  }
-}
-
-async function createNewOrderDetail(orderDetail) {
-  try {
-    const pool = await poolPromise;
-    const result = await pool
-      .request()
-      .input("MAPHIEU", sql.Int, orderDetail.mapheu)
-      .input("MAMON", sql.Int, orderDetail.mamon)
-      .input("SL", sql.Int, orderDetail.soluong)
-      .execute("SP_CREATE_CHONMON");
-    return result;
-  } catch (error) {
-    console.error("Error creating new order detail:", error);
     throw error;
   }
 }
