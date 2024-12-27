@@ -10,14 +10,18 @@ const Item = ({ id, name, image, old_price }) => {
   const [quantity, setQuantity] = useState(1);
 
   const handleAddToCart = () => {
-    addToCart(id, quantity);
-    alert(`${quantity} ${name} đã được thêm vào giỏ hàng!`);
-  };
+    const product = {
+      MaMon: id, // Map `id` to `MaMon`
+      TenMon: name, // Map `name` to `TenMon`
+      HinhAnh: image, // Map `image` to `HinhAnh`
+      GiaTien: old_price, // Map `old_price` to `GiaTien`
+    };
 
-  useEffect(() => {
-    // Lưu `cartItems` vào localStorage mỗi khi nó thay đổi
-    localStorage.setItem("cartItems", JSON.stringify(cartItems));
-}, [cartItems]);
+    addToCart(product, quantity); // Truyền sản phẩm cùng số lượng tùy chỉnh
+    alert(`${quantity} ${product.TenMon} đã được thêm vào giỏ hàng!`);
+    console.log(product);
+
+  };
 
   return (
     <div className='rounded-x1 overflow-hidden shadow-lg'>
