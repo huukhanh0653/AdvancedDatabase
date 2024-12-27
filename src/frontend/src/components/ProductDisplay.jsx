@@ -9,8 +9,9 @@ const ProductDisplay = (props) => {
   const [quantity, setQuantity] = useState(1);
 
   const handleAddToCart = () => {
-    addToCart(product.MaMon, quantity);
+    addToCart(product, quantity); // Truyền sản phẩm cùng số lượng tùy chỉnh
     alert(`${quantity} ${product.TenMon} đã được thêm vào giỏ hàng!`);
+    console.log(product);
   };
 
   return (
@@ -27,11 +28,11 @@ const ProductDisplay = (props) => {
           <h3 className='h3'>{product.TenMon}</h3>
           <p><span className='medium-12 text-tertiary'>Phân loại: </span> {product.PhanLoai} </p>
           <div className='flex justify-between items-center my-4 max-w-[555px]'>
-            <div className='text-secondary bold-25 medium-20'> {product.GiaTien}
-              {/* {product.GiaTien.toLocaleString("vi-VN", {
+            <div className='text-secondary bold-25 medium-20'>
+              {product.GiaTien.toLocaleString("vi-VN", {
                 style: "currency",
                 currency: "VND",
-              })} */}
+              })}
             </div>
             <div>
               <span>Số lượng: </span>

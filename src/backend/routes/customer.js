@@ -220,22 +220,25 @@ router.post("/customer-reservation", async function (req, res, next) {
 
 router.post("/cart-page", async function (req, res, next) {
   try {
-    const { cartItems } = req.body;
+    const { cartItems, cardID } = req.body;
 
     // Validate the request body
     if (!cartItems || Object.keys(cartItems).length === 0) {
+      console.log("Cart is empty");
       return res.status(400).json({ message: "Cart is empty" });
     }
 
     // Fetch products from database to validate cart items and calculate totals
     const pool = await poolPromise; // Assuming you're using SQL Server with a pool
     const productIds = Object.keys(cartItems).map(id => `'${id}'`).join(',');
+    console.log(productIds);
     const query = `SELECT MaMon, TenMon, HinhAnh, GiaTien FROM MONAN WHERE MaMon IN (${productIds})`;
 
     const result = await pool.request().query(query);
     const products = result.recordset;
 
     if (!products || products.length === 0) {
+      console.log("Products not found");
       return res.status(404).json({ message: "Products not found" });
     }
 
@@ -244,16 +247,14 @@ router.post("/cart-page", async function (req, res, next) {
     const orderDetails = [];
 
     products.forEach((product) => {
-      const quantity = cartItems[product.MaMon];
-      if (quantity > 0) {
-        const subtotal = product.GiaTien * quantity;
+      const cartItem = cartItems[product.MaMon]; // Get the product details from cartItems
+      if (cartItem && cartItem.quantity > 0) {
+        const subtotal = product.GiaTien * cartItem.quantity; // Use the quantity from cartItem
         totalAmount += subtotal;
-
+    
         orderDetails.push({
           MaMon: product.MaMon,
-          SoLuong: quantity,
-          DonGia: product.GiaTien,
-          ThanhTien: subtotal,
+          SoLuong: cartItem.quantity, // Pass the quantity
         });
       }
     });
@@ -261,11 +262,6 @@ router.post("/cart-page", async function (req, res, next) {
     // Insert invoice using stored procedure `sp_taoHDMoi`
     const invoiceResult = await pool
       .request()
-      .input("GiamGia", 0) // Assuming no discount for now
-      .input("TongHoaDon", totalAmount)
-      .input("MaThe", null) // Assuming no membership card used
-      .input("NgayLap", new Date())
-      .input("isEATIN", isEATIN) // Eating in or take-away
       .execute("sp_taoHDMoi");
 
     const MaHD = invoiceResult.returnValue; // Get the newly created invoice ID
@@ -273,11 +269,8 @@ router.post("/cart-page", async function (req, res, next) {
     // Insert order (PHIEUDATMON) using stored procedure `sp_TaoPDM_Moi`
     const orderResult = await pool
       .request()
-      .input("MaBan", MaBan)
-      .input("MaCN", MaCN)
-      .input("MaNV", MaNV)
       .input("MaHD", MaHD)
-      .execute("sp_TaoPDM_Moi");
+      .execute("sp_TaoPDM_Customer");
 
     const MaPhieu = orderResult.returnValue; // Get the newly created order ID
 
@@ -288,18 +281,28 @@ router.post("/cart-page", async function (req, res, next) {
         .input("MaPhieu", MaPhieu)
         .input("MaMon", detail.MaMon)
         .input("SoLuong", detail.SoLuong)
+        .input("TraMon", 0)
         .query(
-          "INSERT INTO CHONMON (MaPhieu, MaMon, SoLuong) VALUES (@MaPhieu, @MaMon, @SoLuong)"
+          "INSERT INTO CHONMON (MaPhieu, MaMon, SoLuong, TraMon) VALUES (@MaPhieu, @MaMon, @SoLuong, @TraMon)"
         );
     }
 
+    const checkOutRes = await pool
+      .request()
+      .input("MaHD", MaHD)
+      .input("MaThe", cardID)
+      .execute("sp_Checkout_Customer");
+
+    const GiamGia = checkOutRes.returnValue;
+
+    const query1 = `SELECT TOP 1 * FROM HOADON WHERE MaHD = '${MaHD}'`;
+    const result1 = await pool.request().query(query1)
+
+    const TongTien = result1.recordset[0]?.TongHoaDon;
     // Respond with order confirmation
     return res.status(200).json({
       message: "Order placed successfully",
-      MaPhieu,
-      MaHD,
-      totalAmount,
-      orderDetails,
+      MaPhieu, TongTien, GiamGia
     });
   } catch (error) {
     console.error("Error placing order:", error);
@@ -307,19 +310,30 @@ router.post("/cart-page", async function (req, res, next) {
   }
 });
 
-router.post("/create-new-card", async function (req, res, next) {
-  const { username, password } = req.user;
-  const { LoaiThe } = req.query;
-  // TODO: tao the thanh vien moi
-  let MaThe = queryDB("SELECT * FROM THETHANHVIEN").recordset.length;
-  if (!MaThe) MaThe = 1;
+router.post("/check-card", async function (req, res, next) {
+  try {
+    const { cardID } = req.body;
 
-  if (!executeProcedure("CREATE_THE_THANH_VIEN", [MaThe, LoaiThe, username]))
-    return res.status(500).json({ message: "Internal server error" });
+    if (!cardID )
+      return res.status(400).json({ message: "Missing information" });
 
-  return res.status(200).json({ message: "Registered successfully" });
+    const query = `SELECT * FROM THETHANHVIEN WHERE MaThe = '${cardID}' `;
+    const pool = await poolPromise;
+    const result = await pool.request().query(query);
+
+    if (result.recordset.length === 0) {
+      return res.status(404).json({ message: "Mã thẻ không hợp lệ!" });
+    }
+
+      return res.status(200).json({ message: "Mã thẻ hợp lệ!" });
+
+    } catch (error) {
+      console.error("Error: ", error);
+      return res.status(500).json({ message: "Unexpected Error" });
+    }
 
 });
+
 // router.post("/register-customer", isEmployee, function (req, res, next) {
 //   const { username, password } = req.user;
 //   const { NgayLap, LoaiThe, MaKH } = req.body;
