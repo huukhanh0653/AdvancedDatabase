@@ -190,6 +190,30 @@ async function createNewOrder(order) {
   }
 }
 
+async function checkout(MaBan, MaThe) {
+  try {
+    const pool = await poolPromise;
+    let query = 'Select mathe from thethanhvien where mathe = "' + MaThe + '"';
+    let rs = await pool.request().query(query);
+    if (rs.recordset.length === 0)
+      return { success: false, message: "Mã thẻ không tồn tại" };
+
+    query = 'select maban from ban where maban = ' + MaBan;
+    rs = await pool.request().query(query);
+    if (rs.recordset.length === 0) return { success: false, message: "Bàn không tồn tại" };
+
+    await pool.request().input("MABAN", sql.Int, MaBan);
+    await pool.request().input("MATHE", sql.Char(6), MaThe);
+    rs = await pool.request().execute("SP_CHECKOUT");
+    if (rs.rowsAffected[0] === 0) return { success: false, message: "Lỗi khi thanh toán" };
+
+    return { success: true, message: "Thanh toán thành công" };
+  } catch (error) {
+    console.error("Error checking out:", error);
+    throw error;
+  }
+}
+
 async function deleteOrder(MaPhieu) {
   try {
     const pool = await poolPromise;
@@ -244,4 +268,5 @@ module.exports = {
   createNewOrderDetail,
   deleteCustomer,
   deleteDish,
+  checkout,
 };

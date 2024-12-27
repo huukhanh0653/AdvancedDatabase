@@ -40,6 +40,7 @@ const {
   createNewOrderDetail,
   deleteCustomer,
   deleteDish,
+  checkout,
 } = require("../model/query_post");
 
 router.get("/get-all-bophan", async function (req, res, next) {
@@ -421,6 +422,7 @@ router.get("/statistic-branch", async function (req, res, next) {
     return res.status(400).json({ message: "Invalid Branch ID or Date" });
 
   result = await getStatisticBranch(MaCN, fromDate, toDate);
+  console.log(result);
 
   if (!result || result.length === 0)
     return res
@@ -471,6 +473,44 @@ router.get("/search-dish", async function (req, res, next) {
       .status(500)
       .json({ message: "Internal server error or empty data" });
 
+  return res.status(200).json(result);
+});
+
+router.get("/search-customer", async function (req, res, next) {
+  let result = false;
+  let KeyWord = req.query.keyWord ? req.query.keyWord : "";
+
+  result = await executeProcedure("SP_SEARCH_KHACHHANG", [
+    {
+      name: "TUKHOA",
+      type: sql.NVarChar,
+      value: KeyWord,
+    },
+  ]);
+  if (result.length === 0)
+    return res.status(200).json({ message: "No result" });
+  if (!result || result.length === 0)
+    return res.status(500).json({ message: "Internal server error" });
+  return res.status(200).json(result);
+});
+
+router.get("/search-order", async function (req, res, next) {
+  let result = false;
+  let KeyWord = req.query.keyWord ? req.query.keyWord : "";
+
+  result = await executeProcedure("SP_SEARCH_HOADON", [
+    {
+      name: "TUKHOA",
+      type: sql.NVarChar,
+      value: KeyWord,
+    },
+  ]);
+
+  if (result.length === 0)
+    return res.status(200).json({ message: "No result" });
+
+  if (!result)
+    return res.status(500).json({ message: "Internal server error" });
   return res.status(200).json(result);
 });
 
@@ -562,7 +602,6 @@ router.post("/new_membership", upload.none(), async function (req, res, next) {
     return res.status(500).json({ message: "Internal server error" });
 });
 
-//! Test chưa kỹ
 router.post(
   "/add_dish_to_branch",
   upload.none(),
@@ -608,7 +647,6 @@ router.post("/new_order", upload.none(), async function (req, res, next) {
   return res.status(200).json(result);
 });
 
-//! Buồn ngủ quá -> Chưa test
 router.delete("/delete_order", async function (req, res, next) {
   let MaHD = req.query.id;
 
@@ -635,7 +673,21 @@ router.post(
   }
 );
 
-//! Buồn ngủ quá -> Chưa test
+//! Chưa test
+router.post("/checkout", async function (req, res, next) {
+  let MaBan = req.query.TableID;
+  let MaThe = req.query.MemberID;
+
+  const result = await checkout(MaBan, MaThe);
+
+  if (!result.success && result.message)
+    return res.status(400).json({ message: result.message });
+  else if (!result)
+    return res.status(500).json({ message: "Internal server error" });
+
+  return res.status(200).json(result);
+});
+
 router.delete("/delete_customer", async function (req, res, next) {
   let MaKH = req.query.CustomerID;
 
@@ -647,7 +699,6 @@ router.delete("/delete_customer", async function (req, res, next) {
   return res.status(200).json(result);
 });
 
-//! Buồn ngủ quá -> Chưa test
 router.delete("/delete_dish", async function (req, res, next) {
   let MaMon = req.query.DishID;
 
@@ -663,7 +714,9 @@ router.delete("/delete_dish", async function (req, res, next) {
 //^ Route dùng để test các chức năng mới
 router.get("/testing", async function (req, res, next) {
   let result = false;
-  result = await queryDB("(SELECT ISNULL(MAX(MAHD), 0) + 1 FROM HOADON)");
+  result = await queryDB(
+    "select mathe from thethanhvien where mathe = '041058'"
+  );
   console.log(result);
   if (!result || result.length === 0) {
     return res.status(500).json({ message: "Internal server error" });
