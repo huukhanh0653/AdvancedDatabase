@@ -7,8 +7,6 @@ const {
   formatAsVietnameseDate,
 } = require("../middleware/utils");
 const e = require("express");
-const { get } = require("../routes");
-const { pool } = require("mssql");
 
 async function executeProcedure(procedureName, params) {
   try {
