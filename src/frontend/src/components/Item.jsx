@@ -19,7 +19,6 @@ const Item = ({ id, name, image, old_price }) => {
 
     addToCart(product, quantity); // Truyền sản phẩm cùng số lượng tùy chỉnh
     alert(`${quantity} ${product.TenMon} đã được thêm vào giỏ hàng!`);
-    console.log(product);
 
   };
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { NavLink } from 'react-router-dom'
 
 const CustomerReservation = () => {
     const [areas, setAreas] = useState([]);
@@ -54,7 +55,7 @@ const CustomerReservation = () => {
         e.preventDefault();
 
         try {
-            const response = await fetch('http://localhost:5000/customer/reservation', {
+            const response = await fetch('http://localhost:5000/customer/customer-reservation', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, phone, rdate, ppl, note, selectedBranch }),
@@ -62,13 +63,12 @@ const CustomerReservation = () => {
 
             if (!response.ok) {
                 const error = await response.json();
-                setErrorMessage(error.message || 'Đặt bàn thất bại!');
+                alert(error.message);
                 return;
             }
 
             const result = await response.json();
-            setSuccessMessage(result.message);
-            setErrorMessage('');
+            alert(`Đặt bàn thành công!`);
 
             setTimeout(() => {
                 // Redirect to home page
@@ -128,11 +128,9 @@ const CustomerReservation = () => {
                             <input type="text" placeholder='Ghi chú' className='h-16 w-full pl-5 bg-slate-900/5 outline-none rounded-xl' value={note} onChange={(e) => setNote(e.target.value)} />
                         </div>
                         <div className="flex mt-6 gap-5">
-                            <button type='submit' className='btn_dark_outline my-5 w-1/2 !rounded-md'>Đặt bàn</button>
-                            <button className='btn_secondary_rounded  my-5 w-1/2 !rounded-md'>Gọi món</button>
+                            <button type='submit' className='btn_dark_outline my-5 w-full !rounded-md'>Đặt bàn</button>
+                            
                         </div>
-                        {errorMessage && <p className='flexCenter text-base py-5 text-red-500'>{errorMessage}</p>}
-                        {successMessage && <p className='text-green-500'>{successMessage}</p>}
                     </form>
                 </div>
             </section>

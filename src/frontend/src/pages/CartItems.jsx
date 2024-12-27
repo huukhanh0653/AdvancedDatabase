@@ -23,7 +23,7 @@ const CartItems = () => {
 
             const data = await response.json();
             if (response.ok) {
-                alert(`Order placed successfully! Order ID: ${data.MaPhieu}`);
+                alert(`Đặt món thành công! Order ID: ${data.MaPhieu}`);
                 setDiscount(data.GiamGia); 
                 setTotal(data.TongTien);
                 // window.location.replace("/cart-page");
@@ -121,7 +121,7 @@ const CartItems = () => {
                     <div className='flexCenter flex-col gap-20 my-16 p-8 md:flex-row rounded-md bg-white w-full max-w-[800px]'>
                         <div className='flex flex-col gap-10'>
                             <h4 className='bold-20'>Hóa đơn</h4>
-                            <div>
+                            <div className='flex-row w-60'>
                                 <div className='flexBetween py-4'>
                                     <h4 className='medium-16'>Tạm tính:</h4>
                                     <h4 className='text-gray-30 font-semibold'>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(getTotalCartAmount())}</h4>

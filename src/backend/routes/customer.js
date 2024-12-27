@@ -196,7 +196,7 @@ router.post("/customer-reservation", async function (req, res, next) {
     const { name, phone, rdate, ppl, note, selectedBranch } = req.body;
 
     if (!rdate || !ppl || !name || !phone || !selectedBranch)
-      return res.status(400).json({ message: "Missing required information" });
+      return res.status(404).json({ message: "Missing required information" });
 
     // Parse and format date for SQL
     const formattedDate = rdate.replace("T", " ") + ":00";
@@ -222,6 +222,8 @@ router.post("/cart-page", async function (req, res, next) {
   try {
     const { cartItems, cardID } = req.body;
 
+    const processedCardID = cardID && cardID.trim() !== "" ? cardID : null;
+
     // Validate the request body
     if (!cartItems || Object.keys(cartItems).length === 0) {
       console.log("Cart is empty");
@@ -243,14 +245,11 @@ router.post("/cart-page", async function (req, res, next) {
     }
 
     // Calculate totals and prepare order details
-    let totalAmount = 0;
     const orderDetails = [];
 
     products.forEach((product) => {
       const cartItem = cartItems[product.MaMon]; // Get the product details from cartItems
       if (cartItem && cartItem.quantity > 0) {
-        const subtotal = product.GiaTien * cartItem.quantity; // Use the quantity from cartItem
-        totalAmount += subtotal;
     
         orderDetails.push({
           MaMon: product.MaMon,
@@ -290,7 +289,7 @@ router.post("/cart-page", async function (req, res, next) {
     const checkOutRes = await pool
       .request()
       .input("MaHD", MaHD)
-      .input("MaThe", cardID)
+      .input("MaThe", processedCardID)
       .execute("sp_Checkout_Customer");
 
     const GiamGia = checkOutRes.returnValue;

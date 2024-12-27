@@ -215,6 +215,19 @@ BEGIN
 END;
 GO
 
+CREATE OR ALTER PROCEDURE sp_TaoPDM_Customer(@MaHD int)
+AS 
+BEGIN 
+	DECLARE @MaPhieu int;
+	INSERT INTO PHIEUDATMON(NgayLap, MaHD)
+    VALUES (GETDATE(), @MaHD);
+
+	SET @MaPhieu = SCOPE_IDENTITY(); -- Retrieve the newly created invoice ID
+
+	RETURN @MaPhieu;
+END;
+GO
+
 ----INSERT CHONMON 
 
 --CREATE OR ALTER PROCEDURE sp_ChonMon(@ListMon array)
@@ -337,8 +350,68 @@ BEGIN
 			WHERE MaThe = @MaThe;
 		END;
 
-		--EXEC sp_UpdateBanToEmpty @MaHD = @MaHD;
+		EXEC sp_UpdateBanToEmpty @MaHD = @MaHD;
 	END;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE sp_Checkout_Customer(@MaHD int, @MaThe char(8))
+AS 
+BEGIN 
+	DECLARE @TongTien DECIMAL(18, 2);
+	DECLARE @LoaiThe CHAR(6);
+	DECLARE @GiamGia DECIMAL(18, 2);
+	DECLARE @DiemTichLuy INT;
+
+	IF EXISTS (SELECT * FROM HOADON WHERE MaHD = @MaHD)
+	BEGIN
+
+		EXEC sp_Subtotal @MaHD = @MaHD
+
+		UPDATE HOADON
+		SET TongHoaDon = (SELECT SUM(TongTien)
+						  FROM PhieuDatMon pd
+						  WHERE pd.MaHD = @MaHD), MaThe = @MaThe
+		WHERE MaHD = @MaHD;
+
+		-- Fetch the final total and membership card details
+		SELECT @TongTien = TongHoaDon
+		FROM HOADON
+		WHERE MaHD = @MaHD;
+
+		-- If a membership card is used, calculate points
+		IF (@MaThe IS NOT NULL AND @TongTien > 0)
+		BEGIN
+		-- Retrieve membership type
+			SELECT @LoaiThe = LoaiThe
+			FROM THETHANHVIEN
+			WHERE MaThe = @MaThe;
+
+			-- Determine the discount rate based on membership type
+			IF (@LoaiThe = 'Silver') 
+				SET @GiamGia = @TongTien * 0.05; -- 5% discount
+			ELSE IF (@LoaiThe = 'Gold') 
+				SET @GiamGia = @TongTien * 0.10; -- 10% discount
+			ELSE 
+				SET @GiamGia = 0; -- No discount for other types
+
+			-- Update the invoice with the discount
+			UPDATE HOADON
+			SET GiamGia = @GiamGia,
+				TongHoaDon = @TongTien - @GiamGia
+			WHERE MaHD = @MaHD;
+
+			-- Update membership points (1 point per 100,000 VND of the final total)
+			SET @DiemTichLuy = FLOOR(@TongTien / 100000); -- 1 point per 100,000 VND
+
+			-- Update membership card points
+			UPDATE THETHANHVIEN
+			SET DiemTichLuy = DiemTichLuy + @DiemTichLuy
+			WHERE MaThe = @MaThe;
+		END;
+	END;
+	
+	RETURN @GiamGia;
 END;
 GO
 
