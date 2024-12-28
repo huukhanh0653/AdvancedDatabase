@@ -1,3 +1,4 @@
+const { queryDB } = require("./queryDB");
 const { sql, poolPromise } = require("./dbConfig");
 
 async function createNewDish(dish) {
@@ -104,31 +105,6 @@ async function addDishToBranch(dishBranch) {
   }
 }
 
-async function createNewOrder(order) {
-  try {
-    const pool = await poolPromise;
-    // const result = await pool
-    //   .request()
-    //   .input("MANV", sql.Int, order.createdBy)
-    //   .input("MABAN", sql.Int, order.tableID)
-    //   .input("ISEATIN", sql.Bit, order.isEatIn)
-    //   .execute("SP_CREATE_ORDER");
-
-    let MaHD = query("(SELECT ISNULL(MAX(MAHD), 0) + 1 FROM HOADON)");
-    MaHD = MaHD.recordset[0][""];
-
-    let query = `SET IDENTITY_INSERT HOADON ON; 
-    INSERT INTO HOADON (MAHD, MANV, MABAN, ISEATIN) 
-    VALUES (${MaHD}, ${order.createdBy}, ${order.tableID}, ${order.isEatIn}); 
-    SET IDENTITY_INSERT HOADON OFF;`;
-
-    return result;
-  } catch (error) {
-    console.error("Error creating new order:", error);
-    throw error;
-  }
-}
-
 async function createNewOrderDetail(orderDetail) {
   try {
     const pool = await poolPromise;
@@ -141,6 +117,99 @@ async function createNewOrderDetail(orderDetail) {
     return result;
   } catch (error) {
     console.error("Error creating new order detail:", error);
+    throw error;
+  }
+}
+
+async function createNewOrder(order) {
+  try {
+    const pool = await poolPromise;
+    let _order = order;
+    let success = true;
+    let query = "";
+
+    //^ Kiểm tra hóa đơn đã tồn tại chưa
+    if (!order.MaHD) {
+      let MaHD = await queryDB("SELECT ISNULL(MAX(MAHD), 0) + 1 FROM HOADON");
+      MaHD = MaHD[0][""];
+      _order.MaHD = MaHD;
+
+      //^ Tạo hóa đơn mới
+      query = `SET IDENTITY_INSERT HOADON ON; 
+    INSERT INTO HOADON (MAHD, NGAYLAP, ISEATIN, MACN, TONGHOADON) 
+    VALUES (${MaHD}, GETDATE(), ${_order.isEatIn}, '${_order.curBranch}', 0); 
+    SET IDENTITY_INSERT HOADON OFF;`;
+      let rs = await pool.request().query(query);
+      if (rs.rowsAffected[0] === 0) {
+        queryDB(`DELETE FROM HOADON WHERE MAHD = ${_order.MaHD}`);
+        return false;
+      }
+    }
+
+    //^ Lấy mã phiếu mới
+    query = "SELECT ISNULL(MAX(MAPHIEU), 0) + 1 FROM PHIEUDATMON";
+    let rs = await pool.request().query(query);
+    let MaPhieu = rs.recordset[0][""];
+
+    //^ Tạo phiếu đặt món
+    query = `SET IDENTITY_INSERT PHIEUDATMON ON;
+    INSERT INTO PHIEUDATMON (MAPHIEU, NGAYLAP, MABAN, MANV, MAHD)
+    VALUES (${MaPhieu}, GETDATE(), ${_order.tableID}, ${_order.createdBy}, ${_order.MaHD});
+    SET IDENTITY_INSERT PHIEUDATMON OFF;`;
+    rs = await pool.request().query(query);
+    if (rs.rowsAffected[0] === 0) {
+      queryDB(`DELETE FROM PHIEUDATMON WHERE MAPHIEU = ${MaPhieu}`);
+      return false;
+    }
+
+    //^ Thêm món vào bảng chọn món
+    query = `INSERT INTO CHONMON (MAPHIEU, MAMON, SOLUONG, TRAMON) VALUES `;
+    for (let i = 0; i < _order.data.length; i++) {
+      query += `(${MaPhieu}, ${_order.data[i].dishID}, ${_order.data[i].quantity}, 0), `;
+    }
+    rs = await pool.request().query(query.slice(0, -2));
+    if (rs.rowsAffected[0] === 0) {
+      queryDB(`DELETE FROM CHONMON WHERE MAPHIEU = ${MaPhieu}`);
+      return false;
+    }
+
+    //^ Cập nhật trạng thái bàn
+    if (_order.isEatIn === 1) {
+      query = `UPDATE BAN SET TINHTRANG = 1 WHERE MABAN = ${_order.tableID}`;
+      rs = await pool.request().query(query);
+      if (rs.rowsAffected[0] === 0) success = false;
+    }
+
+    if (success) return { MaHD: _order.MaHD, MaPhieu: MaPhieu };
+    else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Error creating new order:", error);
+    throw error;
+  }
+}
+
+async function checkout(MaBan, MaThe) {
+  try {
+    const pool = await poolPromise;
+    let query = 'Select mathe from thethanhvien where mathe = "' + MaThe + '"';
+    let rs = await pool.request().query(query);
+    if (rs.recordset.length === 0)
+      return { success: false, message: "Mã thẻ không tồn tại" };
+
+    query = 'select maban from ban where maban = ' + MaBan;
+    rs = await pool.request().query(query);
+    if (rs.recordset.length === 0) return { success: false, message: "Bàn không tồn tại" };
+
+    await pool.request().input("MABAN", sql.Int, MaBan);
+    await pool.request().input("MATHE", sql.Char(6), MaThe);
+    rs = await pool.request().execute("SP_CHECKOUT");
+    if (rs.rowsAffected[0] === 0) return { success: false, message: "Lỗi khi thanh toán" };
+
+    return { success: true, message: "Thanh toán thành công" };
+  } catch (error) {
+    console.error("Error checking out:", error);
     throw error;
   }
 }
@@ -199,4 +268,5 @@ module.exports = {
   createNewOrderDetail,
   deleteCustomer,
   deleteDish,
+  checkout,
 };

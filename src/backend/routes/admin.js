@@ -41,6 +41,7 @@ const {
   createNewOrderDetail,
   deleteCustomer,
   deleteDish,
+  checkout,
 } = require("../model/query_post");
 
 router.get("/get-all-bophan", async function (req, res, next) {
@@ -54,7 +55,6 @@ router.get("/get-all-bophan", async function (req, res, next) {
 });
 
 router.get("/get-all-nhanvien", async function (req, res, next) {
-
   let pageSize = req.query.PageSize ? parseInt(req.query.PageSize, 10) : 25;
   let pageNumber = req.query.PageNumber
     ? parseInt(req.query.PageNumber, 10)
@@ -73,7 +73,6 @@ router.get("/get-all-nhanvien", async function (req, res, next) {
 });
 
 router.get("/customers", async function (req, res, next) {
-
   let pageSize = req.query.PageSize ? parseInt(req.query.PageSize, 10) : 25;
   let pageNumber = req.query.CurrentPage
     ? parseInt(req.query.CurrentPage, 10)
@@ -94,10 +93,9 @@ router.get("/info", async function (req, res, next) {
 
   // if (isAdministrator(req.body.user)) MaCN = req.query.id;
   // else MaCN = req.body.user.CN_HienTai;
-  if(req.query.CurBranch != null) {
+  if (req.query.CurBranch != null) {
     MaCN = req.query.CurBranch;
-  }
-  else {
+  } else {
     // MaCN = req.body.user.CN_HienTai;
   }
 
@@ -155,13 +153,11 @@ router.get("/bill", async function (req, res, next) {
     PageNumber
   );
 
-
   if (!result || result.length === 0) {
     return res.status(500).json({ message: "Internal server error" });
   }
   return res.status(200).json(result);
 });
-
 
 // Lay toan bo hoa don trong mot ngay cu the tai mot chi nhanh
 router.get("/total-bill", async function (req, res, next) {
@@ -171,7 +167,7 @@ router.get("/total-bill", async function (req, res, next) {
 
   result = await queryDB(
     `SELECT COUNT(*) AS TotalBill FROM HOADON WHERE MaCN = ${MaCN}`
-  )
+  );
 
   if (!result || result.length === 0) {
     return res.status(500).json({ message: "Internal server error" });
@@ -199,8 +195,7 @@ router.get("/total-dish", async function (req, res, next) {
     `SELECT COUNT(*) AS TotalDish
     FROM MONAN JOIN PHUCVU ON MONAN.MaMon = PHUCVU.MaMon
     WHERE PHUCVU.MaCN = ${MaCN} AND MONAN.phanLoai='${Category}'`
-  )
-
+  );
 
   if (!result || result.length === 0) {
     return res.status(500).json({ message: "Internal server error" });
@@ -213,8 +208,8 @@ router.get("/dish-per-category", async function (req, res, next) {
   let MaCN = req.query.CurBranch;
 
   result = await queryDB(
-    `SELECT PhanLoai, COUNT(*) AS TotalDish FROM MONAN JOIN PHUCVU ON MONAN.MaMon = PHUCVU.MaMon WHERE PHUCVU.MaCN = ${MaCN} GROUP BY PhanLoai` 
-  )
+    `SELECT PhanLoai, COUNT(*) AS TotalDish FROM MONAN JOIN PHUCVU ON MONAN.MaMon = PHUCVU.MaMon WHERE PHUCVU.MaCN = ${MaCN} GROUP BY PhanLoai`
+  );
 
   let data = {};
   result.forEach((row) => {
@@ -250,13 +245,11 @@ router.get("/regional-dishes", async function (req, res, next) {
 
   let PageNumber = req.query.CurrentPage ? req.query.CurrentPage : 1;
   let PageSize = req.query.PageSize ? req.query.PageSize : 25;
-  let Category  = req.query.Category ? req.query.Category : "%";
-  
-  let MaCN = req.query.CurBranch? req.query.CurBranch : null;
+  let Category = req.query.Category ? req.query.Category : "%";
 
-  let MaKV = await queryDB(
-    `SELECT MaKV FROM CHINHANH WHERE MaCN = ${MaCN}`
-  );
+  let MaCN = req.query.CurBranch ? req.query.CurBranch : null;
+
+  let MaKV = await queryDB(`SELECT MaKV FROM CHINHANH WHERE MaCN = ${MaCN}`);
   MaKV = MaKV[0].MaKV;
 
   if (!MaKV) {
@@ -271,14 +264,10 @@ router.get("/regional-dishes", async function (req, res, next) {
   return res.status(200).json(result);
 });
 
-
 router.get("/regional-dish-info", async function (req, res, next) {
   let result = false;
   let MaCN = req.query.CurBranch;
-  const MaKV = await queryDB(
-    `SELECT MaKV FROM CHINHANH WHERE MaCN = ${MaCN}`
-  );
-
+  const MaKV = await queryDB(`SELECT MaKV FROM CHINHANH WHERE MaCN = ${MaCN}`);
 
   result = await queryDB(
     `SELECT MONAN.PhanLoai, COUNT(*) AS TotalDish 
@@ -286,7 +275,7 @@ router.get("/regional-dish-info", async function (req, res, next) {
     JOIN THUCDON ON MONAN.MaMon = THUCDON.MaMon 
     WHERE THUCDON.MaKV = '${MaKV[0].MaKV}'
     GROUP BY MONAN.PhanLoai`
-  )
+  );
 
   let data = {};
   let total = 0;
@@ -295,7 +284,7 @@ router.get("/regional-dish-info", async function (req, res, next) {
     total += row.TotalDish;
   });
 
-  result = {"data": data, "total": total};
+  result = { data: data, total: total };
 
   if (!result || result.length === 0) {
     return res.status(500).json({ message: "Internal server error" });
@@ -310,7 +299,7 @@ router.get("/total-employee", async function (req, res, next) {
 
   result = await queryDB(
     `SELECT COUNT(*) AS TotalEmployee FROM NHANVIEN WHERE CN_HienTai = ${MaCN}`
-  )
+  );
   if (!result || result.length === 0) {
     return res.status(500).json({ message: "Internal server error" });
   }
@@ -380,10 +369,7 @@ router.get("/member", async function (req, res, next) {
 router.get("/total-customer", async function (req, res, next) {
   let result = false;
 
-
-  result = await queryDB(
-    'SELECT COUNT(*) AS TotalCustomer FROM KHACHHANG'
-  )
+  result = await queryDB("SELECT COUNT(*) AS TotalCustomer FROM KHACHHANG");
 
   if (!result || result.length === 0) {
     return res.status(500).json({ message: "Internal server error" });
@@ -412,10 +398,7 @@ router.get("/customers", async function (req, res, next) {
 router.get("/total-customer", async function (req, res, next) {
   let result = false;
 
-
-  result = await queryDB(
-    'SELECT COUNT(*) AS TotalCustomer FROM KHACHHANG'
-  )
+  result = await queryDB("SELECT COUNT(*) AS TotalCustomer FROM KHACHHANG");
 
   if (!result || result.length === 0) {
     return res.status(500).json({ message: "Internal server error" });
@@ -441,17 +424,17 @@ router.get("/customers", async function (req, res, next) {
   return res.status(200).json(result);
 });
 
-
 router.get("/statistic-branch", async function (req, res, next) {
   let result = false;
   let MaCN = req.query.CurBranch ? req.query.CurBranch : 1;
-  let fromDate = req.query.FromDate
-  let toDate = req.query.ToDate
+  let fromDate = req.query.FromDate;
+  let toDate = req.query.ToDate;
 
   if (!MaCN || !fromDate || !toDate)
     return res.status(400).json({ message: "Invalid Branch ID or Date" });
 
   result = await getStatisticBranch(MaCN, fromDate, toDate);
+  console.log(result);
 
   if (!result || result.length === 0)
     return res
@@ -463,17 +446,16 @@ router.get("/statistic-branch", async function (req, res, next) {
 
 router.get("/statistic-company", async function (req, res, next) {
   let result = false;
-  let KhuVuc = req.query.Region ? req.query.Region : 'all';
-  let fromDate = req.query.FromDate
-  let toDate = req.query.ToDate
+  let KhuVuc = req.query.Region ? req.query.Region : "all";
+  let fromDate = req.query.FromDate;
+  let toDate = req.query.ToDate;
 
   if (!KhuVuc || !fromDate || !toDate)
     return res.status(400).json({ message: "Invalid Branch ID or Date" });
 
-  if(KhuVuc === 'company') {
+  if (KhuVuc === "company") {
     result = await getStatisticCompany(fromDate, toDate);
-  }
-  else {
+  } else {
     result = await getStatisticRegion(KhuVuc, fromDate, toDate);
   }
   console.log(result);
@@ -489,9 +471,9 @@ router.get("/statistic-company", async function (req, res, next) {
 router.get("/search-dish", async function (req, res, next) {
   let result = false;
   let MaCN = req.query.CurBranch ? req.query.CurBranch : 1;
-  let fromDate = req.query.FromDate
-  let toDate = req.query.ToDate
-  let dishName = req.query.DishName
+  let fromDate = req.query.FromDate;
+  let toDate = req.query.ToDate;
+  let dishName = req.query.DishName;
 
   if (!MaCN || !fromDate || !toDate || !dishName)
     return res.status(400).json({ message: "Invalid Branch ID or Date" });
@@ -503,6 +485,44 @@ router.get("/search-dish", async function (req, res, next) {
       .status(500)
       .json({ message: "Internal server error or empty data" });
 
+  return res.status(200).json(result);
+});
+
+router.get("/search-customer", async function (req, res, next) {
+  let result = false;
+  let KeyWord = req.query.keyWord ? req.query.keyWord : "";
+
+  result = await executeProcedure("SP_SEARCH_KHACHHANG", [
+    {
+      name: "TUKHOA",
+      type: sql.NVarChar,
+      value: KeyWord,
+    },
+  ]);
+  if (result.length === 0)
+    return res.status(200).json({ message: "No result" });
+  if (!result || result.length === 0)
+    return res.status(500).json({ message: "Internal server error" });
+  return res.status(200).json(result);
+});
+
+router.get("/search-order", async function (req, res, next) {
+  let result = false;
+  let KeyWord = req.query.keyWord ? req.query.keyWord : "";
+
+  result = await executeProcedure("SP_SEARCH_HOADON", [
+    {
+      name: "TUKHOA",
+      type: sql.NVarChar,
+      value: KeyWord,
+    },
+  ]);
+
+  if (result.length === 0)
+    return res.status(200).json({ message: "No result" });
+
+  if (!result)
+    return res.status(500).json({ message: "Internal server error" });
   return res.status(200).json(result);
 });
 
@@ -594,26 +614,23 @@ router.post("/new_membership", upload.none(), async function (req, res, next) {
     return res.status(500).json({ message: "Internal server error" });
 });
 
-//! Test chưa kỹ
 router.post(
   "/add_dish_to_branch",
   upload.none(),
   async function (req, res, next) {
     let dishBranch = req.body;
-    if(req.query.CurBranch == -1) {
+    if (req.query.CurBranch == -1) {
       let staff = req.query.Staff;
       const branch = await queryDB(
         `SELECT CN_HienTai FROM NHANVIEN WHERE MaNV = ${staff}`
-      );  
+      );
       if (!branch || branch.length === 0)
         return res.status(500).json({ message: "Internal server error" });
-  
+
       dishBranch.CurBranch = branch[0].CN_HienTai;
-    }
-    else {
+    } else {
       dishBranch.CurBranch = req.query.CurBranch;
     }
-
 
     //& Sẽ bổ sung phần xác thực phân quyền cho chức năng này
 
@@ -628,21 +645,20 @@ router.post(
 
 router.post("/new_order", upload.none(), async function (req, res, next) {
   let order = req.body;
-  //! Procedure route này đang bị lỗi, chưa thể sử dụng
-  return res.status(500).json({ message: "Internal server error" });
   //& Sẽ bổ sung phần xác thực phân quyền cho chức năng này
-  order.tableID = req.query.tableID ? req.query.tableIDh : 1;
-  order.isEatIn = req.query.isEatIn ? req.query.isEatIn : 1;
+  order.tableID = req.query.tableID ? parseInt(req.query.tableID) : null;
+  order.isEatIn = order.tableID ? 1 : 0;
+  order.curBranch = req.query.CurBranch ? req.query.CurBranch : 1; // just for testing
 
+  console.log("order", order);
   const result = await createNewOrder(order);
 
-  if (!result || result.length === 0)
+  if (!result)
     return res.status(500).json({ message: "Internal server error" });
 
   return res.status(200).json(result);
 });
 
-//! Buồn ngủ quá -> Chưa test
 router.delete("/delete_order", async function (req, res, next) {
   let MaHD = req.query.id;
 
@@ -654,18 +670,36 @@ router.delete("/delete_order", async function (req, res, next) {
   return res.status(200).json(result);
 });
 
-router.post("/open_table_for_preorder", upload.none(), async function (req, res, next) {
-  let MaBan = req.query.TableID;
+router.post(
+  "/open_table_for_preorder",
+  upload.none(),
+  async function (req, res, next) {
+    let MaBan = req.query.TableID;
 
-    const response = await queryDB (
+    const response = await queryDB(
       `UPDATE BAN SET TinhTrang = 0, MaHD = NULL WHERE MaBan = ${MaBan}`
     );
     if (!response || response.length === 0)
       return res.status(500).json({ message: "Internal server error" });
     else return res.status(200).json(response);
+  }
+);
+
+//! Chưa test
+router.post("/checkout", async function (req, res, next) {
+  let MaBan = req.query.TableID;
+  let MaThe = req.query.MemberID;
+
+  const result = await checkout(MaBan, MaThe);
+
+  if (!result.success && result.message)
+    return res.status(400).json({ message: result.message });
+  else if (!result)
+    return res.status(500).json({ message: "Internal server error" });
+
+  return res.status(200).json(result);
 });
 
-//! Buồn ngủ quá -> Chưa test
 router.delete("/delete_customer", async function (req, res, next) {
   let MaKH = req.query.CustomerID;
 
@@ -677,8 +711,6 @@ router.delete("/delete_customer", async function (req, res, next) {
   return res.status(200).json(result);
 });
 
-
-//! Buồn ngủ quá -> Chưa test
 router.delete("/delete_dish", async function (req, res, next) {
   let MaMon = req.query.DishID;
 
@@ -690,15 +722,14 @@ router.delete("/delete_dish", async function (req, res, next) {
   return res.status(200).json(result);
 });
 
-
 ////////////////////////////////////////////////////////////////////////////////////////
 //^ Route dùng để test các chức năng mới
 router.get("/testing", async function (req, res, next) {
   let result = false;
-  let MaHD = 100;
-
-  result = await executeProcedure("SP_DRAFT");
-
+  result = await queryDB(
+    "select mathe from thethanhvien where mathe = '041058'"
+  );
+  console.log(result);
   if (!result || result.length === 0) {
     return res.status(500).json({ message: "Internal server error" });
   }

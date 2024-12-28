@@ -7,8 +7,6 @@ const {
   formatAsVietnameseDate,
 } = require("../middleware/utils");
 const e = require("express");
-const { get } = require("../routes");
-const { pool } = require("mssql");
 
 async function executeProcedure(procedureName, params) {
   try {
@@ -77,7 +75,6 @@ async function queryPaginating(query, pageSize, pageNumber) {
       { name: "Page", type: sql.Int, value: pageNumber },
     ]);
 
-
     if (!result) {
       return [];
     }
@@ -95,12 +92,9 @@ async function getTableInfo(MaCN) {
       { name: "MACN", type: sql.Int, value: MaCN },
     ]);
 
-
     if (!result) {
       return [];
-    };
-
-
+    }
 
     return result;
   } catch (err) {
@@ -201,7 +195,6 @@ async function getTableDetail(MaBan) {
   }
 }
 
-
 async function getBillDetail(MaHD) {
   try {
     let query = `SELECT PHIEUDATMON.*, NHANVIEN.HoTen FROM PHIEUDATMON
@@ -212,7 +205,6 @@ async function getBillDetail(MaHD) {
       return [];
     }
     let result = [];
-
 
     for (let i = 0; i < PhieuDatMon.length; i++) {
       let item = {};
@@ -232,7 +224,8 @@ async function getBillDetail(MaHD) {
       if (MonAn) {
         item["data"] = MonAn;
         item["data"].forEach((element) => {
-          item["subTotal"] += element["GiaTien"].toFixed(0) * element["SoLuong"];
+          item["subTotal"] +=
+            element["GiaTien"].toFixed(0) * element["SoLuong"];
 
           element["GiaTien"] = formatCurrency(element["GiaTien"].toFixed(0));
           element["price"] = element["GiaTien"];
@@ -243,15 +236,12 @@ async function getBillDetail(MaHD) {
 
           element["dishName"] = element["TenMon"];
           delete element["TenMon"];
-
-
         });
       } else item["data"] = [];
       item["subTotal"] = formatCurrency(item["subTotal"].toFixed(0));
 
       result.push(item);
     }
-
 
     return result;
   } catch (err) {
@@ -278,7 +268,7 @@ async function getStatisticBranch(MaCN, fromDate, toDate) {
     request.input("NgayBatDau", sqlFromDate);
     request.input("NgayKetThuc", sqlToDate);
 
-    const result = await request.execute("sp_TopMonAnChayNhatChiNhanh");
+    const result = await request.execute("sp_Top5MonAnChayNhatCN");
     totalCustomer = await queryDB(
       `SELECT COUNT(MaKH) as totalCustomer FROM KHACHHANG`
     );
@@ -292,7 +282,6 @@ async function getStatisticBranch(MaCN, fromDate, toDate) {
       WHERE HD.MaCN = ${MaCN}
       AND '${sqlFromDate}' <= HD.NgayLap AND HD.NgayLap <= '${sqlToDate}'
       GROUP BY HD.NgayLap`
-  
     );
 
     totalRevenue = await queryDB(
@@ -304,7 +293,6 @@ async function getStatisticBranch(MaCN, fromDate, toDate) {
       WHERE HD.MaCN = ${MaCN}
       AND '${sqlFromDate}' <= HD.NgayLap AND HD.NgayLap <= '${sqlToDate}'`
     );
-
 
     totalNewMember = await queryDB(
       `SELECT COUNT(MaThe) as totalNewMember FROM THETHANHVIEN WHERE NgayLap BETWEEN '${sqlFromDate}' AND '${sqlToDate}'`
@@ -318,8 +306,7 @@ async function getStatisticBranch(MaCN, fromDate, toDate) {
 
     dailyRevenue.forEach((element) => {
       element["date"] = formatAsVietnameseDate(element["date"]);
-    }
-    );
+    });
 
     return {
       dailyRevenue: dailyRevenue ? dailyRevenue : [],
@@ -348,7 +335,6 @@ async function getStatisticCompany(fromDate, toDate) {
     let totalNewMember;
     let totalCustomer;
 
-
     const sqlFromDate = convertToSQLDate(fromDate);
     const sqlToDate = convertToSQLDate(toDate);
 
@@ -356,6 +342,7 @@ async function getStatisticCompany(fromDate, toDate) {
     request.input("NgayKetThuc", sqlToDate);
 
     const result = await request.execute("sp_TopMonAnChayNhatCty");
+
     totalCustomer = await queryDB(
       `SELECT COUNT(MaKH) as totalCustomer FROM KHACHHANG`
     );
@@ -368,7 +355,6 @@ async function getStatisticCompany(fromDate, toDate) {
       JOIN HOADON HD ON PDM.MaHD = HD.MaHD
       WHERE '${sqlFromDate}' <= HD.NgayLap AND HD.NgayLap <= '${sqlToDate}'
       GROUP BY HD.NgayLap`
-  
     );
 
     totalRevenue = await queryDB(
@@ -379,7 +365,6 @@ async function getStatisticCompany(fromDate, toDate) {
       JOIN HOADON HD ON PDM.MaHD = HD.MaHD
       WHERE'${sqlFromDate}' <= HD.NgayLap AND HD.NgayLap <= '${sqlToDate}'`
     );
-
 
     totalNewMember = await queryDB(
       `SELECT COUNT(MaThe) as totalNewMember FROM THETHANHVIEN WHERE NgayLap BETWEEN '${sqlFromDate}' AND '${sqlToDate}'`
@@ -393,8 +378,7 @@ async function getStatisticCompany(fromDate, toDate) {
 
     dailyRevenue.forEach((element) => {
       element["date"] = formatAsVietnameseDate(element["date"]);
-    }
-    );
+    });
 
     return {
       dailyRevenue: dailyRevenue ? dailyRevenue : [],
@@ -412,7 +396,6 @@ async function getStatisticCompany(fromDate, toDate) {
   }
 }
 
-
 async function getStatisticRegion(region, fromDate, toDate) {
   //! Còn lỗi, đang chờ fix
   try {
@@ -424,7 +407,6 @@ async function getStatisticRegion(region, fromDate, toDate) {
     let totalNewMember;
     let totalCustomer;
 
-
     const sqlFromDate = convertToSQLDate(fromDate);
     const sqlToDate = convertToSQLDate(toDate);
 
@@ -432,7 +414,7 @@ async function getStatisticRegion(region, fromDate, toDate) {
     request.input("NgayBatDau", sqlFromDate);
     request.input("NgayKetThuc", sqlToDate);
 
-    const result = await request.execute("sp_TopMonAnChayNhatKhuVuc");
+    const result = await request.execute("sp_Top5MonAnChayNhatKV");
     totalCustomer = await queryDB(
       `SELECT COUNT(MaKH) as totalCustomer FROM KHACHHANG`
     );
@@ -447,7 +429,6 @@ async function getStatisticRegion(region, fromDate, toDate) {
       WHERE '${sqlFromDate}' <= HD.NgayLap AND HD.NgayLap <= '${sqlToDate}'
       AND CN.MaKV = '${region}'
       GROUP BY HD.NgayLap`
-  
     );
 
     totalRevenue = await queryDB(
@@ -460,7 +441,6 @@ async function getStatisticRegion(region, fromDate, toDate) {
       WHERE'${sqlFromDate}' <= HD.NgayLap AND HD.NgayLap <= '${sqlToDate}'
       AND CN.MaKV = '${region}'`
     );
-
 
     totalNewMember = await queryDB(
       `SELECT COUNT(MaThe) as totalNewMember FROM THETHANHVIEN WHERE NgayLap BETWEEN '${sqlFromDate}' AND '${sqlToDate}'`
@@ -476,8 +456,7 @@ async function getStatisticRegion(region, fromDate, toDate) {
 
     dailyRevenue.forEach((element) => {
       element["date"] = formatAsVietnameseDate(element["date"]);
-    }
-    );
+    });
 
     return {
       dailyRevenue: dailyRevenue ? dailyRevenue : [],
@@ -494,7 +473,6 @@ async function getStatisticRegion(region, fromDate, toDate) {
     return [];
   }
 }
-
 
 async function searchStatisticDish(MaCN, fromDate, toDate, dishName) {
   //! Còn lỗi, đang chờ fix
@@ -513,14 +491,11 @@ async function searchStatisticDish(MaCN, fromDate, toDate, dishName) {
 
     const result = await request.execute("sp_SearchDoanhThuMonAnCN");
     return result.recordset ? result.recordset : result;
-
   } catch (err) {
     console.error("Error executing getStatistic:", err);
     return [];
   }
 }
-
-
 
 async function getCustomer(pageSize, pageNumber) {
   try {
@@ -582,8 +557,6 @@ async function getDishes(MACN, Category, pageSize, pageNumber) {
       delete element["PhanLoai"];
       element["availability"] = element["isServed"];
       delete element["isServed"];
-
-
     });
     return result;
   } catch (err) {
@@ -591,7 +564,6 @@ async function getDishes(MACN, Category, pageSize, pageNumber) {
     return null;
   }
 }
-
 
 async function getCompanyDishes(Category, pageSize, pageNumber) {
   try {
@@ -607,7 +579,7 @@ async function getCompanyDishes(Category, pageSize, pageNumber) {
       JOIN MONAN ON KV.MaMon = MONAN.MaMon`,
       pageSize,
       pageNumber
-    )
+    );
 
     if (!result) return [];
 
@@ -626,8 +598,6 @@ async function getCompanyDishes(Category, pageSize, pageNumber) {
       delete element["PhanLoai"];
       element["availability"] = element["isServed"];
       delete element["isServed"];
-
-
     });
 
     return result;
@@ -636,7 +606,6 @@ async function getCompanyDishes(Category, pageSize, pageNumber) {
     return null;
   }
 }
-
 
 async function getRegionalDishes(MAKV, Category, pageSize, pageNumber) {
   try {
@@ -660,7 +629,6 @@ async function getRegionalDishes(MAKV, Category, pageSize, pageNumber) {
       delete element["GiaoHang"];
       element["category"] = element["PhanLoai"];
       delete element["PhanLoai"];
-
     });
 
     return result;
