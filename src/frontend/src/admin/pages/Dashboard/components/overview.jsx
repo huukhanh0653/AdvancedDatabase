@@ -25,7 +25,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 export function Overview(dailyRevenue) {
   return (
     <ResponsiveContainer width="100%" height={370}>
-      <BarChart data={dailyRevenue.dailyRevenue}>
+      <BarChart data={dailyRevenue ? dailyRevenue.dailyRevenue : []}>
         <YAxis
           stroke="#888888"
           color='red'
