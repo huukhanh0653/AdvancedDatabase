@@ -685,6 +685,20 @@ async function getMember(MaKH) {
   }
 }
 
+async function getEmployeeReview(MaNV) {
+  try {
+    const result = await callFunction("fn_DiemPhucVuNhanVien", [
+      { name: "MaNV", type: sql.Int, value: parseInt(MaNV) },
+    ]);
+    if (!result) return null;
+
+    return result.recordset ? result.recordset : result;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
 module.exports = {
   queryPaginating,
   getTableInfo,
@@ -703,4 +717,5 @@ module.exports = {
   searchStatisticDish,
   getStatisticCompany,
   getStatisticRegion,
+  getEmployeeReview,
 };

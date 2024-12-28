@@ -20,6 +20,7 @@ const {
   getStatisticCompany,
   getStatisticRegion,
   getMember,
+  getEmployeeReview,
   getRegionalDishes,
   executeProcedure,
   queryDB,
@@ -328,6 +329,17 @@ router.get("/employees", async function (req, res, next) {
     PageSize,
     PageNumber
   );
+
+  if (!result || result.length === 0) {
+    return res.status(500).json({ message: "Internal server error" });
+  }
+  return res.status(200).json(result);
+});
+
+router.get("/employee-review", async function (req, res, next) {
+  let result = false;
+  let MaNV = req.query.EmployeeID;
+  result = await getEmployeeReview(MaNV);
 
   if (!result || result.length === 0) {
     return res.status(500).json({ message: "Internal server error" });

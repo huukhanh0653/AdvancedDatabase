@@ -6,6 +6,8 @@ import { EditEmployeeForm, WorkHistoryDetail, TerminateEmployeeForm } from "./Em
 import { Button } from "@/components/ui/button"
 import { PopupModal } from "@/components/ui/modal"
 import React from "react";
+import { AlertDialogComponent } from "@/src/admin/components/alert-dialog";
+import { useEffect } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +19,7 @@ import {
 import { set } from "date-fns";
 
 import { formattedDate } from "@/lib/utils";
+import { use } from "react";
 
 export const columns = [
     {
@@ -121,6 +124,25 @@ export const columns = [
       const [terminateOpen, setTerminateOpen] = React.useState(false)
       const [transferOpen, setTransferOpen] = React.useState(false)
       const [workHistoryOpen, setWorkHistoryOpen] = React.useState(false)
+      const [reviewOpen, setReviewOpen] = React.useState(false)
+      const [review, setReview] = React.useState(0)
+
+      const getEmployeeReview = async () => {
+        try {
+          const response = await fetch(`http://localhost:5000/admin/employee-review?EmployeeID=${row.original.MaNV}`).then((response) => response.json());
+          console.log(response);
+          setReview(response);
+          return response;
+        }
+        catch (error) {
+          console.log(error);
+        }
+      }
+
+      useEffect(() => {
+        getEmployeeReview();
+      }, []);
+
       return (
         <>
         <PopupModal
@@ -159,6 +181,16 @@ export const columns = [
         >
         </PopupModal> 
 
+        <AlertDialogComponent 
+          open= {reviewOpen} 
+          setOpen={setReviewOpen} 
+          func={getEmployeeReview}
+          title={"Điểm phục vụ của nhân viên"} 
+          description={`Điểm phục vụ của nhân viên này là: ${review}`} 
+          >
+        </AlertDialogComponent>
+        
+
 
 
 
@@ -184,6 +216,9 @@ export const columns = [
             </DropdownMenuItem>
             <DropdownMenuItem onClick= {setTerminateOpen}>
               Xác nhận nghỉ việc
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick= {setReviewOpen}>
+              Điểm đánh giá
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
