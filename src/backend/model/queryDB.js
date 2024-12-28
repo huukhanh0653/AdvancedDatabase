@@ -268,7 +268,7 @@ async function getStatisticBranch(MaCN, fromDate, toDate) {
     request.input("NgayBatDau", sqlFromDate);
     request.input("NgayKetThuc", sqlToDate);
 
-    const result = await request.execute("sp_TopMonAnChayNhatChiNhanh");
+    const result = await request.execute("sp_Top5MonAnChayNhatCN");
     totalCustomer = await queryDB(
       `SELECT COUNT(MaKH) as totalCustomer FROM KHACHHANG`
     );
@@ -414,7 +414,7 @@ async function getStatisticRegion(region, fromDate, toDate) {
     request.input("NgayBatDau", sqlFromDate);
     request.input("NgayKetThuc", sqlToDate);
 
-    const result = await request.execute("sp_TopMonAnChayNhatKhuVuc");
+    const result = await request.execute("sp_Top5MonAnChayNhatKV");
     totalCustomer = await queryDB(
       `SELECT COUNT(MaKH) as totalCustomer FROM KHACHHANG`
     );

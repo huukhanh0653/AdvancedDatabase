@@ -18,9 +18,12 @@
 select * from KHACHHANG
 
 declare @x  Nvarchar(255);
-set @x = '12'
+set @x = 'TESTING'
 
-select top 10 * from hoadon where mahd LIKE '%' + @x + '%'
-or mathe like '%' + @x + '%'
-or NgayLap like '%' + @x +'%'
-order by ngaylap desc
+select top 10 * from KHACHHANG where MAKH LIKE '%' + @x + '%'
+or USERNAME like '%' + @x + '%'
+or EMAIL like '%' + @x +'%'
+OR HOTEN like '%' + @x +'%'
+OR CCCD like '%' + @x +'%'
+OR SDT like '%' + @x +'%'
+order by MAKH desc
