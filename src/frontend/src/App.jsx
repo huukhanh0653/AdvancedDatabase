@@ -111,8 +111,9 @@ export default function App() {
           }
         >
           <Route path="/table" element={<Table />} />
-          <Route path="/table/:tableID" element={<TableDetail />} />
+          <Route path="/table/:tableID/:billID" element={<TableDetail />} />
           <Route path="/table/:tableID/order" element={<Order />} />
+          <Route path="/table/:tableID/:billID/order" element={<Order />} />
           <Route path="/reservation" element={<Reservation />} />
           <Route path="/bill" element={<Bill />} />
           <Route path="/bill/:billID" element={<BillDetail />} />

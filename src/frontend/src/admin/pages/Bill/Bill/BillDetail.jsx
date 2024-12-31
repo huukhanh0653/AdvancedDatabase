@@ -10,7 +10,7 @@ import { useParams } from "react-router-dom";
 
 
 export default function BillDetail() {
-  const [data, setData] = useState(functionToFetchData());
+  const [data, setData] = useState([]);
   const billID = useParams().billID;
 
 

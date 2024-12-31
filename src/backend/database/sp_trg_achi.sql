@@ -7,7 +7,7 @@ GO
 --3. Trigger để tính thời gian duyệt web của khách
 
 -----1. Proc cập nhật hang thành viên.
-CREATE PROCEDURE sp_UpdateMembershipRanks
+CREATE or alter PROCEDURE sp_UpdateMembershipRanks
 AS
 BEGIN
     DECLARE @CurrentDate DATE = GETDATE();
@@ -295,7 +295,7 @@ END;
 GO 
 
 --Thanh toán, gọi lên khi chọn vào button 'Thanh toán' trên web
-CREATE OR ALTER PROCEDURE sp_Checkout(@MaHD int, @MaThe char(8))
+CREATE OR ALTER PROCEDURE sp_Checkout(@MaHD int, @MaThe char(6))
 AS 
 BEGIN 
 	DECLARE @TongTien DECIMAL(18, 2);

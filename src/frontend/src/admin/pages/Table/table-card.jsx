@@ -7,7 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { PopupModal } from "@/components/ui/modal"
 import { useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
-import { formattedDate } from "@/lib/utils"
+import { formattedDate, currencyFormatted } from "@/lib/utils"
 import { sub } from "date-fns"
 
 
@@ -70,8 +70,34 @@ export function TableCard({ tableID, billID, date, isPending}) {
   const navigate = useNavigate()
   const [payOpen, setPayOpen] = useState(false);
   const [openTable, setOpenTable] = useState(false);
+  const handleCheckoutPreorder = async () => {
+    let curBranch
+    let userinfo;
+    const _userbase64 = localStorage.getItem("user");
+    if (_userbase64) {
+      userinfo = JSON.parse(decodeURIComponent(escape(atob(_userbase64))));
+    }
+    if(userinfo.MaBP == 6) {
+      curBranch=`?CurBranch=${localStorage.getItem('branch')}`;
+    }
+    else {
+      curBranch = '';
+    }
+    const response = await fetch(`http://localhost:5000/admin/checkout-preorder${curBranch}&TableID=${tableID}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.ok) {
+      console.log("Thanh toán thành công");
+      window.location.reload();
+    }
+    else {
+      alert("Thanh toán không thành công")
+    }
+  }
   
-
   return (
     <Card className="w-[390px] bg-zinc-900 text-zinc-100">
       <CardHeader className="space-y-4 pb-4">
@@ -100,10 +126,10 @@ export function TableCard({ tableID, billID, date, isPending}) {
         </div>
       </CardHeader>
       <CardFooter className="flex gap-2 pt-4 justify-between">
-        {!isPending && !billID && <Button onClick={() => navigate(`/table/${tableID}`)} variant="outline" size="icon" className="h-10 w-10 rounded-lg border-zinc-800 bg-transparent text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
+        {!isPending && billID && <Button onClick={() => navigate(`/table/${tableID}/${billID}`)} variant="outline" size="icon" className="h-10 w-10 rounded-lg border-zinc-800 bg-transparent text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100" >
           <Pencil className="h-4 w-4 " />
         </Button>}
-        {!isPending && billID && <Button onClick={() => navigate(`/table/${tableID}/order`)} variant="outline" size="icon" className="h-10 w-10 rounded-lg border-zinc-800 bg-transparent text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100">
+        {!isPending && !billID && <Button onClick={() => navigate(`/table/${tableID}/order`)} variant="outline" size="icon" className="h-10 w-10 rounded-lg border-zinc-800 bg-transparent text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100" >
           <Pencil className="h-4 w-4 " />
         </Button>}
         {!isPending && billID && <PopupModal open={payOpen} setOpen={setPayOpen} formComponent={BillSummary} props={{title: "", description: ""}} className="bg-zinc-900 border-transparent"  billID= {billID} tableID= {tableID}>
@@ -112,7 +138,9 @@ export function TableCard({ tableID, billID, date, isPending}) {
           </Button>
         </PopupModal>}
         {!isPending && !billID && 
-          <Button className="ml-auto flex-1 rounded-lg bg-rose-200 text-rose-900 hover:bg-rose-300">
+          <Button 
+            className="ml-auto flex-1 rounded-lg bg-rose-200 text-rose-900 hover:bg-rose-300"
+            onClick={handleCheckoutPreorder}>
             Đã thanh toán
           </Button>
         }
@@ -198,25 +226,25 @@ function BillSummary({ setOpen, billID, tableID }) {
   // const [billInfo, setBillInfo] = useState({subtotal: 0, tax: 0, discount: 0, total: 0});
   const [member, setMember] = useState('');
   const [subtotal, setSubtotal] = useState(0);
-  const [tax, setTax] = useState(0);
-  const [discount, setDiscount] = useState(0);
-  const [total, setTotal] = useState(0);
+
   
 
-  // const handlePay = async () => {
-  //   const response = await fetch(`http://localhost:5000/admin/pay_bill?BillID=${billID}&Member=${member}`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   });
-  //   if (response.ok) {
-  //     console.log("Thanh toán thành công");
-  //   }
-  //   else {
-  //     alert("Thanh toán không thành công")
-  //   }
-  // }
+  const handlePay = async () => {
+    const response = await fetch(`http://localhost:5000/admin/checkout?BillID=${billID}&MemberID=${member != '' ? member : -1}}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.ok) {
+      console.log("Thanh toán thành công");
+      handleClose();
+      window.location.reload();
+    }
+    else {
+      alert("Thanh toán không thành công")
+    }
+  }
 
   const fetchData = async () => {
     const api = `http://localhost:5000/admin/bill-detail?billID=${billID}`;
@@ -236,9 +264,6 @@ function BillSummary({ setOpen, billID, tableID }) {
       const billSummary = convertToBillSummary(billDetail);
       const subTotalDish = calcSubtotal(billSummary);
       setSubtotal(subTotalDish);
-      setTax(subTotalDish * 0.1);
-      setDiscount(subTotalDish * 0.05);
-      setTotal(subTotalDish - discount + tax);
       setData(billSummary);
       console.log(billSummary);
     } catch (error) {
@@ -287,32 +312,20 @@ function BillSummary({ setOpen, billID, tableID }) {
       </ScrollArea>
 
       <div className="p-4 border-t border-zinc-800">
-        <div className="space-y-2 mb-4">
-          <div className="flex justify-between text-sm">
-            <span className="text-zinc-400">Tổng tiền món ăn (VNĐ)</span>
-            <span className="text-white">{subtotal}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-zinc-400">Giảm giá</span>
-            <span className="text-white">{discount}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-zinc-400">Thuế VAT</span>
-            <span className="text-white">{tax}</span>
-          </div>
-          <div className="flex justify-between text-sm font-medium">
-            <span className="text-zinc-400">Tổng cộng (VNĐ)</span>
-            <span className="text-white">{total}</span>
-          </div>
+        <div className="flex justify-between text-sm mb-4">
+          <span className="text-zinc-400">Tổng tiền món ăn (VNĐ)</span>
+          <span className="text-white">{currencyFormatted(subtotal)}</span>
         </div>
         <Input 
-          className="mt-2 mb-4"
+          className="mt-2 mb-4 text-white"
           id="tableID" 
           label="Mã thành viên" 
           placeholder="Mã thành viên..." 
           onChange= {(e) => setMember(e.target.value)}/>
         <div className="space-y-2">
-          <Button className="w-full bg-pink-300 text-zinc-900 hover:bg-pink-400">
+          <Button 
+            className="w-full bg-pink-300 text-zinc-900 hover:bg-pink-400"
+            onClick={handlePay}>
             Thanh toán
           </Button>
           <Button onClick={handleClose} className="w-full bg-zinc-600 text-zinc-900 hover:bg-zinc-300">

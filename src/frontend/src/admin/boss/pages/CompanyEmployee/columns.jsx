@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { PopupModal } from "@/components/ui/modal"
 import React from "react";
 import { formattedDate } from "@/lib/utils";
+import { AlertDialogComponent } from "@/src/admin/components/alert-dialog";
+import { useEffect } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -124,6 +126,22 @@ export const columns = [
     const [terminateOpen, setTerminateOpen] = React.useState(false)
     const [transferOpen, setTransferOpen] = React.useState(false)
     const [workHistoryOpen, setWorkHistoryOpen] = React.useState(false)
+    const [reviewOpen, setReviewOpen] = React.useState(false)
+    const [review, setReview] = React.useState(0);
+
+    const getEmployeeReview = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/admin/employee-review?EmployeeID=${row.original.MaNV}`).then((response) => response.json());
+        setReview(response['']);
+      }
+      catch (error) {
+        console.log(error);
+      }
+    }
+
+    useEffect(() => {
+      getEmployeeReview();
+    }, [row.original.MaNV]);
     return (
       <>
       <PopupModal
@@ -163,6 +181,16 @@ export const columns = [
       >
       </PopupModal> 
 
+      <AlertDialogComponent 
+        open= {reviewOpen} 
+        setOpen={setReviewOpen} 
+        func={() => {}}
+        title={"Điểm phục vụ của nhân viên"} 
+        description={`Điểm phục vụ của nhân viên này là: ${review}`} 
+        >
+      </AlertDialogComponent>
+      
+
 
 
 
@@ -185,6 +213,9 @@ export const columns = [
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick= {setEditOpen}>
             Chỉnh sửa thông tin
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick= {setReviewOpen}>
+            Điểm đánh giá
           </DropdownMenuItem>
           <DropdownMenuItem onClick= {setTerminateOpen}>
             Xác nhận nghỉ việc

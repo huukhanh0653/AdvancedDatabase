@@ -22,7 +22,7 @@ export const columns = [
     },
     {
       accessorKey: "GiamGia",
-      header: "Giảm giá",
+      header: "Giảm giá (%)",
     },
     {
       accessorKey: "TongHoaDon",
@@ -38,6 +38,14 @@ export const columns = [
           </Button>
         )
       },
+      cell: ({ row }) => (
+        <span>
+          {row.original.TongHoaDon.toLocaleString("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          })}
+        </span>
+      ),
     },
     {
       accessorKey: "MaThe",

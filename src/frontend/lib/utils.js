@@ -11,4 +11,22 @@ function formattedDate(date) {
   return formatter.format(format_date);
 }
 
-export { formattedDate };
+
+
+function currencyFormatted(amount) {
+  // Ensure the amount is a number
+  const numAmount = Number(amount);
+  if (isNaN(numAmount)) {
+    return "Invalid number";
+  }
+
+  // Format the number with commas as thousand separators
+  const formattedAmount = numAmount.toLocaleString("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  });
+
+  return formattedAmount;
+};
+
+export { formattedDate, currencyFormatted };

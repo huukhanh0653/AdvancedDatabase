@@ -35,6 +35,23 @@ export default function Customer() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(5);
   const [totalSize, setTotalSize] = useState(0);
+  const [query, setQuery] = useState('');
+
+  const handleSearch = async () => {
+    if(query == '') {
+      fetchData();
+      setCurrentPage(1);
+      return;
+    }
+    try {
+      const data = await fetch(`http://localhost:5000/admin/search-customer?keyWord=${encodeURIComponent(query)}`).then((response) => response.json());
+      setTotalPages(1);
+      setTotalSize(data.length);
+      setData(data);  // Set data in state
+    } catch (error) {
+      setError(error);  // Update error state
+    }
+  };
 
   const handlePrevPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -56,6 +73,10 @@ export default function Customer() {
       setError(error);  // Update error state
     }
   };
+
+  useEffect(() => {
+    handleSearch();
+  }, [query]);
   
   useEffect(() => {
     fetchData();
@@ -77,7 +98,7 @@ export default function Customer() {
             </PopupModal>
 
           </div>
-        <DataTable columns={columns} data={data} filterProps={{column: "phoneNumber", placeholder: "Tìm khách hàng bằng số điện thoại..."}}/>
+        <DataTable columns={columns} data={data} buildInSearch={false} onChange={setQuery} filterProps={{value:query, placeholder: "Tìm khách hàng..."}}/>
         <div className="flex items-center justify-end space-x-2 py-4">
           <Button
             variant="outline"

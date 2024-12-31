@@ -8,6 +8,8 @@ const { sql, poolPromise } = require("../model/dbConfig");
 const {
   queryPaginating,
   getCompanyDishes,
+  getStatisticCompany,
+  getStatisticRegion,
   queryDB,
 } = require("../model/queryDB");
 
@@ -93,6 +95,29 @@ router.get("/work-history", async function (req, res, next) {
   if (!result || result.length === 0) {
     return res.status(500).json({ message: "Internal server error" });
   }
+  return res.status(200).json(result);
+});
+
+router.get("/statistic-company", async function (req, res, next) {
+  let result = false;
+  let KhuVuc = req.query.Region ? req.query.Region : "all";
+  let fromDate = req.query.FromDate;
+  let toDate = req.query.ToDate;
+
+  if (!KhuVuc || !fromDate || !toDate)
+    return res.status(400).json({ message: "Invalid Branch ID or Date" });
+
+  if (KhuVuc === "company") {
+    result = await getStatisticCompany(fromDate, toDate);
+  } else {
+    result = await getStatisticRegion(KhuVuc, fromDate, toDate);
+  }
+
+  if (!result || result.length === 0)
+    return res
+      .status(500)
+      .json({ message: "Internal server error or empty data" });
+
   return res.status(200).json(result);
 });
 
