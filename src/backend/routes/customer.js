@@ -3,7 +3,7 @@ const passport = require("../middleware/passport");
 const { isEmployee } = require("../middleware/auth");
 var router = express.Router();
 const { sql, poolPromise } = require("../model/dbConfig");
-const { query_paginating, getTableInfo, queryDB } = require("../model/queryDB");
+const { query_paginating, getTableInfo, executeProcedure, queryDB } = require("../model/queryDB");
 
 router.get("/get-all-bophan", async function (req, res, next) {
   let query = `SELECT * FROM BOPHAN`;
@@ -44,70 +44,61 @@ router.post("/register", async function (req, res, next) {
 
 router.get("/menu/:MaKV", async function (req, res, next) {
   const { MaKV } = req.params;
-  try {
-    const query = `SELECT MA.* 
-                  FROM MONAN MA, THUCDON TD
-                  WHERE TD.MaMon = MA.MaMon AND TD.MaKV = '${MaKV}'`;
-    const pool = await poolPromise;
-    const result = await pool.request().query(query);
+  let result = false;
 
-    if (result.recordset.length === 0) {
-      return res.status(404).json({ message: "No products found" });
-    }
-
-    console.log(result.recordset);
-    return res.status(200).json(result.recordset);
-  }
-  catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Unexpected Error" });
-  }
+  result = await executeProcedure("sp_XemMenuTheoKV", [
+    {
+      name: "makv",
+      type: sql.Char,
+      value: MaKV,
+    },
+  ]);
+  if (result.length === 0)
+    return res.status(200).json({ message: "No result" });
+  if (!result || result.length === 0)
+    return res.status(500).json({ message: "Internal server error" });
+  return res.status(200).json(result);
 });
 
 router.get("/menu/:MaKV/:MaCN", async function (req, res, next) {
   const { MaKV, MaCN } = req.params;
+  let result = false;
 
-  try {
-    const query = `SELECT MA.* 
-                  FROM MONAN MA, PHUCVU PV
-                  WHERE PV.MaMon = MA.MaMon AND PV.MaCN = '${MaCN}'`;
-    const pool = await poolPromise;
-    const result = await pool.request().query(query);
-
-    if (result.recordset.length === 0) {
-      return res.status(404).json({ message: "No products found" });
-    }
-
-    console.log(result.recordset);
-    return res.status(200).json(result.recordset);
-  }
-  catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Unexpected Error" });
-  }
+  result = await executeProcedure("sp_XemMenuTheoCN", [
+    {
+      name: "macn",
+      type: sql.Int,
+      value: MaCN,
+    },
+  ]);
+  if (result.length === 0)
+    return res.status(200).json({ message: "No result" });
+  if (!result || result.length === 0)
+    return res.status(500).json({ message: "Internal server error" });
+  return res.status(200).json(result);
 });
 
 router.get("/menu/:MaKV/:MaCN/:PhanLoai", async function (req, res, next) {
   const { MaKV, MaCN, PhanLoai } = req.params;
+  let result = false;
 
-  try {
-    const query = `SELECT MA.* 
-                  FROM MONAN MA, PHUCVU PV
-                  WHERE PV.MaMon = MA.MaMon AND PV.MaCN = '${MaCN}' AND MA.PhanLoai = '${PhanLoai}'`;
-    const pool = await poolPromise;
-    const result = await pool.request().query(query);
-
-    if (result.recordset.length === 0) {
-      return res.status(404).json({ message: "No products found" });
-    }
-
-    console.log(result.recordset);
-    return res.status(200).json(result.recordset);
-  }
-  catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Unexpected Error" });
-  }
+  result = await executeProcedure("sp_XemMenuTheoCate", [
+    {
+      name: "phanloai",
+      type: sql.NVarChar,
+      value: PhanLoai,
+    },
+    {
+      name: "macn",
+      type: sql.Int,
+      value: MaCN,
+    },
+  ]);
+  if (result.length === 0)
+    return res.status(200).json({ message: "No result" });
+  if (!result || result.length === 0)
+    return res.status(500).json({ message: "Internal server error" });
+  return res.status(200).json(result);
 });
 
 
@@ -194,6 +185,7 @@ router.get("/product/:id", async function (req, res, next) {
 router.post("/customer-reservation", async function (req, res, next) {
   try {
     const { name, phone, rdate, ppl, note, selectedBranch } = req.body;
+    const pool = await poolPromise;
 
     if (!rdate || !ppl || !name || !phone || !selectedBranch)
       return res.status(404).json({ message: "Missing required information" });
@@ -205,12 +197,24 @@ router.post("/customer-reservation", async function (req, res, next) {
 
     //let branchId = queryDB("SELECT MaCN FROM CHINHANH WHERE TenCN = N'${selectedBranch}'").recordset.length;
 
-    if (
-      queryDB(
-        `INSERT INTO DATBAN (HoTen, SDT, NgayGioDat, SoLuong, ChiNhanh, GhiChu) VALUES (N'${name}', '${phone}', '${formattedDate}', '${ppl}', '${selectedBranch}', N'${note}')`
-      )
-    )
-      return res.status(200).json({ message: "Đặt bàn thành công! " });
+    const bookingResult = await pool
+      .request()
+      .input("hoten", name)
+      .input("sdt", phone)
+      .input("ngaygiodat", formattedDate)
+      .input("sl", ppl)
+      .input("macn", selectedBranch)
+      .input("ghichu", note)
+      .execute("sp_DatBanMoi");
+
+    const MaDatBan = bookingResult.returnValue;
+
+    // if (
+    //   queryDB(
+    //     `INSERT INTO DATBAN (HoTen, SDT, NgayGioDat, SoLuong, ChiNhanh, GhiChu) VALUES (N'${name}', '${phone}', '${formattedDate}', '${ppl}', '${selectedBranch}', N'${note}')`
+    //   )
+    // )
+      return res.status(200).json({ message: "Đặt bàn thành công! ", MaDatBan });
 
   } catch (error) {
     console.error("Error: ", error);
@@ -220,7 +224,7 @@ router.post("/customer-reservation", async function (req, res, next) {
 
 router.post("/cart-page", async function (req, res, next) {
   try {
-    const { cartItems, cardID } = req.body;
+    const { cartItems, cardID, reservationID } = req.body;
 
     const processedCardID = cardID && cardID.trim() !== "" ? cardID : null;
 
@@ -259,11 +263,14 @@ router.post("/cart-page", async function (req, res, next) {
     });
 
     // Insert invoice using stored procedure `sp_taoHDMoi`
-    const invoiceResult = await pool
-      .request()
-      .execute("sp_taoHDMoi");
-
-    const MaHD = invoiceResult.returnValue; // Get the newly created invoice ID
+    let invoiceResult;
+    if (reservationID) {
+        invoiceResult = await pool.request().execute("sp_TaoHDMoi");
+    } else {
+        invoiceResult = await pool.request().execute("sp_TaoHDMoi_Delivery");
+    }
+    
+    const MaHD = invoiceResult.returnValue; 
 
     // Insert order (PHIEUDATMON) using stored procedure `sp_TaoPDM_Moi`
     const orderResult = await pool
@@ -298,6 +305,14 @@ router.post("/cart-page", async function (req, res, next) {
     const result1 = await pool.request().query(query1)
 
     const TongTien = result1.recordset[0]?.TongHoaDon;
+
+    if (reservationID)
+    {
+      const query2 = `UPDATE DATBAN
+                      SET MaHD = '${MaHD}' AND MaPhieu = '${MaPhieu}'
+                      WHERE MaDatBan = '${reservationID}'`;
+      const result2 = await pool.request().query(query2)
+    }
     // Respond with order confirmation
     return res.status(200).json({
       message: "Order placed successfully",
@@ -331,6 +346,24 @@ router.post("/check-card", async function (req, res, next) {
       return res.status(500).json({ message: "Unexpected Error" });
     }
 
+});
+
+router.get("/search-dish", async function (req, res, next) {
+  let result = false;
+  let KeyWord = req.query.keyWord ? req.query.keyWord : "";
+
+  result = await executeProcedure("SP_SEARCH_MONAN", [
+    {
+      name: "TUKHOA",
+      type: sql.NVarChar,
+      value: KeyWord,
+    },
+  ]);
+  if (result.length === 0)
+    return res.status(200).json({ message: "No result" });
+  if (!result || result.length === 0)
+    return res.status(500).json({ message: "Internal server error" });
+  return res.status(200).json(result);
 });
 
 // router.post("/register-customer", isEmployee, function (req, res, next) {

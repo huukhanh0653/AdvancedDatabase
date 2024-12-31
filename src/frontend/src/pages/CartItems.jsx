@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { ShopContext } from '../Context/ShopContext'
 import { TbTrash } from 'react-icons/tb'
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,7 @@ const CartItems = () => {
     const [cardID, setCard] = useState('');
     const [total, setTotal] = useState('');
     const [discount, setDiscount] = useState(0);
+    const reservationID = sessionStorage.getItem('ReservationID');
     const navigate = useNavigate();
 
     const handleCheckout = async () => {
@@ -17,7 +18,7 @@ const CartItems = () => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    cartItems, cardID // Use the cartItems from context
+                    cartItems, cardID, reservationID // Use the cartItems from context
                 }),
             });
 
