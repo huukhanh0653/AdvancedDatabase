@@ -6,7 +6,7 @@ import { Pencil, Trash2 } from 'lucide-react'
 
 export function OrderCard({data , orderID, date, time, subTotal, createdBy, isPending }) {
 
-  const handleDelete = async (orderID) => {
+  const handleDelete = async () => {
     try {
       const response = await fetch(`http://localhost:5000/admin/delete_order?OrderID=${orderID}`, {
         method: "DELETE",
@@ -16,6 +16,7 @@ export function OrderCard({data , orderID, date, time, subTotal, createdBy, isPe
       });
       if (response.ok) {
         console.log("Order deleted successfully");
+        window.location.reload();
       } else {
         console.log("Failed to delete order");
       }

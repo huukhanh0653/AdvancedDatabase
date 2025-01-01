@@ -252,6 +252,7 @@ async function checkoutForPreorder(MaBan, ChiNhanh) {
 
 async function deleteOrder(MaPhieu) {
   try {
+    console.log(MaPhieu)
     const pool = await poolPromise;
     const result = await pool
       .request()

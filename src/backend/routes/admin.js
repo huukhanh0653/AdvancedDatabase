@@ -634,7 +634,7 @@ router.post("/new_order", upload.none(), async function (req, res, next) {
 
 router.delete("/delete_order", async function (req, res, next) {
   let MaHD = req.query.OrderID;
-
+  console.log(MaHD);
   const result = await deleteOrder(MaHD);
 
   if (!result || result.length === 0)

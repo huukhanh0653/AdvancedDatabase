@@ -353,11 +353,129 @@ RAISERROR('PHIEU DAT MON KHONG TON TAI',16,1);
 RETURN;
 END;
 
-DECLARE @MAHD INT;
-SET @MAHD = (SELECT MAHD FROM PHIEUDATMON WHERE @MAPHIEU = MAPHIEU);
+DELETE FROM CHONMON WHERE MAPHIEU = @MAPHIEU;
 DELETE FROM PHIEUDATMON WHERE MAPHIEU = @MAPHIEU;
-SELECT @MAHD AS 'MAHD';
+
 END;
 GO
+
+CREATE PROCEDURE SP_GETTOTALCUSTOMER
+AS
+BEGIN
+    SELECT COUNT(MaKH) AS totalCustomer FROM KHACHHANG;
+END;
+GO
+
+CREATE PROCEDURE SP_GETDAILYREVENUEBRANCH
+    @MaCN INT,
+    @FromDate DATE,
+    @ToDate DATE
+AS
+BEGIN
+    SELECT HD.NgayLap AS date, SUM(CM.SoLuong * MA.GiaTien) AS Revenue
+    FROM CHONMON CM
+    JOIN PHIEUDATMON PDM ON CM.MaPhieu = PDM.MaPhieu
+    JOIN MONAN MA ON CM.MaMon = MA.MaMon
+    JOIN HOADON HD ON PDM.MaHD = HD.MaHD
+    WHERE HD.MaCN = @MaCN
+      AND @FromDate <= HD.NgayLap AND HD.NgayLap <= @ToDate
+    GROUP BY HD.NgayLap
+    ORDER BY HD.NgayLap ASC;
+END;
+GO
+
+CREATE PROCEDURE GETTOTALREVENUEBRANCH
+    @MaCN INT,
+    @FromDate DATE,
+    @ToDate DATE
+AS
+BEGIN
+    SELECT SUM(CM.SoLuong * MA.GiaTien) AS totalRevenue
+    FROM CHONMON CM
+    JOIN PHIEUDATMON PDM ON CM.MaPhieu = PDM.MaPhieu
+    JOIN MONAN MA ON CM.MaMon = MA.MaMon
+    JOIN HOADON HD ON PDM.MaHD = HD.MaHD
+    WHERE HD.MaCN = @MaCN
+      AND @FromDate <= HD.NgayLap AND HD.NgayLap <= @ToDate;
+END;
+GO
+
+CREATE PROCEDURE GetTotalBills
+    @MaCN INT,
+    @FromDate DATE,
+    @ToDate DATE
+AS
+BEGIN
+    SELECT COUNT(MaHD) AS totalBills
+    FROM HOADON
+    WHERE NgayLap BETWEEN @FromDate AND @ToDate 
+      AND HOADON.MaCN = @MaCN;
+END;
+GO
+
+CREATE PROCEDURE SP_GETDAILYREVENUECOMPANY
+    @sqlFromDate DATE,
+    @sqlToDate DATE
+AS
+BEGIN
+    SELECT HD.NgayLap AS date, SUM(CM.SoLuong * MA.GiaTien) AS Revenue
+    FROM CHONMON CM
+    JOIN PHIEUDATMON PDM ON CM.MaPhieu = PDM.MaPhieu
+    JOIN MONAN MA ON CM.MaMon = MA.MaMon
+    JOIN HOADON HD ON PDM.MaHD = HD.MaHD
+    WHERE @sqlFromDate <= HD.NgayLap AND HD.NgayLap <= @sqlToDate
+    GROUP BY HD.NgayLap
+    ORDER BY HD.NgayLap ASC;
+END;
+GO
+
+CREATE PROCEDURE GETTOTALREVENUECOMPANY
+    @sqlFromDate DATE,
+    @sqlToDate DATE
+AS
+BEGIN
+    SELECT SUM(CM.SoLuong * MA.GiaTien) AS totalRevenue
+    FROM CHONMON CM
+    JOIN PHIEUDATMON PDM ON CM.MaPhieu = PDM.MaPhieu
+    JOIN MONAN MA ON CM.MaMon = MA.MaMon
+    JOIN HOADON HD ON PDM.MaHD = HD.MaHD
+    WHERE @sqlFromDate <= HD.NgayLap AND HD.NgayLap <= @sqlToDate;
+END;
+GO 
+
+CREATE PROCEDURE GETDAILEYREVENUEREGION
+    @sqlFromDate DATE,
+    @sqlToDate DATE,
+    @region NVARCHAR(50)
+AS
+BEGIN
+    SELECT HD.NgayLap AS date, SUM(CM.SoLuong * MA.GiaTien) AS Revenue
+    FROM CHONMON CM
+    JOIN PHIEUDATMON PDM ON CM.MaPhieu = PDM.MaPhieu
+    JOIN MONAN MA ON CM.MaMon = MA.MaMon
+    JOIN HOADON HD ON PDM.MaHD = HD.MaHD
+    JOIN CHINHANH CN ON HD.MaCN = CN.MaCN
+    WHERE @sqlFromDate <= HD.NgayLap AND HD.NgayLap <= @sqlToDate
+      AND CN.MaKV = @region
+    GROUP BY HD.NgayLap
+    ORDER BY HD.NgayLap ASC;
+END;
+GO
+
+CREATE PROCEDURE GETTOTALREVENUEREGION
+    @sqlFromDate DATE,
+    @sqlToDate DATE,
+    @region NVARCHAR(50)
+AS
+BEGIN
+    SELECT SUM(CM.SoLuong * MA.GiaTien) AS totalRevenue
+    FROM CHONMON CM
+    JOIN PHIEUDATMON PDM ON CM.MaPhieu = PDM.MaPhieu
+    JOIN MONAN MA ON CM.MaMon = MA.MaMon
+    JOIN HOADON HD ON PDM.MaHD = HD.MaHD
+    JOIN CHINHANH CN ON HD.MaCN = CN.MaCN
+    WHERE @sqlFromDate <= HD.NgayLap AND HD.NgayLap <= @sqlToDate
+      AND CN.MaKV = @region;
+END;
 
 
