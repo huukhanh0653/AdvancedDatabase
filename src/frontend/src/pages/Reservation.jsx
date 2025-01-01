@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { NavLink } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const CustomerReservation = () => {
     const [areas, setAreas] = useState([]);
@@ -10,6 +10,9 @@ const CustomerReservation = () => {
     const [rdate, setRdate] = useState('');
     const [ppl, setPpl] = useState('');
     const [note, setNote] = useState('');
+    const [reservationID, setReservationID] = useState('');
+    const [clickedButton, setClickedButton] = useState('');
+    const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
@@ -40,6 +43,14 @@ const CustomerReservation = () => {
         }
     }, [selectedArea]);
 
+    useEffect(() => {
+        if (clickedButton === 'preorder' && reservationID) {
+            sessionStorage.setItem('ReservationID', reservationID);
+            alert('Đặt bàn thành công! Mời bạn chọn món để đặt trước.');
+            navigate('/menu');
+        }
+    }, [clickedButton, reservationID, navigate]);
+
     const handleAreaChange = (event) => {
         const areaId = event.target.value;
         setSelectedArea(areaId);
@@ -68,12 +79,15 @@ const CustomerReservation = () => {
             }
 
             const result = await response.json();
-            alert(`Đặt bàn thành công!`);
+            setReservationID(result.MaDatBan); 
 
-            setTimeout(() => {
-                // Redirect to home page
-                window.location.replace('/');
-            }, 2000); // Delay of 2 seconds 
+            // Check which button was clicked
+            if (clickedButton === 'reserve') {
+                alert('Đặt bàn thành công!');
+                setTimeout(() => {
+                    navigate('/');
+                }, 2000);
+            }
 
         } catch (error) {
             console.error(error);
@@ -128,8 +142,9 @@ const CustomerReservation = () => {
                             <input type="text" placeholder='Ghi chú' className='h-16 w-full pl-5 bg-slate-900/5 outline-none rounded-xl' value={note} onChange={(e) => setNote(e.target.value)} />
                         </div>
                         <div className="flex mt-6 gap-5">
-                            <button type='submit' className='btn_dark_outline my-5 w-full !rounded-md'>Đặt bàn</button>
-                            
+                            <button type='submit' onClick={() => setClickedButton('reserve')} className='btn_dark_outline my-5 w-1/2 !rounded-md'>Đặt bàn</button>
+                            <button type='submit' onClick={() => setClickedButton('preorder')}
+                                className='btn_secondary_rounded my-5 w-1/2 !rounded-md'>Đặt món sẵn</button>
                         </div>
                     </form>
                 </div>
