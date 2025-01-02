@@ -15,10 +15,10 @@ async function updateTheThanhVien() {
     }
 }
 
-// Schedule the function to run every 30 seconds
-schedule.scheduleJob('*/30 * * * * *', function() {
-    updateTheThanhVien();
-});
+// // Schedule the function to run every 30 seconds
+// schedule.scheduleJob('*/30 * * * * *', function() {
+//     updateTheThanhVien();
+// });
 
 // // Schedule the function to run every 24 hours
 // schedule.scheduleJob('0 0 * * *', function() {

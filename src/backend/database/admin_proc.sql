@@ -400,7 +400,7 @@ BEGIN
 END;
 GO
 
-CREATE PROCEDURE GetTotalBills
+CREATE PROCEDURE sp_GetTotalBills
     @MaCN INT,
     @FromDate DATE,
     @ToDate DATE
