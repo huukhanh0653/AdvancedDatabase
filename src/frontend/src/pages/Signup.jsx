@@ -31,16 +31,16 @@ const Signup = () => {
       }
 
       const result = await response.json();
+      alert(`Đăng kí thành công!`);
+      window.location.replace('/login');
       setSuccessMessage(result.message);
       setErrorMessage('');
 
-
-
-      // Delay navigation for a moment to allow users to see the message
-      setTimeout(() => {
-        // Redirect to login page
-        window.location.replace('/login');
-      }, 3000); // Delay of 4 seconds 
+      // // Delay navigation for a moment to allow users to see the message
+      // setTimeout(() => {
+      //   // Redirect to login page
+      //   window.location.replace('/login');
+      // }, 3000); // Delay of 4 seconds 
 
     } catch (error) {
       console.error(error);
