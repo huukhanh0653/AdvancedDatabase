@@ -14,35 +14,35 @@ BEGIN
 
     -- Downgrade GOLD to SILVER if total points < 100 in the last 1 year
     UPDATE THETHANHVIEN
-    SET LoaiThe = 'Silver'
+    SET LoaiThe = 'Silver', DiemTichLuy = 0, NgayDatThe = @CurrentDate
     WHERE LoaiThe = 'Gold'
       AND DiemTichLuy < 100
       AND DATEADD(YEAR, -1, @CurrentDate) <= NgayDatThe;
 
     -- Maintain GOLD if total points >= 100 in the last 1 year
     UPDATE THETHANHVIEN
-    SET LoaiThe = 'Gold'
+    SET LoaiThe = 'Gold', DiemTichLuy = 0, NgayDatThe = @CurrentDate
     WHERE LoaiThe = 'Gold'
       AND DiemTichLuy >= 100
       AND DATEADD(YEAR, -1, @CurrentDate) <= NgayDatThe;
 
     -- Downgrade SILVER to Membership if total points < 50 in the last 1 year
     UPDATE THETHANHVIEN
-    SET LoaiThe = 'Normal'
+    SET LoaiThe = 'Normal', DiemTichLuy = 0, NgayDatThe = @CurrentDate
     WHERE LoaiThe = 'Silver'
       AND DiemTichLuy < 50
       AND DATEADD(YEAR, -1, @CurrentDate) <= NgayDatThe;
 
     -- Maintain SILVER if total points >= 50 in the last 1 year
     UPDATE THETHANHVIEN
-    SET LoaiThe = 'Silver'
+    SET LoaiThe = 'Silver', DiemTichLuy = 0, NgayDatThe = @CurrentDate
     WHERE LoaiThe = 'Silver'
       AND DiemTichLuy >= 50
       AND DATEADD(YEAR, -1, @CurrentDate) <= NgayDatThe;
 
     -- Upgrade from SILVER to GOLD if total points >= 100 in the last 1 year
     UPDATE THETHANHVIEN
-    SET LoaiThe = 'Gold',
+    SET LoaiThe = 'Gold', DiemTichLuy = 0,
         NgayDatThe = @CurrentDate -- Update the date of achieving GOLD
     WHERE LoaiThe = 'Silver'
       AND DiemTichLuy >= 100
@@ -50,7 +50,7 @@ BEGIN
 
     -- Upgrade from Membership to SILVER if total points >= 100
     UPDATE THETHANHVIEN
-    SET LoaiThe = 'Silver',
+    SET LoaiThe = 'Silver', DiemTichLuy = 0,
         NgayDatThe = @CurrentDate -- Update the date of achieving SILVER
     WHERE LoaiThe = 'Normal'
       AND DiemTichLuy >= 100;
@@ -394,10 +394,12 @@ UPDATE DATBAN
 SET MaHD = 300029
 WHERE MaDatBan = 1017;
 
-SELECT * FROM MONAN
+SELECT * FROM THETHANHVIEN
 
 DELETE FROM MONAN WHERE TenMon = 'testing'
 
-SELECT * FROM THETHANHVIEN
+SELECT * FROM DATBAN 
+ORDER BY MaDatBan DESC
 
 SELECT * FROM HOADON
+ORDER BY MaHD DESC

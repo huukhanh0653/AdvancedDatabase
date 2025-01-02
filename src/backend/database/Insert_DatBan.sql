@@ -1,3 +1,8 @@
+use QLY_NHAHANG
+go
+
+SET IDENTITY_INSERT DATBAN ON
+
 INSERT INTO DATBAN (MaDatBan, HoTen, SDT, NgayGioDat, SoLuong, ChiNhanh, GhiChu, MaHD) VALUES 
 (1, N'Nguyễn Thị Ngọc', '9977482047', '2021-11-06 15:58:08.000', 9, 1, N'Bàn gần cửa sổ.', 1),
 (2, N'Vũ Thị Thảo', '3808346838', '2024-10-29 09:50:29.000', 1, 1, N'Bàn trong phòng VIP.', 2),
@@ -999,4 +1004,7 @@ INSERT INTO DATBAN (MaDatBan, HoTen, SDT, NgayGioDat, SoLuong, ChiNhanh, GhiChu,
 (998, N'Nguyễn Thị Mai', '7532226398', '2020-02-14 19:11:36.000', 10, 8, N'Bàn gần khu vực lẩu.', 998),
 (999, N'Lê Minh Châu', '1723237326', '2024-05-28 19:05:18.000', 4, 14, N'Bàn gần khu vực tempura.', 999),
 (1000, N'Lê Thị Vân', '8380932804', '2020-10-11 15:40:41.000', 4, 4, N'Bàn gần khu vực nướng.', 1000); 
+GO
+
+SET IDENTITY_INSERT DATBAN OFF
 GO
