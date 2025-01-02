@@ -309,7 +309,7 @@ router.post("/cart-page", async function (req, res, next) {
     if (reservationID)
     {
       const query2 = `UPDATE DATBAN
-                      SET MaHD = '${MaHD}' AND MaPhieu = '${MaPhieu}'
+                      SET MaHD = '${MaHD}'
                       WHERE MaDatBan = '${reservationID}'`;
       const result2 = await pool.request().query(query2)
     }
