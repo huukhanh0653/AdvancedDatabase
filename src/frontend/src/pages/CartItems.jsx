@@ -27,6 +27,10 @@ const CartItems = () => {
                 alert(`Đặt món thành công! Order ID: ${data.MaPhieu}`);
                 setDiscount(data.GiamGia); 
                 setTotal(data.TongTien);
+                if (reservationID)
+                {
+                    sessionStorage.removeItem('ReservationID');
+                }
                 // window.location.replace("/cart-page");
 
             } else {
