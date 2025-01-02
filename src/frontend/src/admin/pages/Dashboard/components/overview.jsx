@@ -8,7 +8,7 @@ function log(data) {
 }
 
 const CustomTooltip = ({ active, payload, label }) => {
-  if (active && payload) {
+  if (active && payload[0]) {
     return (
       <div className="custom-tooltip">
         <p className="label">Date: {payload[0].payload.date}</p>

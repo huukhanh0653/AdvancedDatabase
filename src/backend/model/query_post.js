@@ -127,6 +127,7 @@ async function createNewOrder(order) {
     let _order = order;
     let success = true;
     let query = "";
+    let isOpenTable = false;  //^ Kiểm tra bàn đã mở chưa
 
     //^ Kiểm tra hóa đơn đã tồn tại chưa
     if (!order.MaHD) {
@@ -144,6 +145,7 @@ async function createNewOrder(order) {
         queryDB(`DELETE FROM HOADON WHERE MAHD = ${_order.MaHD}`);
         return false;
       }
+      isOpenTable = true;
     }
 
     //^ Lấy mã phiếu mới
@@ -172,10 +174,13 @@ async function createNewOrder(order) {
       queryDB(`DELETE FROM CHONMON WHERE MAPHIEU = ${MaPhieu}`);
       return false;
     }
-
+    console.log(_order.isEatIn, _order.MaHD, order.MaHD);
     //^ Cập nhật trạng thái bàn
-    if (_order.isEatIn === 1) {
-      query = `UPDATE BAN SET TINHTRANG = 1 WHERE MABAN = ${_order.tableID}`;
+    if (_order.isEatIn === 1 && isOpenTable) {
+      console.log("Updating table status");
+      query = 
+      `UPDATE BAN SET TinhTrang = 0 WHERE MaBan = ${_order.tableID}
+       UPDATE BAN SET MaHD = ${_order.MaHD} WHERE MaBan = ${_order.tableID}`;
       rs = await pool.request().query(query);
       if (rs.rowsAffected[0] === 0) success = false;
     }
@@ -190,23 +195,54 @@ async function createNewOrder(order) {
   }
 }
 
-async function checkout(MaBan, MaThe) {
+async function checkout(MaHoaDon, MaThe) {
   try {
+    console.log("Checking out");
     const pool = await poolPromise;
-    let query = 'Select mathe from thethanhvien where mathe = "' + MaThe + '"';
-    let rs = await pool.request().query(query);
-    if (rs.recordset.length === 0)
-      return { success: false, message: "Mã thẻ không tồn tại" };
+    let query = `SELECT 1 FROM THETHANHVIEN WHERE MaThe = '${MaThe}' AND IsActive = 1`;
+    let rs = await queryDB(query);
+    if(rs.length === 0) {
+      console.log("Card not found");
+    }
+    console.log(rs);
+    console.log("Checking if table exists");
 
-    query = 'select maban from ban where maban = ' + MaBan;
-    rs = await pool.request().query(query);
-    if (rs.recordset.length === 0) return { success: false, message: "Bàn không tồn tại" };
 
-    await pool.request().input("MABAN", sql.Int, MaBan);
-    await pool.request().input("MATHE", sql.Char(6), MaThe);
-    rs = await pool.request().execute("SP_CHECKOUT");
-    if (rs.rowsAffected[0] === 0) return { success: false, message: "Lỗi khi thanh toán" };
+    const result = await pool.
+                  request(). 
+                  input("MaHD", sql.Int, MaHoaDon).
+                  input("MaThe", sql.Char(8), MaThe).
+                  execute("SP_CHECKOUT");
 
+    if (result.rowsAffected[0] === 0) {
+      return { success: false, message: "Thanh toán thất bại" };
+    }
+    console.log("Checked out");
+    return { success: true, message: "Thanh toán thành công" };
+  } catch (error) {
+    console.error("Error checking out:", error);
+    throw error;
+  }
+}
+
+async function checkoutForPreorder(MaBan, ChiNhanh) {
+  try {
+
+    const pool = await poolPromise;
+    let query = `SELECT 1 FROM BAN WHERE MaBan = ${MaBan} AND MaCN = '${ChiNhanh}' AND TinhTrang = 0`;
+    let rs = await queryDB(query);
+    if(rs.length === 0) {
+      console.log("Table not found");
+    }
+
+    query = `UPDATE BAN SET TinhTrang = 1 WHERE MaBan = ${MaBan} AND MaCN = '${ChiNhanh}'`;
+    rs = await queryDB(query);
+    if(rs.rowsAffected[0] === 0) {
+      console.log("Table not updated");
+    }
+    else {
+      return { success: true, message: "Thanh toán thành công" };
+    }
     return { success: true, message: "Thanh toán thành công" };
   } catch (error) {
     console.error("Error checking out:", error);
@@ -216,10 +252,11 @@ async function checkout(MaBan, MaThe) {
 
 async function deleteOrder(MaPhieu) {
   try {
+    console.log(MaPhieu)
     const pool = await poolPromise;
     const result = await pool
       .request()
-      .input("MAHD", sql.Int, MaPhieu)
+      .input("MAPHIEU", sql.Int, MaPhieu)
       .execute("SP_DELETE_ORDER");
     return result;
   } catch (error) {
@@ -269,4 +306,5 @@ module.exports = {
   deleteCustomer,
   deleteDish,
   checkout,
+  checkoutForPreorder,
 };

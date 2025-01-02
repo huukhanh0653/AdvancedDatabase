@@ -12,6 +12,7 @@ export default function Bill() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(5);
   const [totalSize, setTotalSize] = useState(0);
+  const [query, setQuery] = useState('');
 
   const handlePrevPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -20,6 +21,24 @@ export default function Bill() {
   const handleNextPage = () => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
+
+  const handleSearch = async () => {
+    if(query == '') {
+      fetchData();
+      setCurrentPage(1);
+      return;
+    }
+    try {
+      const data = await fetch(`http://localhost:5000/admin/search-bill?keyWord=${query}`).then((response) => response.json());
+      setTotalPages(1);
+      setTotalSize(10);
+      setData(data);  // Set data in state
+    } catch (error) {
+      setError(error);  // Update error state
+    }
+  };
+
+
 
   const fetchData = async () => {
     let curBranch
@@ -49,9 +68,12 @@ export default function Bill() {
       setData(data);  // Set data in state
     } catch (error) {
       setError(error);  // Update error state
-      setLoading(false);  // Update loading state
     }
   };
+
+  useEffect(() => {
+    handleSearch();
+  }, [query]);
 
   useEffect(() => {  
     fetchData();
@@ -63,7 +85,7 @@ export default function Bill() {
   return (
       <DefaultLayout>
         <h1 className="text-2xl font-normal flex justify-between items-center mb-2 mt-3">Hóa đơn đã hoàn thành ({totalSize})</h1>
-        <DataTable columns={columns} data={data} filterProps={{column: "NgayLap", placeholder: "Tìm hóa đơn theo ngày..."}}/>
+        <DataTable columns={columns} buildInSearch={false} data={data} onChange={setQuery} filterProps={{placeholder: "Tìm hóa đơn theo ngày...", value: query} }/>
         <div className="flex items-center justify-end space-x-2 py-4">
           <Button
             variant="outline"

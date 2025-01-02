@@ -36,7 +36,7 @@ export default function DashboardPage() {
     const [recentSales, setRecentSales] = useState([]);
     const [dailyRevenue, setDailyRevenue] = useState([]);
     const [date, setDate] = useState({
-        from: new Date(2023, 0, 20),
+        from: new Date(2024, 0, 20),
         to: new Date(),
     });
 
@@ -54,7 +54,7 @@ export default function DashboardPage() {
             region = 'MB';
         }
         try {
-            const reponse = await fetch(`http://localhost:5000/admin/statistic-company?Region=${region}&FromDate=${formattedDate(date.from)}&ToDate=${formattedDate(date.to)}`).then((response) => response.json());
+            const reponse = await fetch(`http://localhost:5000/company/statistic-company?Region=${region}&FromDate=${formattedDate(date.from)}&ToDate=${formattedDate(date.to)}`).then((response) => response.json());
             console.log(reponse);
             setData(reponse);
             setRecentSales(reponse.recentSales);

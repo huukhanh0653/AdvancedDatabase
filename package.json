@@ -2,7 +2,8 @@
   "dependencies": {
     "concurrently": "^9.1.0",
     "express-session": "^1.18.1",
-    "multer": "^1.4.5-lts.1"
+    "multer": "^1.4.5-lts.1",
+    "vite": "^6.0.6"
   },
   "scripts": {
     "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",

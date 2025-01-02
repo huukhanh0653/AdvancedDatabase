@@ -25,6 +25,8 @@ export function DataTable({
   columns,
   data,
   filterProps,
+  onChange,
+  buildInSearch = true,
 }) {
   const [sorting, setSorting] = React.useState([])
   const [columnFilters, setColumnFilters] = React.useState([])
@@ -46,14 +48,22 @@ export function DataTable({
   return (
     <>
       <div className="flex items-center py-4 mt-0" >
-        <Input
+        {buildInSearch && <Input
           placeholder={filterProps.placeholder}
           value={(table.getColumn(filterProps.column)?.getFilterValue()) ?? ""}
           onChange={(event) =>
             table.getColumn(filterProps.column)?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
-        />
+        />}
+        {!buildInSearch && <Input
+          placeholder={filterProps.placeholder}
+          value={filterProps.value}
+          onChange={(event) =>
+            onChange(event.target.value)
+          }
+          className="max-w-sm"
+        />}
       </div>
       <div className="rounded-md border">
         <Table>

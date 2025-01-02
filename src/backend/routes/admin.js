@@ -25,6 +25,7 @@ const {
   executeProcedure,
   queryDB,
   searchStatisticDish,
+  searchCustomer,
 } = require("../model/queryDB");
 
 const { formatAsSQLDate, convertToSQLDate } = require("../middleware/utils");
@@ -42,6 +43,7 @@ const {
   deleteCustomer,
   deleteDish,
   checkout,
+  checkoutForPreorder,
 } = require("../model/query_post");
 
 router.get("/get-all-bophan", async function (req, res, next) {
@@ -333,7 +335,7 @@ router.get("/employee-review", async function (req, res, next) {
   if (!result || result.length === 0) {
     return res.status(500).json({ message: "Internal server error" });
   }
-  return res.status(200).json(result);
+  return res.status(200).json(result.output);
 });
 
 router.get("/work-history", async function (req, res, next) {
@@ -434,7 +436,6 @@ router.get("/statistic-branch", async function (req, res, next) {
     return res.status(400).json({ message: "Invalid Branch ID or Date" });
 
   result = await getStatisticBranch(MaCN, fromDate, toDate);
-  console.log(result);
 
   if (!result || result.length === 0)
     return res
@@ -444,29 +445,6 @@ router.get("/statistic-branch", async function (req, res, next) {
   return res.status(200).json(result);
 });
 
-router.get("/statistic-company", async function (req, res, next) {
-  let result = false;
-  let KhuVuc = req.query.Region ? req.query.Region : "all";
-  let fromDate = req.query.FromDate;
-  let toDate = req.query.ToDate;
-
-  if (!KhuVuc || !fromDate || !toDate)
-    return res.status(400).json({ message: "Invalid Branch ID or Date" });
-
-  if (KhuVuc === "company") {
-    result = await getStatisticCompany(fromDate, toDate);
-  } else {
-    result = await getStatisticRegion(KhuVuc, fromDate, toDate);
-  }
-  console.log(result);
-
-  if (!result || result.length === 0)
-    return res
-      .status(500)
-      .json({ message: "Internal server error or empty data" });
-
-  return res.status(200).json(result);
-});
 
 router.get("/search-dish", async function (req, res, next) {
   let result = false;
@@ -490,15 +468,9 @@ router.get("/search-dish", async function (req, res, next) {
 
 router.get("/search-customer", async function (req, res, next) {
   let result = false;
-  let KeyWord = req.query.keyWord ? req.query.keyWord : "";
+  let KeyWord = decodeURIComponent(req.query.keyWord);
 
-  result = await executeProcedure("SP_SEARCH_KHACHHANG", [
-    {
-      name: "TUKHOA",
-      type: sql.NVarChar,
-      value: KeyWord,
-    },
-  ]);
+  result = await searchCustomer(KeyWord);
   if (result.length === 0)
     return res.status(200).json({ message: "No result" });
   if (!result || result.length === 0)
@@ -506,7 +478,7 @@ router.get("/search-customer", async function (req, res, next) {
   return res.status(200).json(result);
 });
 
-router.get("/search-order", async function (req, res, next) {
+router.get("/search-bill", async function (req, res, next) {
   let result = false;
   let KeyWord = req.query.keyWord ? req.query.keyWord : "";
 
@@ -652,6 +624,7 @@ router.post("/new_order", upload.none(), async function (req, res, next) {
 
   console.log("order", order);
   const result = await createNewOrder(order);
+  console.log("result", result);
 
   if (!result)
     return res.status(500).json({ message: "Internal server error" });
@@ -660,8 +633,8 @@ router.post("/new_order", upload.none(), async function (req, res, next) {
 });
 
 router.delete("/delete_order", async function (req, res, next) {
-  let MaHD = req.query.id;
-
+  let MaHD = req.query.OrderID;
+  console.log(MaHD);
   const result = await deleteOrder(MaHD);
 
   if (!result || result.length === 0)
@@ -687,10 +660,29 @@ router.post(
 
 //! Chưa test
 router.post("/checkout", async function (req, res, next) {
-  let MaBan = req.query.TableID;
+  let HoaDon = req.query.BillID;
   let MaThe = req.query.MemberID;
+  if(MaThe == -1) {
+    MaThe = null;
+  }
+  console.log(HoaDon, MaThe);
 
-  const result = await checkout(MaBan, MaThe);
+  const result = await checkout(HoaDon, MaThe);
+
+  if (!result.success && result.message)
+    return res.status(400).json({ message: result.message });
+  else if (!result)
+    return res.status(500).json({ message: "Internal server error" });
+
+  return res.status(200).json(result);
+});
+
+router.post("/checkout-preorder", async function (req, res, next) {
+  let MaBan = req.query.TableID;
+  let ChiNhanh = req.query.CurBranch;
+
+
+  const result = await checkoutForPreorder(MaBan, ChiNhanh);
 
   if (!result.success && result.message)
     return res.status(400).json({ message: result.message });

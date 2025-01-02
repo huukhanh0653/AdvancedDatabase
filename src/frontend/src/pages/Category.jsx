@@ -6,6 +6,7 @@ const Category = () => {
   const [branches, setBranches] = useState([]);
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
+  const [searchKeyword, setSearchKeyword] = useState(""); // State for search input
 
   const [selectedArea, setSelectedArea] = useState("");
   const [selectedBranch, setSelectedBranch] = useState("");
@@ -21,6 +22,20 @@ const Category = () => {
     fetch(query)
       .then((res) => res.json())
       .then((data) => setProducts(data))
+      .catch((error) => console.error(error));
+  };
+
+  // Search products
+  const searchProducts = () => {
+    fetch(`http://localhost:5000/customer/search-dish?keyWord=${encodeURIComponent(searchKeyword)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.message === "No result") {
+          setProducts([]);
+        } else {
+          setProducts(data);
+        }
+      })
       .catch((error) => console.error(error));
   };
 
@@ -84,6 +99,16 @@ const Category = () => {
     fetchProducts(selectedArea, selectedBranch, category);
   };
 
+  const handleSearchInputChange = (event) => {
+    setSearchKeyword(event.target.value);
+  };
+
+  const handleSearch = (event) => {
+    event.preventDefault();
+    searchProducts();
+  };
+
+
   return (
     <main className="bg-primary text-tertiary">
       <section className="max_padd_container py-5 xl:py-14">
@@ -136,9 +161,20 @@ const Category = () => {
             <h5>
               <span className="font-bold">Hiển thị {products.length}</span> sản phẩm
             </h5>
-            <input type="text" placeholder='Tìm kiếm món ăn'
-              className="flex h-14 w-1/3 pl-5 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
-              aria-label="Search" />
+            <form onSubmit={handleSearch} className="flex h-14 w-1/3 rounded-xl border border-gray-300 overflow-hidden">
+              <input
+                type="text"
+                placeholder="Tìm kiếm món ăn"
+                value={searchKeyword}
+                onChange={handleSearchInputChange}
+                className="flex-1 pl-5 outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+                aria-label="Search"
+              />
+              <button type="submit" className="btn_secondary_rounded text-white px-4">
+                Tìm kiếm
+              </button>
+            </form>
+
           </div>
 
           {/* Products Grid */}

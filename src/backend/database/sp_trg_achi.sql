@@ -7,7 +7,7 @@ GO
 --3. Trigger để tính thời gian duyệt web của khách
 
 -----1. Proc cập nhật hang thành viên.
-CREATE PROCEDURE sp_UpdateMembershipRanks
+CREATE or alter PROCEDURE sp_UpdateMembershipRanks
 AS
 BEGIN
     DECLARE @CurrentDate DATE = GETDATE();
@@ -57,144 +57,26 @@ BEGIN
 END;
 GO
 
---INSERT INTO TAIKHOAN (Username, Password, IsActive)
---VALUES
----- Active accounts
---('john.doe', 'password123', 1),
---('jane.smith', 'jane2024!', 1),
---('pham.vinh', 'vinhSecure#1', 1),
---('nguyen.thao', 'Thao*2023', 1);
----- Inactive accounts
---('le.minh', 'minhInactive$', 0),
---('tran.hoai', 'hoaiPaused&7', 0);
-
---INSERT INTO TAIKHOAN (Username, Password, IsActive)
---VALUES
----- Active employees with assigned usernames
---('an.nguyen', 'AnhPass@2024', 1),   -- Maps to MaNV = 1
---('hong.le', 'Minh123#Secure', 1), -- Maps to MaNV = 2
---('binh.tran', 'Quoc!78Access', 1),    -- Maps to MaNV = 3
---('tuyet.pham', 'LanPassword#01', 1),  -- Maps to MaNV = 4
---('phat.hoang', 'HungSecure*99', 1);    -- Maps to MaNV = 5
-
---INSERT INTO TAIKHOAN (Username, Password, IsActive)
---VALUES
----- Active employees with assigned usernames
---('john.doe', 'AnhPass@2024', 1),   -- Maps to MaNV = 1
---('pham.vinh', 'Minh123#Secure', 1), -- Maps to MaNV = 2
---('jane.smith', 'Quoc!78Access', 1),
---('nguyen.thao', 'Quoc!78Access', 1);
-
---SELECT * FROM KHACHHANG;
---SELECT * FROM TAIKHOAN;
-
---INSERT INTO KHACHHANG (Username, HoTen, SDT, Email, CCCD, GioiTinh)
---VALUES
----- Male customers
---('john.doe', N'John Doe', '0901234567', 'john.doe@example.com', '012345678901', 'Male'),
---('pham.vinh', N'Phạm Vinh', '0912345678', 'vinh.pham@example.com', '123456789012', 'Male'),
----- Female customers
---('jane.smith', N'Jane Smith', '0987654321', 'jane.smith@example.com', '987654321098', 'Female'),
---('nguyen.thao', N'Nguyễn Thảo', '0976543210', 'thao.nguyen@example.com', '345678901234', 'Female');
-
---INSERT INTO BOPHAN (MaBP, TenBoPhan, Luong)
---VALUES 
---('BV', N'Bảo Vệ', 7000000),    -- Security department
---('TN', N'Thu Ngân', 8000000),  -- Cashier department
---('PV', N'Phục Vụ', 6000000),   -- Service department
---('BP', N'Bếp', 9000000),       -- Kitchen department
---('GD', N'Giám Đốc', 20000000), -- Director department
---('QL', N'Quản Lý', 15000000),  -- Management department
---('TV', N'Tư Vấn', 8500000);    -- Consultation department
-
---INSERT INTO KHUVUC (MaKV, TenKhuVuc)
---VALUES
---('MB', N'Miền Bắc'),
---('MT', N'Miền Trung'),
---('MN', N'Miền Nam');
-
---INSERT INTO CHINHANH (MaCN, TenCN, DiaChi, ThoiGianMo, ThoiGianDong, SDT, CoXeMay, CoXeHoi, MaKV)
---VALUES
----- Branches in Miền Bắc
---('HN', N'Chi Nhánh Hà Nội', N'123 Phố Huế, Hai Bà Trưng, Hà Nội', '07:30', '22:00', '0241234567', 1, 1, 'MB'),
-
----- Branches in Miền Trung
---('DN', N'Chi Nhánh Đà Nẵng', N'789 Bạch Đằng, Hải Châu, Đà Nẵng', '08:00', '22:00', '0236123456', 1, 1, 'MT'),
-
----- Branches in Miền Nam
---('CT', N'Chi Nhánh Cần Thơ', N'456 Đường 3 Tháng 2, Ninh Kiều, Cần Thơ', '08:00', '22:00', '0292123456', 1, 0, 'MN');
-
-
---INSERT INTO NHANVIEN (HoTen, NgaySinh, NgayVaoLam, NgayNghiViec, Username, MaBP, CN_Hientai)
---VALUES 
----- Security staff
---(N'Nguyễn Văn An', '1985-03-10', '2020-01-15', NULL, 'an.nguyen', 'BV', 'HN'),
---(N'Lê Thị Hồng', '1990-06-20', '2021-04-01', NULL, 'hong.le', 'BV', 'HN'),
----- Cashier staff
---(N'Trần Văn Bình', '1992-09-12', '2018-10-05', NULL, 'binh.tran', 'TN', 'DN'),
---(N'Phạm Minh Tuyết', '1995-12-18', '2019-11-25', NULL, 'tuyet.pham', 'TN', 'CT'),
----- Service staff
---(N'Hoàng Đức Phát', '1993-01-22', '2020-07-12', NULL, 'phat.hoang', 'PV', 'DN');
-
---SELECT * FROM CHINHANH;
-
---INSERT INTO THETHANHVIEN (NgayLap, NgayDatThe, LoaiThe, DiemTichLuy, IsActive, MaKH, MaNV)
---VALUES
---('2023-01-01', '2023-01-01', 'Silver', 50, 1, 2, 3), -- Silver card with 50 points
---('2023-01-01', '2023-01-01', 'Gold', 150, 1, 3, 4), -- Gold card with 150 points
---('2023-01-01', '2023-01-01', 'Normal', 0, 1, 4, 5); -- Normal card with 0 points
-
---SELECT * FROM MONAN
---SELECT * FROM PHIEUDATMON
---SELECT * FROM BAN
---SELECT * FROM HOADON 
-
---INSERT INTO BAN
---    (MaBan, MACN, TinhTrang)
---VALUES
---    ('A01', 'CT', 0),
---    ('A02', 'CT' , 0),
---    ('B03', 'DN', 0),
---    ('B04', 'HN', 0);
-
---INSERT INTO MonAn
---    (TenMon, PhanLoai, GiaTien, GiaoHang)
---VALUES
---    ('AKAGAI SASHIMI', 'Sashimi', 179000, 1),
---    ('AKAGAI SUSHI', 'Sushi', 89000, 1),
---    ('AYU SHIO YAKI', 'Yakimono', 129000, 1),
---    ('BEEF SALAD', 'Salad', 149000, 0);
-
---SELECT * FROM MONAN
-
---UPDATE BAN
---SET TinhTrang = 1
---WHERE MaCN = 'CT' AND MaBan = 'A02';
-
---UPDATE BAN
---SET TinhTrang = 1
---WHERE MaCN = 'DN' and MaBan = 'B03';
-
---INSERT INTO PHIEUDATMON(NgayLap, MaBan, MaCN, MaKH, MaNV) VALUES ('2023-01-01', 'A02', 'CT',  NULL, '3'); -- Silver card with 50 points
---INSERT INTO PHIEUDATMON(NgayLap, MaBan, MaCN, MaKH, MaNV) VALUES ('2023-01-01', 'A02', 'CT', '2', '4'); -- Gold card with 150 points
---INSERT INTO PHIEUDATMON(NgayLap, MaBan, MaCN, MaKH, MaNV) VALUES ('2023-01-01', 'B03', 'DN', '3', '5'); -- Normal card with 0 points
---GO
-
---INSERT INTO PHIEUDATMON(NgayLap, MaBan, MaCN, MaKH, MaNV, MaHD) VALUES ('2023-01-01', 'A02', 'CT', '2', '4', 5);
-
---INSERT INTO CHONMON(MaPhieu, MaMon, SoLuong) VALUES ('7', '1', 2); 
---INSERT INTO CHONMON(MaPhieu, MaMon, SoLuong) VALUES ('7', '2', 3);
---INSERT INTO CHONMON(MaPhieu, MaMon, SoLuong) VALUES ('8', '2', 1);
---INSERT INTO CHONMON(MaPhieu, MaMon, SoLuong) VALUES ('9', '3', 2);
---GO
-
 --Proc trả về MaHD mới tạo
 CREATE OR ALTER PROCEDURE sp_TaoHDMoi
 AS 
 BEGIN	
 	DECLARE @MaHD int;
-	INSERT INTO HOADON (MaThe, NgayLap, isEatIn, TongHoaDon)
-    VALUES (NULL, GETDATE(), 1, 0);
+	INSERT INTO HOADON (MaThe, MaCN, NgayLap, isEatIn, TongHoaDon)
+    VALUES (NULL, 1, GETDATE(), 1, 0);
+
+    SET @MaHD = SCOPE_IDENTITY(); -- Retrieve the newly created invoice ID
+
+	RETURN @MaHD;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE sp_TaoHDMoi_Delivery
+AS 
+BEGIN	
+	DECLARE @MaHD int;
+	INSERT INTO HOADON (MaThe, MaCN, NgayLap, isEatIn, TongHoaDon)
+    VALUES (NULL, 1, GETDATE(), 0, 0);
 
     SET @MaHD = SCOPE_IDENTITY(); -- Retrieve the newly created invoice ID
 
@@ -295,7 +177,7 @@ END;
 GO 
 
 --Thanh toán, gọi lên khi chọn vào button 'Thanh toán' trên web
-CREATE OR ALTER PROCEDURE sp_Checkout(@MaHD int, @MaThe char(8))
+CREATE OR ALTER PROCEDURE sp_Checkout(@MaHD int, @MaThe char(6))
 AS 
 BEGIN 
 	DECLARE @TongTien DECIMAL(18, 2);
@@ -415,6 +297,8 @@ BEGIN
 END;
 GO
 
+
+
 --EXEC sp_XemHD @TinhTrang = 0
 
 --Proc để xem HD thanh toán hoặc chưa thanh toán (1 là đã thanh toán, 0 là ngược lại)
@@ -453,4 +337,67 @@ END;
 --SELECT * FROM THETHANHVIEN
 
 SELECT * FROM KHACHHANG
-SELECT * FROM TAIKHOAN
+SELECT * FROM TAIKHOAN;
+GO
+
+CREATE OR ALTER PROCEDURE sp_DatBanMoi(@hoten nvarchar(50), @sdt VARCHAR(12), @ngaygiodat DATETIME,  @sl INT, @macn CHAR(2), @ghichu NVARCHAR(255))
+AS
+BEGIN 
+	DECLARE @MaDatBan int;
+	INSERT INTO DATBAN (HoTen, SDT, NgayGioDat, SoLuong, ChiNhanh, GhiChu) VALUES
+	(@hoten, @sdt, @ngaygiodat, @sl, @macn, @ghichu)
+
+	SET @MaDatBan = SCOPE_IDENTITY(); -- Retrieve the newly created table_booking ID
+
+	RETURN @MaDatBan;
+
+END;
+GO
+
+CREATE OR ALTER PROCEDURE sp_XemMenuTheoKV (@makv char(2))
+AS
+BEGIN 
+	SELECT MA.* 
+	FROM MONAN MA, THUCDON TD
+    WHERE TD.MaMon = MA.MaMon AND TD.MaKV = @makv
+END;
+GO
+
+exec sp_XemMenuTheoKV @makv = 'MB'
+
+CREATE OR ALTER PROCEDURE sp_XemMenuTheoCN (@macn int)
+AS
+BEGIN 
+	SELECT MA.* 
+	FROM MONAN MA, PHUCVU PV
+    WHERE PV.MaMon = MA.MaMon AND PV.MaCN = @macn
+END;
+GO
+
+CREATE OR ALTER PROCEDURE sp_XemMenuTheoCate (@phanloai nvarchar(50), @macn int)
+AS
+BEGIN 
+	SELECT MA.* 
+    FROM MONAN MA, PHUCVU PV
+    WHERE PV.MaMon = MA.MaMon AND PV.MaCN = @macn AND MA.PhanLoai = @phanloai
+END;
+GO
+
+
+SELECT * FROM HOADON 
+ORDER BY MaHD DESC
+
+SELECT * FROM DATBAN 
+ORDER BY MaDatBan DESC
+
+UPDATE DATBAN
+SET MaHD = 300029
+WHERE MaDatBan = 1017;
+
+SELECT * FROM MONAN
+
+DELETE FROM MONAN WHERE TenMon = 'testing'
+
+SELECT * FROM THETHANHVIEN
+
+SELECT * FROM HOADON

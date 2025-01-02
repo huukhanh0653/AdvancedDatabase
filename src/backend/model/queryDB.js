@@ -281,7 +281,8 @@ async function getStatisticBranch(MaCN, fromDate, toDate) {
       JOIN HOADON HD ON PDM.MaHD = HD.MaHD
       WHERE HD.MaCN = ${MaCN}
       AND '${sqlFromDate}' <= HD.NgayLap AND HD.NgayLap <= '${sqlToDate}'
-      GROUP BY HD.NgayLap`
+      GROUP BY HD.NgayLap
+      ORDER BY HD.NgayLap ASC`
     );
 
     totalRevenue = await queryDB(
@@ -354,7 +355,8 @@ async function getStatisticCompany(fromDate, toDate) {
       JOIN MONAN MA ON CM.MaMon = MA.MaMon
       JOIN HOADON HD ON PDM.MaHD = HD.MaHD
       WHERE '${sqlFromDate}' <= HD.NgayLap AND HD.NgayLap <= '${sqlToDate}'
-      GROUP BY HD.NgayLap`
+      GROUP BY HD.NgayLap
+      ORDER BY HD.NgayLap ASC`
     );
 
     totalRevenue = await queryDB(
@@ -428,7 +430,8 @@ async function getStatisticRegion(region, fromDate, toDate) {
       JOIN CHINHANH CN ON HD.MaCN = CN.MaCN
       WHERE '${sqlFromDate}' <= HD.NgayLap AND HD.NgayLap <= '${sqlToDate}'
       AND CN.MaKV = '${region}'
-      GROUP BY HD.NgayLap`
+      GROUP BY HD.NgayLap
+      ORDER BY HD.NgayLap ASC`
     );
 
     totalRevenue = await queryDB(
@@ -482,7 +485,6 @@ async function searchStatisticDish(MaCN, fromDate, toDate, dishName) {
 
     const sqlFromDate = convertToSQLDate(fromDate);
     const sqlToDate = convertToSQLDate(toDate);
-    console.log(sqlFromDate, sqlToDate);
 
     request.input("MaCN", sql.Int, MaCN);
     request.input("NgayBatDau", sqlFromDate);
@@ -531,6 +533,44 @@ async function getCustomer(pageSize, pageNumber) {
   }
 }
 
+async function searchCustomer(keyWord) {
+  try {
+    const result = await executeProcedure("SP_SEARCH_KHACHHANG", [
+      {
+        name: "TUKHOA",
+        type: sql.NVarChar,
+        value: keyWord,
+      },
+    ]);
+
+
+    if (!result) return [];
+
+    result.forEach((element) => {
+      element["username"] = element["Username"];
+      delete element["Username"];
+      element["customerID"] = element["MaKH"];
+      delete element["MaKH"];
+      element["fullName"] = element["HoTen"];
+      delete element["HoTen"];
+      element["phoneNumber"] = element["SDT"];
+      delete element["SDT"];
+      element["email"] = element["Email"];
+      delete element["Email"];
+      element["address"] = element["DiaChi"];
+      delete element["DiaChi"];
+      element["ssn"] = element["cccd"];
+      delete element["cccd"];
+      element["gender"] = element["GioiTinh"];
+      delete element["GioiTinh"];
+    });
+    return result;
+  }
+  catch (err) {
+    console.log(err);
+  }
+}
+ 
 async function getDishes(MACN, Category, pageSize, pageNumber) {
   try {
     let result = await executeProcedure("SP_GETDISHES", [
@@ -654,11 +694,12 @@ async function getMember(MaKH) {
 }
 
 async function getEmployeeReview(MaNV) {
+  console.log(MaNV);
   try {
-    const result = await callFunction("fn_DiemPhucVuNhanVien", [
-      { name: "MaNV", type: sql.Int, value: parseInt(MaNV) },
-    ]);
-    if (!result) return null;
+    const pool = await poolPromise;
+    const request = pool.request();
+    request.input("MaNV", sql.Int, MaNV);
+    const result = await request.execute("fn_DiemPhucVuNhanVien");
 
     return result.recordset ? result.recordset : result;
   } catch (err) {
@@ -686,4 +727,5 @@ module.exports = {
   getStatisticCompany,
   getStatisticRegion,
   getEmployeeReview,
+  searchCustomer,
 };

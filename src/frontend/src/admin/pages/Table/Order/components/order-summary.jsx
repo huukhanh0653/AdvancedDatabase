@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { useOrder } from '../context/OrderContext'
 import { Separator } from "@/components/ui/separator"
-import { Textarea } from "@/components/ui/textarea"
+import { currencyFormatted } from "@/lib/utils"
 import { useEffect, useState } from 'react'
 import { Input } from "@/components/ui/input"
 
@@ -19,35 +19,51 @@ function calcSubtotal(orderItems) {
   return subtotal
 }
 
-export function OrderSummary({ tableNumber, onCancel }) {
+export function OrderSummary({ tableNumber, onCancel, billID }) {
   const { orderItems } = useOrder()
   const subtotal = calcSubtotal(orderItems)
   const [employee, setEmployee] = useState('')
-  const [note, setNote] = useState('')
 
-  // const handleOrder = async () => {
-  //   try {
-  //     const response = await fetch('http://localhost:5000/admin/order', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //       },
-  //       body: JSON.stringify({
-  //         tableNumber,
-  //         employee,
-  //         note,
-  //         orderItems
-  //       })
-  //     })
-  //     if (response.ok) {
-  //       console.log('Order placed successfully')
-  //     } else {
-  //       console.error('Failed to place order')
-  //     }
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }
+
+
+  const handleOrder = async () => {
+    if(employee === '' || orderItems.length === 0) {
+      return
+    }
+    let curBranch
+    let userinfo;
+    const _userbase64 = localStorage.getItem("user");
+    if (_userbase64) {
+      userinfo = JSON.parse(decodeURIComponent(escape(atob(_userbase64))));
+    }
+    if(userinfo.MaBP == 6) {
+      curBranch=`?CurBranch=${localStorage.getItem('branch')}`;
+    }
+    else {
+      curBranch = '';
+    }
+    try {
+      const response = await fetch(`http://localhost:5000/admin/new_order${curBranch}&tableID=${tableNumber}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          createdBy: employee,
+          data: orderItems,
+          MaHD: billID
+        })
+      })
+      if (response.ok) {
+        console.log('Order placed successfully')
+        onCancel()
+      } else {
+        console.log('Failed to place order')
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <Card className="bg-zinc-900 h-full flex flex-col border-transparent p-2">
@@ -74,7 +90,7 @@ export function OrderSummary({ tableNumber, onCancel }) {
       <ScrollArea className="flex-1">
         <div className="p-4 space-y-4">
           {orderItems.map((item) => (
-            <div key={item.id} className="flex justify-between text-sm">
+            <div key={item.dishID} className="flex justify-between text-sm">
               <div className="flex gap-3">
                 <div className="text-pink-300">{item.quantity}</div>
                 <div className="text-white">{item.dishName}</div>
@@ -84,19 +100,20 @@ export function OrderSummary({ tableNumber, onCancel }) {
           ))}
         </div>
       </ScrollArea>
-      <div className="flex items-center p-2"><Textarea className="p-4 text-white border-zinc-600" placeholder="Ghi chú..." onChange={(e) => setNote(e.target.value)}/></div>
       <div className="p-4 border-t border-zinc-800">
         <div className="space-y-2 mb-4">
           <div className="flex justify-between text-sm">
             <span className="text-zinc-400">Tổng cộng (VNĐ): </span>
-            <span className="text-white">{subtotal.toFixed(0)}</span>
+            <span className="text-white">{currencyFormatted(subtotal.toFixed(0))}</span>
           </div>
         </div>
         <div className="space-y-4 mt-7">
           <Button onClick={onCancel} className="w-full bg-zinc-600 text-zinc-900 hover:bg-white">
             Hủy bỏ
           </Button>
-          <Button className="w-full bg-pink-300 text-zinc-900 hover:bg-pink-400">
+          <Button 
+            className="w-full bg-pink-300 text-zinc-900 hover:bg-pink-400"
+            onClick={handleOrder}>
             Đặt món
           </Button>
         </div>

@@ -7,46 +7,42 @@ import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
 
-const functionToFetchData = () => {
-  return Orders;
-}
-
 
 
 export default function TableDetail() {
-  const [data, setData] = useState(functionToFetchData());
+  const [data, setData] = useState([]);
   const navigate = useNavigate();
-  const { tableID } = useParams();
+  const { tableID, billID } = useParams();
+
+
 
 
   const fetchData = async () => {
+    const api = `http://localhost:5000/admin/bill-detail?billID=${billID}`;
+
     try {
-      const orders = await functionToFetchData();
-      setData(orders);
+      const response = await fetch(api, {
+        method: "GET", 
+        headers: {
+          "Content-Type": "application/json"
+      }});
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await response.json();
+      console.log(data);
+
+      setData(data);
     } catch (error) {
       console.error(error);
     }
-  }
-
-  // const fetchData = async () => {
-  //   const curBranch = localStorage.getItem('branch');
-  //   const api = `http://localhost:1433/api/table/${tableID}/${curBranch ? curBranch : ''}`;
-  //   try {
-  //       const response = await fetch(api);
-  //       if (!response.ok) {
-  //           throw new Error('Failed to fetch data');
-  //       }
-  //       let data = await response.json();
-  //       setData(data);
-  //   } catch (error) {
-  //       toast.error('Error fetching data');
-  //   }
-  // };
-  
+  };
 
   useEffect(() => {
     fetchData();
-  });
+  }, []);
     
 
     return (
@@ -55,7 +51,7 @@ export default function TableDetail() {
                 <div className="flex items-center justify-between mt-5">
                     <h1 className="text-2xl font-normal pb-2">Chi tiết bàn ({data.length})</h1>
                       <Button 
-                        onClick={() => navigate(`/table/${tableID}/order`)}
+                        onClick={() => navigate(`/table/${tableID}/${billID}/order`)}
                         className="bg-blue-500 text-white mr-3">Đặt món ăn
                       </Button>
                 </div>

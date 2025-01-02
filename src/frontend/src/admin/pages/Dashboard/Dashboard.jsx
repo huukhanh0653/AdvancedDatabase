@@ -36,7 +36,7 @@ export default function DashboardPage() {
     const [recentSales, setRecentSales] = useState([]);
     const [dailyRevenue, setDailyRevenue] = useState([]);
     const [date, setDate] = useState({
-        from: new Date(2023, 0, 20),
+        from: new Date(2024, 0, 20),
         to: new Date(),
     });
 

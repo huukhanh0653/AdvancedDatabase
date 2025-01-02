@@ -52,7 +52,7 @@ export default function Order() {
   const [dishOfCategory, setDishOfCategory] = useState({})
   const [data, setData] = useState([]);
   const [curCategory, setCurCategory] = useState('Sushi');
-  const {tableID} = useParams();
+  const {tableID, billID} = useParams();
   const navigate = useNavigate();
   const handleGoBack = () => {
     navigate(-1); // Navigates to the previous screen
@@ -128,7 +128,7 @@ export default function Order() {
               </ScrollArea>
             </div>
             <div className="w-[400px] border-transparent">
-              <OrderSummary tableNumber={tableID}  onCancel= {handleGoBack} />
+              <OrderSummary tableNumber={tableID} billID={billID} onCancel= {handleGoBack} />
             </div>
           </div>
         </OrderProvider>

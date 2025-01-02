@@ -16,10 +16,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { set } from "date-fns";
 
 import { formattedDate } from "@/lib/utils";
-import { use } from "react";
 
 export const columns = [
     {
@@ -125,14 +123,12 @@ export const columns = [
       const [transferOpen, setTransferOpen] = React.useState(false)
       const [workHistoryOpen, setWorkHistoryOpen] = React.useState(false)
       const [reviewOpen, setReviewOpen] = React.useState(false)
-      const [review, setReview] = React.useState(0)
+      const [review, setReview] = React.useState(0);
 
       const getEmployeeReview = async () => {
         try {
           const response = await fetch(`http://localhost:5000/admin/employee-review?EmployeeID=${row.original.MaNV}`).then((response) => response.json());
-          console.log(response);
-          setReview(response);
-          return response;
+          setReview(response['']);
         }
         catch (error) {
           console.log(error);
@@ -141,7 +137,7 @@ export const columns = [
 
       useEffect(() => {
         getEmployeeReview();
-      }, []);
+      }, [row.original.MaNV]);
 
       return (
         <>
@@ -184,15 +180,12 @@ export const columns = [
         <AlertDialogComponent 
           open= {reviewOpen} 
           setOpen={setReviewOpen} 
-          func={getEmployeeReview}
+          func={() => {}}
           title={"Điểm phục vụ của nhân viên"} 
           description={`Điểm phục vụ của nhân viên này là: ${review}`} 
           >
         </AlertDialogComponent>
         
-
-
-
 
 
         <DropdownMenu>
