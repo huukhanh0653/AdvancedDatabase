@@ -104,18 +104,16 @@ async function getTableInfo(MaCN) {
 }
 
 async function getReservations(MaCN, Date) {
-  let date = Date;
   let result = null;
   try {
     let query = `SELECT * FROM DATBAN WHERE ChiNhanh = ${MaCN} AND 
-                CONVERT(DATE,NgayGioDat) = CONVERT(DATE,'${date}')`;
+                CONVERT(date, NgayGioDat) = '${Date}'`;
 
     result = await queryDB(query);
 
     if (result === null) {
       return [];
     }
-
     result.forEach((element) => {
       element["reservationID"] = element["MaDatBan"];
       delete element["MaDatBan"];
@@ -129,6 +127,8 @@ async function getReservations(MaCN, Date) {
       delete element["SoLuong"];
       element["note"] = element["GhiChu"] ? element["GhiChu"] : null;
       delete element["GhiChu"];
+      element["date"] = element["NgayGioDat"].toISOString().split("T")[0];
+      element["time"] = element["NgayGioDat"].toISOString().split("T")[1].split(".")[0];
     });
 
     return result;

@@ -131,13 +131,16 @@ router.get("/reservations", async function (req, res, next) {
   // let MaCN = isAdministrator(req.user) ? req.query.id : req.user.CN_HienTai;
   let MaCN = req.query.CurBranch;
   let formattedDate = req.query.Date
-    ? formatAsSQLDate(req.query.Date)
+    ? convertToSQLDate(req.query.Date)
     : formatAsSQLDate(Date.now());
 
   result = await getReservations(MaCN, formattedDate);
 
-  if (!result || result.length === 0) {
+  if (!result) {
     return res.status(500).json({ message: "Internal server error" });
+  }
+  else if(result.length === 0) {
+    return res.status(200).json({ message: "No data" });
   }
   return res.status(200).json(result);
 });
